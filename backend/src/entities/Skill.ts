@@ -4,6 +4,7 @@ import {
   Column,
   BaseEntity,
   ManyToMany,
+  OneToMany,
 } from "typeorm";
 import { Field, ObjectType, ID } from "type-graphql";
 import { Length } from "class-validator";
@@ -23,7 +24,11 @@ export class Skill extends BaseEntity {
   @Field()
   name: string = "";
 
-  @ManyToMany(() => Ad, (ad) => ad.skills)
+  @Column()
+  @Field()
+  picture: string = "";
+
+  @OneToMany(() => Ad, (ad) => ad.skill)
   @Field(() => Ad)
   ads?: Promise<Ad[]>;
 }

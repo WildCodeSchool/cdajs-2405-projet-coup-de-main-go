@@ -18,7 +18,7 @@ import { User } from "./User";
 import { Skill } from "./Skill";
 import { Transaction } from "./Transaction";
 
-enum Status {
+export enum Status {
   POSTED = "posted",
   BOOKED = "booked",
   FINALISED = "finalised",
@@ -41,7 +41,7 @@ export class Ad extends BaseEntity {
   })
   @Column({ length: 50 })
   @Field()
-  titre: string = "";
+  title: string = "";
 
   @Length(1, 255, {
     message: "La description doit contenir entre 1 et 255 caractères.",
@@ -114,10 +114,9 @@ export class Ad extends BaseEntity {
   @Field(() => User)
   userRequester?: User;
 
-  @ManyToMany(() => Skill, (skill) => skill.ads)
-  @JoinTable()
+  @ManyToOne(() => Skill, (skill) => skill.ads, { eager: true })
   @Field(() => Skill)
-  skills?: Promise<Skill[]>;
+  skill?: Skill;
 
   @OneToOne(() => Transaction, (transaction) => transaction.ad)
   transaction?: Transaction;

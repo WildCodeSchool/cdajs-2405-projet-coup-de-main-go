@@ -135,7 +135,7 @@ export class User extends BaseEntity {
   @ManyToMany(() => Skill)
   @JoinTable()
   @Field(() => Skill)
-  skills?: Promise<Skill[]>;
+  skills?: Skill[];
 
   @BeforeInsert()
   onBeforeInsert() {
