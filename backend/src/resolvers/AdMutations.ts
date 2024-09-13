@@ -81,15 +81,20 @@ export class AdMutations {
       throw Error("Skill not found");
     }
 
-    // Create and save Ad
-    const ad = Ad.create({
-      ...adData,
-      userRequester,
-      skill,
-    });
+    try {
+      // Create and save Ad
+      const ad = Ad.create({
+        ...adData,
+        userRequester,
+        skill,
+      });
 
-    await ad.save();
-    return ad;
+      await ad.save();
+      return ad;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to create Ad");
+    }
   }
 
   // Mutation to update an existing Ad
@@ -116,25 +121,31 @@ export class AdMutations {
       throw new Error("Skill not found");
     }
 
-    // Update Ad with new data
-    Object.assign(ad, { ...adData, userRequester, skill });
+    try {
+      // Update Ad with new data
+      Object.assign(ad, { ...adData, userRequester, skill });
 
-    await ad.save();
-    return ad;
+      await ad.save();
+      return ad;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to update Ad");
+    }
   }
 
   // Mutation to delete Ad (possible only when no transaction is associated to this specific Ad)
   @Mutation((_) => Boolean)
   async deleteAd(@Arg("id") id: string): Promise<boolean> {
     return await dataSource.transaction(async (transactionalEntityManager) => {
-      try {
-        const ad = await transactionalEntityManager.findOne(Ad, {
-          where: { id },
-        });
-        if (!ad) {
-          throw new Error("Ad not found");
-        }
+      // Find ad to delete
+      const ad = await transactionalEntityManager.findOne(Ad, {
+        where: { id },
+      });
+      if (!ad) {
+        throw new Error("Ad not found");
+      }
 
+      try {
         // Update chats associated with the ad, to set adId as null
         if (ad.chats) {
           const chats = await ad.chats;

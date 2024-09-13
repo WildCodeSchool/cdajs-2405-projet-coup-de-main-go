@@ -37,13 +37,13 @@ export class AdQueries {
     return await query.getMany();
   }
 
-  @Query((type) => Ad)
+  @Query(() => Ad)
   async getAdById(@Arg("id") id: string): Promise<Ad | null> {
     const ad: Ad | null = await Ad.findOne({ where: { id } });
     return ad;
   }
 
-  @Query((type) => [Ad])
+  @Query(() => [Ad])
   async getAdsByUser(@Arg("userId") userId: string): Promise<Ad[]> {
     const ads: Ad[] = await Ad.findBy({ userRequester: { id: userId } });
     return ads;
