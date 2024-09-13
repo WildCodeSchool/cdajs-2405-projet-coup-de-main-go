@@ -119,6 +119,7 @@ export class Ad extends BaseEntity {
   skill?: Skill;
 
   @OneToOne(() => Transaction, (transaction) => transaction.ad)
+  @Field(() => Transaction)
   transaction?: Transaction;
 
   @BeforeInsert()
