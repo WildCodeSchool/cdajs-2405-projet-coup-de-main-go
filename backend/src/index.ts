@@ -10,6 +10,7 @@ import { ChatQueries } from "./resolvers/ChatQueries";
 import { ChatMutations } from "./resolvers/ChatMutations";
 import { MessageQueries } from "./resolvers/MessageQueries";
 import { MessageMutations } from "./resolvers/MessageMutations";
+import { SkillQueries } from "./resolvers/SkillQueries";
 
 const port: number = parseInt(process.env.APOLLO_PORT || "", 10);
 
@@ -21,6 +22,7 @@ async function startApolloServer() {
       ChatMutations,
       MessageQueries,
       MessageMutations,
+      SkillQueries
     ],
   });
 
