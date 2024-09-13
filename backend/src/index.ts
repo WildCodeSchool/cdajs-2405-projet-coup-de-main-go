@@ -5,13 +5,14 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 
 import { dataSource } from "./datasource";
 import { UserQueries } from "./resolvers/UserQueries";
+import { AdQueries } from "./resolvers/AdQueries";
 import { AdMutations } from "./resolvers/AdMutations";
 
 const port: number = parseInt(process.env.APOLLO_PORT || "", 10);
 
 async function startApolloServer() {
   const schema = await buildSchema({
-    resolvers: [UserQueries, AdMutations],
+    resolvers: [UserQueries, AdQueries, AdMutations],
   });
 
   const server = new ApolloServer({
