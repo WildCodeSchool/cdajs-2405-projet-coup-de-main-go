@@ -3,19 +3,12 @@ import * as argon2 from "argon2";
 import jwt from "jsonwebtoken";
 
 import { User } from "../entities/User";
-import logError from "../services/logError";
 
 @Resolver(User)
 export class UserQueries {
     @Query(() => [User])
     async getAllUsers(): Promise<User[]> {
-        try {
-            return await User.find({ relations: ["skills"] });
-        } catch (error: unknown) {
-            const message = "Erreur lors de la récupération des utilisateurs";
-            logError(error, message);
-            throw new Error(message);
-        }
+        return await User.find({ relations: ["skills"] });
     }
 
     @Query(() => String)
@@ -23,19 +16,12 @@ export class UserQueries {
         @Arg("email") email: string,
         @Arg("password") password: string
     ): Promise<string> {
-        let user: User | null;
-        try {
-            user = await User.findOne({
-                where: { email },
-            });
+        const user: User | null = await User.findOne({
+            where: { email },
+        });
 
-            if (!user) {
-                throw new Error("incorrect identifiers");
-            }
-        } catch (error: unknown) {
-            const message = "Erreur lors de la connexion";
-            logError(error, message);
-            throw new Error(message);
+        if (!user) {
+            throw new Error("incorrect identifiers");
         }
 
         // argon2
@@ -61,42 +47,29 @@ export class UserQueries {
 
     @Query(() => User)
     async getUserByEmail(@Arg("email") email: string): Promise<User> {
-        try {
-            const user: User | null = await User.findOne({
-                relations: ["skills"],
-                where: { email },
-            });
+        const user: User | null = await User.findOne({
+            relations: ["skills"],
+            where: { email },
+        });
 
-            if (!user) {
-                throw new Error("user not found");
-            }
-
-            return user;
-        } catch (error: unknown) {
-            const message = "Erreur lors de la récupération de l'utilisateur";
-            logError(error, message);
-            throw new Error(message);
+        if (!user) {
+            throw new Error("user not found");
         }
+
+        return user;
     }
 
     @Query(() => Number)
-    async getMangoBalanceByUserId(@Arg("id") id: string): Promise<Number> {
-        try {
-            const user: User | null = await User.findOne({
-                select: { mangoBalance: true },
-                where: { id },
-            });
+    async getMangoBalanceByUserId(@Arg("id") id: string): Promise<number> {
+        const user: User | null = await User.findOne({
+            select: { mangoBalance: true },
+            where: { id },
+        });
 
-            if (!user) {
-                throw new Error("user not found");
-            }
-
-            return user.mangoBalance;
-        } catch (error: unknown) {
-            const message =
-                "Erreur lors de la récupération du solde de l'utilisateur";
-            logError(error, message);
-            throw new Error(message);
+        if (!user) {
+            throw new Error("user not found");
         }
+
+        return user.mangoBalance;
     }
 }
