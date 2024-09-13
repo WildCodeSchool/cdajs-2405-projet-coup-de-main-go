@@ -3,9 +3,9 @@ import { User } from "../entities/User";
 
 @Resolver(User)
 export class UserQueries {
-    @Query(() => [User])
-    async getUsers() {
-        const users = await User.find();
-        return users;
-    }
+  @Query(() => [User])
+  async getUsers() {
+    const users = await User.find();
+    return users;
+  }
 }

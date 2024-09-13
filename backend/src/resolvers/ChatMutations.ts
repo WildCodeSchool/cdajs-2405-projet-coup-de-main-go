@@ -26,36 +26,33 @@ export class ChatMutations {
       );
     }
 
-    let userRequester: User;
-    try {
-      // Check if the requester user exists
-      userRequester = await User.findOneOrFail({
-        where: { id: chatData.userRequesterId },
-      });
-    } catch {
+    // Check if the requester user exists
+    const userRequester = await User.findOne({
+      where: { id: chatData.userRequesterId },
+    });
+
+    if (!userRequester) {
       throw new Error("L'utilisateur requester spécifié n'existe pas.");
     }
 
-    let userHelper: User;
-    try {
-      // Check if the helper user exists
-      userHelper = await User.findOneOrFail({
-        where: { id: chatData.userHelperId },
-      });
-    } catch {
+    // Check if the helper user exists
+    const userHelper = await User.findOne({
+      where: { id: chatData.userHelperId },
+    });
+    
+    if (!userHelper) {
       throw new Error("L'utilisateur helper spécifié n'existe pas.");
     }
 
-    let ad: Ad;
-    try {
-      // Check if the ad exists and belongs to the requester
-      ad = await Ad.findOneOrFail({
-        where: {
-          id: chatData.adId,
-          userRequester: { id: chatData.userRequesterId },
-        },
-      });
-    } catch {
+    // Check if the ad exists and belongs to the requester
+    const ad = await Ad.findOne({
+      where: {
+        id: chatData.adId,
+        userRequester: { id: chatData.userRequesterId },
+      },
+    });
+
+    if (!ad) {
       throw new Error(
         "L'annonce spécifiée n'existe pas ou n'appartient pas à l'utilisateur requester."
       );

@@ -8,13 +8,11 @@ export class TransactionQueries {
   async getTransactionsHistoryByUser(
     @Arg("userId") userId: string
   ): Promise<Transaction[] | null> {
-    let user: User;
-    try {
-      // Check if the user exists
-      user = await User.findOneOrFail({
-        where: { id: userId },
-      });
-    } catch {
+    // Check if the user exists
+    const user = await User.findOne({
+      where: { id: userId },
+    });
+    if (!user) {
       throw new Error("L'utilisateur spécifié n'existe pas.");
     }
 

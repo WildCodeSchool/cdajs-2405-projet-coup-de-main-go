@@ -24,23 +24,21 @@ export class MessageMutations {
   async sendMessage(
     @Arg("messageData") messageData: MessageInput
   ): Promise<Message> {
-    let chat: Chat;
-    try {
-      // Check if the chat exists
-      chat = await Chat.findOneOrFail({
-        where: { id: messageData.chatId },
-      });
-    } catch {
+    // Check if the chat exists
+    const chat = await Chat.findOne({
+      where: { id: messageData.chatId },
+    });
+
+    if (!chat) {
       throw new Error("Le chat spécifié n'existe pas.");
     }
 
-    let author: User;
-    try {
-      // Check if the user exists
-      author = await User.findOneOrFail({
-        where: { id: messageData.authorId },
-      });
-    } catch {
+    // Check if the user exists
+    const author = await User.findOne({
+      where: { id: messageData.authorId },
+    });
+
+    if (!author) {
       throw new Error("L'utilisateur spécifié n'existe pas.");
     }
 

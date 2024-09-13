@@ -9,22 +9,20 @@ export class ReviewQueries {
     @Arg("userHelperId") userId: string
   ): Promise<Review[] | null> {
     // Check if the user exists
-    let user: User;
-    try {
-      user = await User.findOneOrFail({
-        where: { id: userId },
-      });
-    } catch {
+    const user = await User.findOne({
+      where: { id: userId },
+    });
+
+    if (!user) {
       throw new Error("L'utilisateur spécifié n'existe pas.");
     }
 
     // Get all reviews of the user as a helper
-    let reviews: Review[];
-    try {
-      reviews = await Review.find({
-        where: { userHelper: user },
-      });
-    } catch {
+    const reviews = await Review.find({
+      where: { userHelper: user },
+    });
+
+    if (!reviews) {
       throw new Error(
         "Une erreur est survenue lors de la récupération des avis."
       );

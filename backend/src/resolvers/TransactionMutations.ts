@@ -37,34 +37,42 @@ export class TransactionMutations {
       throw new Error("L'annonce spécifiée a déjà une transaction associée.");
     }
 
-    let ad: Ad;
-    try {
-      // Check if the ad exists
-      ad = await Ad.findOneOrFail({
-        where: { id: transactionData.adId },
-      });
-    } catch {
+    // Check if the ad exists
+    const ad = await Ad.findOne({
+      where: { id: transactionData.adId },
+      
+    });
+
+    if (!ad) {
       throw new Error("L'annonce spécifiée n'existe pas.");
     }
 
-    let userRequester: User;
-    try {
-      // Check if the requester user exists
-      userRequester = await User.findOneOrFail({
-        where: { id: transactionData.userRequesterId },
-      });
-    } catch {
+    // Check if the requester user exists
+    const userRequester = await User.findOne({
+      where: { id: transactionData.userRequesterId },
+    });
+
+    if (!userRequester) {
       throw new Error("L'utilisateur requester spécifié n'existe pas.");
     }
 
-    let userHelper: User;
-    try {
-      // Check if the helper user exists
-      userHelper = await User.findOneOrFail({
-        where: { id: transactionData.userHelperId },
-      });
-    } catch {
+    // Check if the helper user exists
+    const userHelper = await User.findOne({
+      where: { id: transactionData.userHelperId },
+    });
+    if (!userHelper) {
       throw new Error("L'utilisateur helper spécifié n'existe pas.");
+    }
+
+    console.log(ad.userRequester?.id);
+    console.log(transactionData.userRequesterId);
+    
+
+    // Check if the ad is linked to the correct requester user
+    if (ad.userRequester?.id?.toString() !== transactionData.userRequesterId) {
+      throw new Error(
+        "L'utilisateur demandeur n'est pas le propriétaire de l'annonce spécifiée."
+      );
     }
 
     // Create and save the transaction

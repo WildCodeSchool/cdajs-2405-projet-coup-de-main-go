@@ -44,23 +44,21 @@ export class ReviewMutations {
       );
     }
 
-    let userRequester: User;
-    try {
-      // Check if the requester user exists
-      userRequester = await User.findOneOrFail({
-        where: { id: reviewData.userRequesterId },
-      });
-    } catch {
+    // Check if the requester user exists
+    const userRequester = await User.findOne({
+      where: { id: reviewData.userRequesterId },
+    });
+
+    if (!userRequester) {
       throw new Error("L'utilisateur requester spécifié n'existe pas.");
     }
 
-    let userHelper: User;
-    try {
-      // Check if the helper user exists
-      userHelper = await User.findOneOrFail({
-        where: { id: reviewData.userHelperId },
-      });
-    } catch {
+    // Check if the helper user exists
+    const userHelper = await User.findOne({
+      where: { id: reviewData.userHelperId },
+    });
+
+    if (!userHelper) {
       throw new Error("L'utilisateur helper spécifié n'existe pas.");
     }
 

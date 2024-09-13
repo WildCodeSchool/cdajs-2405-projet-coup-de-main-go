@@ -8,13 +8,12 @@ export class MessageQueries {
   async getMessagesByChatId(
     @Arg("chatId") chatId: string
   ): Promise<Message[] | null> {
-    let chat: Chat;
-    try {
-      // Check if the chat exists
-      chat = await Chat.findOneOrFail({
-        where: { id: chatId },
-      });
-    } catch {
+    // Check if the chat exists
+    const chat = await Chat.findOne({
+      where: { id: chatId },
+    });
+
+    if (!chat) {
       throw new Error("Le chat spécifié n'existe pas.");
     }
 
