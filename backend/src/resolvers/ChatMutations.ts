@@ -36,6 +36,16 @@ export class ChatMutations {
       throw new Error("L'utilisateur requester spécifié n'existe pas.");
     }
 
+    let userHelper: User;
+    try {
+      // Check if the helper user exists
+      userHelper = await User.findOneOrFail({
+        where: { id: chatData.userHelperId },
+      });
+    } catch {
+      throw new Error("L'utilisateur helper spécifié n'existe pas.");
+    }
+
     let ad: Ad;
     try {
       // Check if the ad exists and belongs to the requester
@@ -49,16 +59,6 @@ export class ChatMutations {
       throw new Error(
         "L'annonce spécifiée n'existe pas ou n'appartient pas à l'utilisateur requester."
       );
-    }
-
-    let userHelper: User;
-    try {
-      // Check if the helper user exists
-      userHelper = await User.findOneOrFail({
-        where: { id: chatData.userHelperId },
-      });
-    } catch {
-      throw new Error("L'utilisateur helper spécifié n'existe pas.");
     }
 
     // Check if a chat already exists for this ad between these two users

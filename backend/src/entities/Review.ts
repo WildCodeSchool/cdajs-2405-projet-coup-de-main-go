@@ -33,7 +33,7 @@ export class Review extends BaseEntity {
 
   @Min(0)
   @Max(5)
-  @Column()
+  @Column("float")
   @Field()
   rating: number = 0;
 
