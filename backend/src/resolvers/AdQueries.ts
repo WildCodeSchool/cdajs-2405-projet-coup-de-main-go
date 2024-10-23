@@ -39,13 +39,17 @@ export class AdQueries {
 
   @Query(() => Ad)
   async getAdById(@Arg("id") id: string): Promise<Ad | null> {
-    const ad: Ad | null = await Ad.findOne({ where: { id } });
+    const ad: Ad | null = await dataSource.manager.findOne(Ad, {
+      where: { id },
+    });
     return ad;
   }
 
   @Query(() => [Ad])
   async getAdsByUser(@Arg("userId") userId: string): Promise<Ad[]> {
-    const ads: Ad[] = await Ad.findBy({ userRequester: { id: userId } });
+    const ads: Ad[] = await dataSource.manager.findBy(Ad, {
+      userRequester: { id: userId },
+    });
     return ads;
   }
 }

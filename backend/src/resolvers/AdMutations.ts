@@ -70,20 +70,24 @@ export class AdMutations {
   @Mutation(() => Ad)
   async createAd(@Arg("adData") adData: AdInput): Promise<Ad> {
     // Check if userRequested exists
-    const userRequester = await User.findOneBy({ id: adData.userRequesterId });
+    const userRequester = await dataSource.manager.findOneBy(User, {
+      id: adData.userRequesterId,
+    });
     if (!userRequester) {
       throw new Error("User not found");
     }
 
     // Check if selected skill exists
-    const skill = await Skill.findOneBy({ id: adData.skillId });
+    const skill = await dataSource.manager.findOneBy(Skill, {
+      id: adData.skillId,
+    });
     if (!skill) {
       throw Error("Skill not found");
     }
 
     try {
       // Create and save Ad
-      const ad = Ad.create({
+      const ad = dataSource.manager.create(Ad, {
         ...adData,
         userRequester,
         skill,
@@ -104,19 +108,23 @@ export class AdMutations {
     @Arg("adData") adData: AdInput
   ): Promise<Ad> {
     // Find the existing Ad
-    const ad = await Ad.findOneBy({ id });
+    const ad = await dataSource.manager.findOneBy(Ad, { id });
     if (!ad) {
       throw new Error("Ad not found");
     }
 
     // Check if userRequester exists
-    const userRequester = await User.findOneBy({ id: adData.userRequesterId });
+    const userRequester = await dataSource.manager.findOneBy(User, {
+      id: adData.userRequesterId,
+    });
     if (!userRequester) {
       throw new Error("User not found");
     }
 
     // Ckeck if selected skill exists
-    const skill = await Skill.findOneBy({ id: adData.skillId });
+    const skill = await dataSource.manager.findOneBy(Skill, {
+      id: adData.skillId,
+    });
     if (!skill) {
       throw new Error("Skill not found");
     }

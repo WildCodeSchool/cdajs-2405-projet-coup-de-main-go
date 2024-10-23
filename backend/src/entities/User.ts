@@ -137,6 +137,27 @@ export class User extends BaseEntity {
   @Field(() => [Skill])
   skills?: Skill[];
 
+  constructor(
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+    picture: string,
+    address: string,
+    zipCode: string,
+    city: string
+  ) {
+    super();
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+    this.password = password;
+    this.picture = picture;
+    this.address = address;
+    this.zipCode = zipCode;
+    this.city = city;
+  }
+
   @BeforeInsert()
   onBeforeInsert() {
     this.createdAt = new Date();

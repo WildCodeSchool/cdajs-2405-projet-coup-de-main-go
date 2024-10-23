@@ -1,6 +1,7 @@
 import { Resolver, Mutation, Arg, InputType, Field } from "type-graphql";
 import { Review } from "../entities/Review";
 import { User } from "../entities/User";
+import { dataSource } from "../datasource";
 
 @InputType()
 export class ReviewInput {
@@ -45,7 +46,7 @@ export class ReviewMutations {
     }
 
     // Check if the requester user exists
-    const userRequester = await User.findOne({
+    const userRequester = await dataSource.manager.findOne(User, {
       where: { id: reviewData.userRequesterId },
     });
 
@@ -54,7 +55,7 @@ export class ReviewMutations {
     }
 
     // Check if the helper user exists
-    const userHelper = await User.findOne({
+    const userHelper = await dataSource.manager.findOne(User, {
       where: { id: reviewData.userHelperId },
     });
 

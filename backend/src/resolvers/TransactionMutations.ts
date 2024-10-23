@@ -2,6 +2,7 @@ import { Resolver, Mutation, Arg, InputType, Field } from "type-graphql";
 import { Transaction } from "../entities/Transaction";
 import { Ad } from "../entities/Ad";
 import { User } from "../entities/User";
+import { dataSource } from "../datasource";
 
 @InputType()
 export class TransactionInput {
@@ -38,9 +39,8 @@ export class TransactionMutations {
     }
 
     // Check if the ad exists
-    const ad = await Ad.findOne({
+    const ad = await dataSource.manager.findOne(Ad, {
       where: { id: transactionData.adId },
-      
     });
 
     if (!ad) {
@@ -48,7 +48,7 @@ export class TransactionMutations {
     }
 
     // Check if the requester user exists
-    const userRequester = await User.findOne({
+    const userRequester = await dataSource.manager.findOne(User, {
       where: { id: transactionData.userRequesterId },
     });
 
@@ -57,7 +57,7 @@ export class TransactionMutations {
     }
 
     // Check if the helper user exists
-    const userHelper = await User.findOne({
+    const userHelper = await dataSource.manager.findOne(User, {
       where: { id: transactionData.userHelperId },
     });
     if (!userHelper) {
@@ -66,7 +66,6 @@ export class TransactionMutations {
 
     console.log(ad.userRequester?.id);
     console.log(transactionData.userRequesterId);
-    
 
     // Check if the ad is linked to the correct requester user
     if (ad.userRequester?.id?.toString() !== transactionData.userRequesterId) {

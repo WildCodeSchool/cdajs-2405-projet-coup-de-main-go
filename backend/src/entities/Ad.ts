@@ -122,6 +122,35 @@ export class Ad extends BaseEntity {
   @Field(() => Transaction)
   transaction?: Transaction;
 
+  constructor(
+    title: string,
+    description: string,
+    address: string,
+    zipCode: string,
+    city: string,
+    duration: number,
+    mangoAmount: number,
+    userRequester: User,
+    skill: Skill,
+    picture1?: string,
+    picture2?: string,
+    picture3?: string
+  ) {
+    super();
+    this.title = title;
+    this.description = description;
+    this.address = address;
+    this.zipCode = zipCode;
+    this.city = city;
+    this.duration = duration;
+    this.mangoAmount = mangoAmount;
+    this.userRequester = userRequester;
+    this.skill = skill;
+    this.picture1 = picture1 || "";
+    this.picture2 = picture2 || "";
+    this.picture3 = picture3 || "";
+  }
+
   @BeforeInsert()
   onBeforeInsert() {
     const date = new Date();

@@ -1,6 +1,7 @@
 import { Resolver, Query, Arg } from "type-graphql";
 import { Transaction } from "../entities/Transaction";
 import { User } from "../entities/User";
+import { dataSource } from "../datasource";
 
 @Resolver(Transaction)
 export class TransactionQueries {
@@ -9,7 +10,7 @@ export class TransactionQueries {
     @Arg("userId") userId: string
   ): Promise<Transaction[] | null> {
     // Check if the user exists
-    const user = await User.findOne({
+    const user = await dataSource.manager.findOne(User, {
       where: { id: userId },
     });
     if (!user) {

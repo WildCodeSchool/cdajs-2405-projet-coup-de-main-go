@@ -2,6 +2,7 @@ import { Resolver, Mutation, Arg, InputType, Field } from "type-graphql";
 import { Message } from "../entities/Message";
 import { Chat } from "../entities/Chat";
 import { User } from "../entities/User";
+import { dataSource } from "../datasource";
 
 @InputType()
 export class MessageInput {
@@ -34,7 +35,7 @@ export class MessageMutations {
     }
 
     // Check if the user exists
-    const author = await User.findOne({
+    const author = await dataSource.manager.findOne(User, {
       where: { id: messageData.authorId },
     });
 

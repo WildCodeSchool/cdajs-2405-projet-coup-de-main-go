@@ -2,6 +2,7 @@ import { Resolver, Mutation, Arg, Field, InputType } from "type-graphql";
 import { Chat } from "../entities/Chat";
 import { Ad } from "../entities/Ad";
 import { User } from "../entities/User";
+import { dataSource } from "../datasource";
 
 @InputType()
 export class ChatInput {
@@ -27,7 +28,7 @@ export class ChatMutations {
     }
 
     // Check if the requester user exists
-    const userRequester = await User.findOne({
+    const userRequester = await dataSource.manager.findOne(User, {
       where: { id: chatData.userRequesterId },
     });
 
@@ -36,16 +37,16 @@ export class ChatMutations {
     }
 
     // Check if the helper user exists
-    const userHelper = await User.findOne({
+    const userHelper = await dataSource.manager.findOne(User, {
       where: { id: chatData.userHelperId },
     });
-    
+
     if (!userHelper) {
       throw new Error("L'utilisateur helper spécifié n'existe pas.");
     }
 
     // Check if the ad exists and belongs to the requester
-    const ad = await Ad.findOne({
+    const ad = await dataSource.manager.findOne(Ad, {
       where: {
         id: chatData.adId,
         userRequester: { id: chatData.userRequesterId },
