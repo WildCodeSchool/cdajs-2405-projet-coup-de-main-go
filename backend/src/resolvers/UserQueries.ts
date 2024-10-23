@@ -1,11 +1,75 @@
-import { Resolver, Query } from "type-graphql";
+import { Resolver, Query, Arg } from "type-graphql";
+import * as argon2 from "argon2";
+import jwt from "jsonwebtoken";
+
 import { User } from "../entities/User";
 
 @Resolver(User)
 export class UserQueries {
     @Query(() => [User])
-    async getUsers() {
-        const users = await User.find();
-        return users;
+    async getAllUsers(): Promise<User[]> {
+        return await User.find({ relations: ["skills"] });
+    }
+
+    @Query(() => String)
+    async login(
+        @Arg("email") email: string,
+        @Arg("password") password: string
+    ): Promise<string> {
+        const user: User | null = await User.findOne({
+            where: { email },
+        });
+
+        if (!user) {
+            throw new Error("incorrect identifiers");
+        }
+
+        // argon2
+        const isCorrectPassword: boolean = await argon2.verify(
+            user.password,
+            password
+        );
+
+        if (!isCorrectPassword) {
+            throw new Error("incorrect identifiers");
+        }
+
+        // jwt
+        const jwtSecret: string | undefined = process.env.JWT_SECRET;
+        if (!jwtSecret) {
+            throw new Error("invalid JWT secret");
+        }
+
+        return jwt.sign({ email }, jwtSecret, {
+            expiresIn: "24h",
+        });
+    }
+
+    @Query(() => User)
+    async getUserByEmail(@Arg("email") email: string): Promise<User> {
+        const user: User | null = await User.findOne({
+            relations: ["skills"],
+            where: { email },
+        });
+
+        if (!user) {
+            throw new Error("user not found");
+        }
+
+        return user;
+    }
+
+    @Query(() => Number)
+    async getMangoBalanceByUserId(@Arg("id") id: string): Promise<number> {
+        const user: User | null = await User.findOne({
+            select: { mangoBalance: true },
+            where: { id },
+        });
+
+        if (!user) {
+            throw new Error("user not found");
+        }
+
+        return user.mangoBalance;
     }
 }
