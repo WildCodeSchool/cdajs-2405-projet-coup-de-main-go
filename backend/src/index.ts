@@ -4,8 +4,18 @@ import { buildSchema } from "type-graphql";
 import { startStandaloneServer } from "@apollo/server/standalone";
 
 import { dataSource } from "./datasource";
-import { UserMutations } from "./resolvers/UserMutations";
+
 import { UserQueries } from "./resolvers/UserQueries";
+import { ChatQueries } from "./resolvers/ChatQueries";
+import { ChatMutations } from "./resolvers/ChatMutations";
+import { MessageQueries } from "./resolvers/MessageQueries";
+import { MessageMutations } from "./resolvers/MessageMutations";
+import { SkillQueries } from "./resolvers/SkillQueries";
+import { ReviewQueries } from "./resolvers/ReviewQueries";
+import { ReviewMutations } from "./resolvers/ReviewMutations";
+import { TransactionQueries } from "./resolvers/TransactionQueries";
+import { TransactionMutations } from "./resolvers/TransactionMutations";
+import { UserMutations } from "./resolvers/UserMutations";
 import { AdQueries } from "./resolvers/AdQueries";
 import { AdMutations } from "./resolvers/AdMutations";
 
@@ -13,7 +23,21 @@ const port: number = parseInt(process.env.APOLLO_PORT || "", 10);
 
 async function startApolloServer() {
   const schema = await buildSchema({
-    resolvers: [UserQueries, UserMutations, AdQueries, AdMutations],
+    resolvers: [
+      UserQueries,
+      UserMutations,
+      AdQueries, 
+      AdMutations,
+      ChatQueries,
+      ChatMutations,
+      MessageQueries,
+      MessageMutations,
+      SkillQueries,
+      ReviewQueries,
+      ReviewMutations,
+      TransactionQueries,
+      TransactionMutations,
+    ],
   });
 
   const server = new ApolloServer({

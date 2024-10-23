@@ -26,6 +26,7 @@ export class Transaction extends BaseEntity {
   date?: Date;
 
   @OneToOne(() => Ad, (ad) => ad.transaction)
+  @Field(() => Ad)
   @JoinColumn()
   ad?: Ad;
 
