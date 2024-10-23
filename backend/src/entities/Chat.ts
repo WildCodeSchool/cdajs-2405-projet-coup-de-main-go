@@ -33,8 +33,8 @@ export class Chat extends BaseEntity {
   @Field(() => User)
   userRequester?: User;
 
-  @ManyToOne(() => Ad, (ad) => ad.chats, { eager: true })
-  @Field(() => Ad)
+  @ManyToOne(() => Ad, (ad) => ad.chats, { eager: true, nullable: true })
+  @Field(() => Ad, { nullable: true })
   ad?: Ad;
 
   @OneToMany(() => Message, (message) => message.chat)
