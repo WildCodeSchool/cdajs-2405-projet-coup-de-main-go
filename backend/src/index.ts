@@ -4,6 +4,7 @@ import { buildSchema } from "type-graphql";
 import { startStandaloneServer } from "@apollo/server/standalone";
 
 import { dataSource } from "./datasource";
+import { UserMutations } from "./resolvers/UserMutations";
 import { UserQueries } from "./resolvers/UserQueries";
 import { AdQueries } from "./resolvers/AdQueries";
 import { AdMutations } from "./resolvers/AdMutations";
@@ -12,7 +13,7 @@ const port: number = parseInt(process.env.APOLLO_PORT || "", 10);
 
 async function startApolloServer() {
   const schema = await buildSchema({
-    resolvers: [UserQueries, AdQueries, AdMutations],
+    resolvers: [UserQueries, UserMutations, AdQueries, AdMutations],
   });
 
   const server = new ApolloServer({
