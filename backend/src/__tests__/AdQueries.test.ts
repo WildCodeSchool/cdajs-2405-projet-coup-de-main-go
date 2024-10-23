@@ -49,8 +49,6 @@ describe("getAllAds", () => {
   beforeEach(() => {
     adQueries = new AdQueries();
     ads = createMockAds(5);
-    console.log("ads", ads);
-    // Mock du `dataSource` pour la base de données
     jest
       .spyOn(dataSource.getRepository(Ad), "createQueryBuilder")
       .mockReturnValue({
