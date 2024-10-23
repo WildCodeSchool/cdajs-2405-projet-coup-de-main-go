@@ -5,27 +5,27 @@ import { dataSource } from "../datasource";
 
 @Resolver(Transaction)
 export class TransactionQueries {
-  @Query(() => [Transaction], { nullable: true })
-  async getTransactionsHistoryByUser(
-    @Arg("userId") userId: string
-  ): Promise<Transaction[] | null> {
-    // Check if the user exists
-    const user = await dataSource.manager.findOne(User, {
-      where: { id: userId },
-    });
-    if (!user) {
-      throw new Error("L'utilisateur spécifié n'existe pas.");
+    @Query(() => [Transaction], { nullable: true })
+    async getTransactionsHistoryByUser(
+        @Arg("userId") userId: string
+    ): Promise<Transaction[] | null> {
+        // Check if the user exists
+        const user = await dataSource.manager.findOne(User, {
+            where: { id: userId },
+        });
+        if (!user) {
+            throw new Error("L'utilisateur spécifié n'existe pas.");
+        }
+
+        // Get all transactions where the user is either the requester or the helper
+        const transactions = await dataSource.manager.find(Transaction, {
+            where: [
+                { userHelper: { id: user.id } },
+                { userRequester: { id: user.id } },
+            ],
+            relations: ["ad"],
+        });
+
+        return transactions;
     }
-
-    // Get all transactions where the user is either the requester or the helper
-    const transactions = await Transaction.find({
-      where: [
-        { userHelper: { id: user.id } },
-        { userRequester: { id: user.id } },
-      ],
-      relations: ["ad"],
-    });
-
-    return transactions;
-  }
 }
