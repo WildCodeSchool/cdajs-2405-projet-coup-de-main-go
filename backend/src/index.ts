@@ -15,6 +15,9 @@ import { ReviewQueries } from "./resolvers/ReviewQueries";
 import { ReviewMutations } from "./resolvers/ReviewMutations";
 import { TransactionQueries } from "./resolvers/TransactionQueries";
 import { TransactionMutations } from "./resolvers/TransactionMutations";
+import { UserMutations } from "./resolvers/UserMutations";
+import { AdQueries } from "./resolvers/AdQueries";
+import { AdMutations } from "./resolvers/AdMutations";
 
 const port: number = parseInt(process.env.APOLLO_PORT || "", 10);
 
@@ -22,6 +25,9 @@ async function startApolloServer() {
   const schema = await buildSchema({
     resolvers: [
       UserQueries,
+      UserMutations,
+      AdQueries, 
+      AdMutations,
       ChatQueries,
       ChatMutations,
       MessageQueries,

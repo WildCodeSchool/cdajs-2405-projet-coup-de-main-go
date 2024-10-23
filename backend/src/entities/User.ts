@@ -66,9 +66,9 @@ export class User extends BaseEntity {
   @Field({ nullable: true })
   dateOfBirth?: Date;
 
-  @Column()
-  @Field()
-  picture: string = "";
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  picture?: string;
 
   @Length(1, 255, {
     message: "L'adresse doit contenir entre 1 et 255 caractères.",
@@ -134,7 +134,7 @@ export class User extends BaseEntity {
 
   @ManyToMany(() => Skill)
   @JoinTable()
-  @Field(() => Skill)
+  @Field(() => [Skill])
   skills?: Skill[];
 
   @BeforeInsert()
