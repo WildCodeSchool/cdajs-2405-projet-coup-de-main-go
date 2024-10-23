@@ -10,13 +10,13 @@ const dbPort: number = parseInt(process.env.DB_PORT || "", 10);
 const dbDatabase: string = process.env.DB_DATABASE || "";
 
 export const dataSource = new DataSource({
-    type: "postgres",
-    host: dbHost,
-    port: dbPort,
-    username: dbUser,
-    password: dbPassword,
-    database: dbDatabase,
-    entities: ["src/entities/*.ts"],
-    synchronize: true,
-    logging: false,
+  type: "postgres",
+  host: dbHost,
+  port: dbPort,
+  username: dbUser,
+  password: dbPassword,
+  database: dbDatabase,
+  entities: ["src/entities/*.ts"],
+  synchronize: true,
+  logging: false,
 });

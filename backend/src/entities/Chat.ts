@@ -41,6 +41,13 @@ export class Chat extends BaseEntity {
   @Field(() => [Message])
   messages?: Promise<Message[]>;
 
+  constructor(
+    date: Date,
+  ) {
+    super();
+    this.date = date;
+  }
+
   @BeforeInsert()
   onBeforeInsert() {
     this.date = new Date();
