@@ -2,7 +2,7 @@ import { Ad } from "../entities/Ad";
 import { AdQueries } from "../resolvers/AdQueries";
 import { User } from "../entities/User";
 import { faker } from "@faker-js/faker";
-import { MockTypeORM } from "mock-typeorm";
+import { mockTypeOrm } from "../tests_mockTypeorm-config";
 import { Skill } from "../entities/Skill";
 import { dataSource } from "../datasource";
 
@@ -19,7 +19,6 @@ const durationCheap: number = 30;
 const durationExpensive: number = 120;
 const mangoAmountCheap: number = 1;
 const mangoAmountExpensive: number = 4;
-const typeorm = new MockTypeORM();
 
 const createMockUser = (count: number): User[] => {
   return Array.from({ length: count }, () => {
@@ -363,16 +362,12 @@ describe("getAdById", () => {
     adQueries = new AdQueries();
   });
 
-  afterEach(() => {
-    typeorm.resetAll();
-  });
-
   it("should return the correct ad when the id is valid", async () => {
     const adId = ads[0].id;
     if (!adId) {
       throw new Error("adId is undefined");
     }
-    typeorm.onMock(Ad).toReturn(ads[0], "findOne");
+    mockTypeOrm().onMock(Ad).toReturn(ads[0], "findOne");
     const retrievedAd = await adQueries.getAdById(adId);
     expect(retrievedAd).toEqual(ads[0]);
   });
@@ -382,7 +377,7 @@ describe("getAdById", () => {
     if (!invalidId) {
       throw new Error("adId is undefined");
     }
-    typeorm.onMock(Ad).toReturn(null, "findOne");
+    mockTypeOrm().onMock(Ad).toReturn(null, "findOne");
     await expect(adQueries.getAdById(invalidId)).rejects.toThrow(
       `Annonce non trouvée pour l'id ${invalidId}`
     );
