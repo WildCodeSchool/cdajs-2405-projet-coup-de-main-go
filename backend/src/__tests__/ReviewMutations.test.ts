@@ -91,4 +91,13 @@ describe("createReview", () => {
       "L'utilisateur requester spécifié n'existe pas."
     );
   });
+
+  it("should throw an error if the userHelper does not exist", async () => {
+    typeorm.onMock(User).toReturn(userRequester, "findOne");
+    typeorm.onMock(User).toReturn(false, "findOne");
+
+    await expect(reviewMutations.createReview(reviewData)).rejects.toThrow(
+      "L'utilisateur helper spécifié n'existe pas."
+    );
+  });
 });
