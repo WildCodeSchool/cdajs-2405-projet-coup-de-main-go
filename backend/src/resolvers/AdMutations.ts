@@ -4,6 +4,7 @@ import { Ad } from "../entities/Ad";
 import { User } from "../entities/User";
 import { Skill } from "../entities/Skill";
 import { dataSource } from "../datasource";
+import { Transaction } from "../entities/Transaction";
 
 @InputType()
 export class AdInput {
@@ -148,9 +149,21 @@ export class AdMutations {
       // Find ad to delete
       const ad = await transactionalEntityManager.findOne(Ad, {
         where: { id },
-      });
+      });      
+      
       if (!ad) {
         throw new Error("Ad not found");
+      }
+
+      const associatedTransaction = await transactionalEntityManager.findOne(
+        Transaction,
+        {
+          where: { ad: { id: ad.id } },
+        }
+      );
+
+      if (associatedTransaction) {
+        throw new Error("Ad is associated to a transaction");
       }
 
       try {
