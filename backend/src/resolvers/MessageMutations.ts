@@ -61,7 +61,7 @@ export class MessageMutations {
                 isView: messageData.isView,
             });
 
-            await message.save();
+            await dataSource.manager.save(message);
             return message;
         } catch (error) {
             console.error(
