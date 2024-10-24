@@ -238,13 +238,16 @@ describe("getAllAds", () => {
     cheapAds = createCheapMockAds(3);
     expensiveAds = createExpensiveMockAds(5);
     const mangoAmountMin = 3; //We expect to get only the expensive ads
+
+    const andWhereSpy = jest.fn().mockReturnThis();
+
     jest
       .spyOn(dataSource.getRepository(Ad), "createQueryBuilder")
       .mockReturnValue({
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(expensiveAds),
-        andWhere: jest.fn().mockReturnThis(),
+        andWhere: andWhereSpy,
       } as any);
 
     const retrievedAds: Ad[] = await adQueries.getAllAds(
@@ -253,19 +256,28 @@ describe("getAllAds", () => {
     );
     expect(retrievedAds.length).toBe(expensiveAds.length);
     expect(retrievedAds).toEqual(expensiveAds);
+    expect(andWhereSpy).toHaveBeenCalledWith(
+      "ad.mangoAmount >= :mangoAmountMin",
+      {
+        mangoAmountMin: 3,
+      }
+    );
   });
 
   it("should filter ads by mangoAmountmax when mangoAmountmax argument is provided", async () => {
     cheapAds = createCheapMockAds(3);
     expensiveAds = createExpensiveMockAds(5);
     const mangoAmountMax = 3; //We expect to get only the cheap ads
+
+    const andWhereSpy = jest.fn().mockReturnThis();
+
     jest
       .spyOn(dataSource.getRepository(Ad), "createQueryBuilder")
       .mockReturnValue({
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(cheapAds),
-        andWhere: jest.fn().mockReturnThis(),
+        andWhere: andWhereSpy,
       } as any);
 
     const retrievedAds: Ad[] = await adQueries.getAllAds(
@@ -275,6 +287,12 @@ describe("getAllAds", () => {
     );
     expect(retrievedAds.length).toBe(cheapAds.length);
     expect(retrievedAds).toEqual(cheapAds);
+    expect(andWhereSpy).toHaveBeenCalledWith(
+      "ad.mangoAmount <= :mangoAmountMax",
+      {
+        mangoAmountMax: 3,
+      }
+    );
   });
 
   it("should return ads 16 to 30 ads when the second page is requested and the default limit is not modified", async () => {
