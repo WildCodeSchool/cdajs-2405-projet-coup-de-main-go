@@ -104,15 +104,6 @@ describe("createChat", () => {
     );
   });
 
-  //   it("should throw an error if helper does not exist", async () => {
-  //     typeorm.onMock(User).toReturn(userRequester, "findOne");
-  //     typeorm.onMock(User).toReturn(null, "findOne");
-
-  //     await expect(chatMutations.createChat(chatData)).rejects.toThrow(
-  //       "L'utilisateur helper spécifié n'existe pas."
-  //     );
-  //   });
-
   it("should throw an error if the ad does not exist or does not belong to the requester", async () => {
     typeorm.onMock(User).toReturn(userRequester, "findOne");
     typeorm.onMock(User).toReturn(userHelper, "findOne");
