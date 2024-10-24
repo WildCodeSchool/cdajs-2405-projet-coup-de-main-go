@@ -77,6 +77,7 @@ describe("createChat", () => {
     typeorm.onMock(User).toReturn(userHelper, "findOne");
     typeorm.onMock(Ad).toReturn(ad, "findOne");
     typeorm.onMock(Chat).toReturn(null, "findOne");
+    typeorm.onMock(Chat).toReturn(null, "save");
 
     const chat = await chatMutations.createChat(chatData);
     expect(chat).toBeInstanceOf(Chat);
