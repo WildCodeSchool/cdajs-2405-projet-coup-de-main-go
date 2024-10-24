@@ -69,9 +69,6 @@ export class TransactionMutations {
             throw new Error("L'utilisateur helper spécifié n'existe pas.");
         }
 
-        console.log(ad.userRequester?.id);
-        console.log(transactionData.userRequesterId);
-
         // Check if the ad is linked to the correct requester user
         if (
             ad.userRequester?.id?.toString() !== transactionData.userRequesterId

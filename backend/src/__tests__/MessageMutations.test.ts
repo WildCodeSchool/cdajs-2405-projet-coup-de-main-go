@@ -1,5 +1,5 @@
 import { MessageMutations, MessageInput } from "../resolvers/MessageMutations";
-import { MockTypeORM } from "mock-typeorm";
+import { mockTypeOrm } from "../tests_mockTypeorm-config";
 import { faker } from "@faker-js/faker";
 import { User } from "../entities/User";
 import { Chat } from "../entities/Chat";
@@ -8,122 +8,113 @@ import { Skill } from "../entities/Skill";
 import { Ad } from "../entities/Ad";
 
 describe("sendMessage", () => {
-  let messageMutations: MessageMutations;
-  let typeorm: MockTypeORM;
-  let userRequester: User;
-  let userHelper: User;
-  let chat: Chat;
-  let ad: Ad;
-  let skill: Skill;
-  let messageData: MessageInput;
+    let messageMutations: MessageMutations;
+    let userRequester: User;
+    let userHelper: User;
+    let chat: Chat;
+    let ad: Ad;
+    let skill: Skill;
+    let messageData: MessageInput;
 
-  beforeAll(() => {
-    typeorm = new MockTypeORM();
-  });
+    beforeEach(() => {
+        messageMutations = new MessageMutations();
 
-  beforeEach(() => {
-    messageMutations = new MessageMutations();
+        userRequester = new User(
+            faker.person.firstName(),
+            faker.person.lastName(),
+            faker.internet.email(),
+            faker.internet.password(),
+            faker.image.avatar(),
+            faker.location.streetAddress(),
+            faker.location.zipCode(),
+            faker.location.city()
+        );
+        userRequester.id = faker.string.uuid();
 
-    userRequester = new User(
-      faker.person.firstName(),
-      faker.person.lastName(),
-      faker.internet.email(),
-      faker.internet.password(),
-      faker.image.avatar(),
-      faker.location.streetAddress(),
-      faker.location.zipCode(),
-      faker.location.city()
-    );
-    userRequester.id = faker.string.uuid();
+        userHelper = new User(
+            faker.person.firstName(),
+            faker.person.lastName(),
+            faker.internet.email(),
+            faker.internet.password(),
+            faker.image.avatar(),
+            faker.location.streetAddress(),
+            faker.location.zipCode(),
+            faker.location.city()
+        );
+        userHelper.id = faker.string.uuid();
 
-    userHelper = new User(
-      faker.person.firstName(),
-      faker.person.lastName(),
-      faker.internet.email(),
-      faker.internet.password(),
-      faker.image.avatar(),
-      faker.location.streetAddress(),
-      faker.location.zipCode(),
-      faker.location.city()
-    );
-    userHelper.id = faker.string.uuid();
+        skill = new Skill(faker.lorem.word(), faker.image.url());
 
-    skill = new Skill(faker.lorem.word(), faker.image.url());
+        ad = new Ad(
+            faker.lorem.word(),
+            faker.lorem.sentence(),
+            faker.location.streetAddress(),
+            faker.location.zipCode(),
+            faker.location.city(),
+            faker.number.int(),
+            faker.number.int(),
+            userRequester,
+            skill
+        );
 
-    ad = new Ad(
-      faker.lorem.word(),
-      faker.lorem.sentence(),
-      faker.location.streetAddress(),
-      faker.location.zipCode(),
-      faker.location.city(),
-      faker.number.int(),
-      faker.number.int(),
-      userRequester,
-      skill
-    );
+        chat = new Chat(userRequester, userHelper, ad);
+        chat.id = faker.string.uuid();
 
-    chat = new Chat(userRequester, userHelper, ad);
-    chat.id = faker.string.uuid();
+        messageData = {
+            message: faker.lorem.sentence(),
+            isView: faker.datatype.boolean(),
+            chatId: chat.id!,
+            authorId: userHelper.id!,
+        };
+    });
 
-    messageData = {
-      message: faker.lorem.sentence(),
-      isView: faker.datatype.boolean(),
-      chatId: chat.id!,
-      authorId: userHelper.id!,
-    };
-  });
+    it("should successfully send a message", async () => {
+        mockTypeOrm().onMock(Chat).toReturn(chat, "findOne");
+        mockTypeOrm().onMock(User).toReturn(userHelper, "findOne");
+        mockTypeOrm().onMock(Message).toReturn(null, "save");
 
-  afterEach(() => {
-    typeorm.resetAll();
-  });
+        const message = await messageMutations.sendMessage(messageData);
 
-  it("should successfully send a message", async () => {
-    typeorm.onMock(Chat).toReturn(chat, "findOne");
-    typeorm.onMock(User).toReturn(userHelper, "findOne");
-    typeorm.onMock(Message).toReturn(null, "save");
+        expect(message).toBeInstanceOf(Message);
+        expect(message.message).toBe(messageData.message);
+        expect(message.chat.id).toBe(chat.id);
+        expect(message.author.id).toBe(userHelper.id);
+    });
 
-    const message = await messageMutations.sendMessage(messageData);
+    it("should throw an error if the chat does not exist", async () => {
+        mockTypeOrm().onMock(Chat).toReturn(null, "findOne");
 
-    expect(message).toBeInstanceOf(Message);
-    expect(message.message).toBe(messageData.message);
-    expect(message.chat.id).toBe(chat.id);
-    expect(message.author.id).toBe(userHelper.id);
-  });
+        await expect(messageMutations.sendMessage(messageData)).rejects.toThrow(
+            "Le chat spécifié n'existe pas."
+        );
+    });
 
-  it("should throw an error if the chat does not exist", async () => {
-    typeorm.onMock(Chat).toReturn(null, "findOne");
+    it("should throw an error if the author does not exist", async () => {
+        mockTypeOrm().onMock(Chat).toReturn(chat, "findOne");
+        mockTypeOrm().onMock(User).toReturn(null, "findOne");
 
-    await expect(messageMutations.sendMessage(messageData)).rejects.toThrow(
-      "Le chat spécifié n'existe pas."
-    );
-  });
+        await expect(messageMutations.sendMessage(messageData)).rejects.toThrow(
+            "L'utilisateur spécifié n'existe pas."
+        );
+    });
 
-  it("should throw an error if the author does not exist", async () => {
-    typeorm.onMock(Chat).toReturn(chat, "findOne");
-    typeorm.onMock(User).toReturn(null, "findOne");
+    it("should throw an error if the author is not part of the chat", async () => {
+        const wrongUser = new User(
+            faker.person.firstName(),
+            faker.person.lastName(),
+            faker.internet.email(),
+            faker.internet.password(),
+            faker.image.avatar(),
+            faker.location.streetAddress(),
+            faker.location.zipCode(),
+            faker.location.city()
+        );
 
-    await expect(messageMutations.sendMessage(messageData)).rejects.toThrow(
-      "L'utilisateur spécifié n'existe pas."
-    );
-  });
+        mockTypeOrm().onMock(Chat).toReturn(chat, "findOne");
+        mockTypeOrm().onMock(User).toReturn(wrongUser, "findOne");
 
-  it("should throw an error if the author is not part of the chat", async () => {
-    const wrongUser = new User(
-      faker.person.firstName(),
-      faker.person.lastName(),
-      faker.internet.email(),
-      faker.internet.password(),
-      faker.image.avatar(),
-      faker.location.streetAddress(),
-      faker.location.zipCode(),
-      faker.location.city()
-    );
-
-    typeorm.onMock(Chat).toReturn(chat, "findOne");
-    typeorm.onMock(User).toReturn(wrongUser, "findOne");
-
-    await expect(messageMutations.sendMessage(messageData)).rejects.toThrow(
-      "L'utilisateur spécifié ne fait pas partie du chat spécifié."
-    );
-  });
+        await expect(messageMutations.sendMessage(messageData)).rejects.toThrow(
+            "L'utilisateur spécifié ne fait pas partie du chat spécifié."
+        );
+    });
 });

@@ -1,7 +1,6 @@
 import * as argon2 from "argon2";
 import { faker } from "@faker-js/faker";
-import jwt from "jsonwebtoken";
-import { MockTypeORM } from "mock-typeorm";
+import { mockTypeOrm } from "../tests_mockTypeorm-config";
 
 import { User } from "../entities/User";
 import { UserMutations } from "../resolvers/UserMutations";
@@ -9,7 +8,6 @@ import { UserMutations } from "../resolvers/UserMutations";
 describe("userMutations", () => {
     let mockUsers: User[];
     let userMutations: UserMutations;
-    let typeorm: MockTypeORM;
 
     const createMockUsers = (count: number): User[] => {
         return Array.from(
@@ -29,7 +27,6 @@ describe("userMutations", () => {
     };
 
     beforeAll(() => {
-        typeorm = new MockTypeORM();
         userMutations = new UserMutations();
     });
 
@@ -50,13 +47,9 @@ describe("userMutations", () => {
         ];
     });
 
-    afterEach(() => {
-        typeorm.resetAll();
-    });
-
     describe("register", () => {
         it("should return an 'email is already in use' error", async () => {
-            typeorm.onMock(User).toReturn(mockUsers[0], "findOne");
+            mockTypeOrm().onMock(User).toReturn(mockUsers[0], "findOne");
             await expect(
                 userMutations.register(
                     "john.doe@gmail.com",
@@ -71,7 +64,7 @@ describe("userMutations", () => {
         });
 
         it("should return an user", async () => {
-            typeorm
+            mockTypeOrm()
                 .onMock(User)
                 .toReturn(null, "findOne")
                 .toReturn(mockUsers[0], "create")
@@ -91,14 +84,14 @@ describe("userMutations", () => {
 
     describe("deleteAccount", () => {
         it("should return an 'user not found' error", async () => {
-            typeorm.onMock(User).toReturn(null, "findOne");
+            mockTypeOrm().onMock(User).toReturn(null, "findOne");
             await expect(userMutations.deleteAccount("badId")).rejects.toThrow(
                 "user not found"
             );
         });
 
         it("should return true", async () => {
-            typeorm
+            mockTypeOrm()
                 .onMock(User)
                 .toReturn(mockUsers[0], "findOne")
                 .toReturn(true, "delete");
@@ -111,14 +104,14 @@ describe("userMutations", () => {
 
     describe("changePassword", () => {
         it("should return an 'user not found' error", async () => {
-            typeorm.onMock(User).toReturn(null, "findOne");
+            mockTypeOrm().onMock(User).toReturn(null, "findOne");
             await expect(
                 userMutations.changePassword("badId", "password")
             ).rejects.toThrow("user not found");
         });
 
         it("should return true", async () => {
-            typeorm
+            mockTypeOrm()
                 .onMock(User)
                 .toReturn(mockUsers[0], "findOne")
                 .toReturn(mockUsers[0], "save");
@@ -130,7 +123,7 @@ describe("userMutations", () => {
 
     describe("updateUser", () => {
         it("should return an 'user not found' error", async () => {
-            typeorm.onMock(User).toReturn(null, "findOne");
+            mockTypeOrm().onMock(User).toReturn(null, "findOne");
             await expect(
                 userMutations.updateUser(
                     "badId",
@@ -146,7 +139,7 @@ describe("userMutations", () => {
         });
 
         it("should return an 'email is already un use' error", async () => {
-            typeorm.onMock(User).toReturn(mockUsers[0], "findOne");
+            mockTypeOrm().onMock(User).toReturn(mockUsers[0], "findOne");
             await expect(
                 userMutations.updateUser(
                     "goodId",
@@ -162,7 +155,7 @@ describe("userMutations", () => {
         });
 
         it("should return a user", async () => {
-            typeorm
+            mockTypeOrm()
                 .onMock(User)
                 .toReturn(mockUsers[0], "findOne")
                 .toReturn(false, "findOne")
@@ -195,14 +188,14 @@ describe("userMutations", () => {
 
     describe("transferMango", () => {
         it("shoud return an 'user not found' error", async () => {
-            typeorm.onMock(User).toReturn(null, "findOne");
+            mockTypeOrm().onMock(User).toReturn(null, "findOne");
             await expect(
                 userMutations.transferMango("badId", 5)
             ).rejects.toThrow("user not found");
         });
 
         it("shoud return user mango balance's", async () => {
-            typeorm
+            mockTypeOrm()
                 .onMock(User)
                 .toReturn(mockUsers[0], "findOne")
                 .toReturn(mockUsers[0], "save");
