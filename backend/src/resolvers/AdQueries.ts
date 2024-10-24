@@ -42,6 +42,11 @@ export class AdQueries {
     const ad: Ad | null = await dataSource.manager.findOne(Ad, {
       where: { id },
     });
+
+    if (!ad) {
+      throw new Error(`Annonce non trouvée pour l'id ${id}`);
+    }
+
     return ad;
   }
 
@@ -50,6 +55,11 @@ export class AdQueries {
     const ads: Ad[] = await dataSource.manager.findBy(Ad, {
       userRequester: { id: userId },
     });
+
+    if (!ads) {
+      throw new Error(`Aucune annonce trouvée pour l'utilisateur ${userId}`);
+    }
+
     return ads;
   }
 }
