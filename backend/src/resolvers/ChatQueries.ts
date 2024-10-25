@@ -24,6 +24,7 @@ export class ChatQueries {
                 { userHelper: { id: user.id } },
                 { userRequester: { id: user.id } },
             ],
+            relations: ["messages"],
         });
 
         return chats;
