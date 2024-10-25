@@ -86,7 +86,7 @@ export class TransactionMutations {
                 userHelper,
             });
 
-            await transaction.save();
+            await dataSource.manager.save(transaction);
             return transaction;
         } catch (error) {
             console.error(
