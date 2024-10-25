@@ -1,5 +1,5 @@
 import { TransactionQueries } from "../resolvers/TransactionQueries";
-import { MockTypeORM } from "mock-typeorm";
+import { mockTypeOrm } from "../tests_mockTypeorm-config";
 import { faker } from "@faker-js/faker";
 import { User } from "../entities/User";
 import { Transaction } from "../entities/Transaction";
@@ -8,15 +8,12 @@ import { Skill } from "../entities/Skill";
 
 describe("getTransactionsByUser", () => {
   let transactionQueries: TransactionQueries;
-  let typeorm: MockTypeORM;
   let userRequester: User;
   let userHelper: User;
   let ad: Ad;
   let skill: Skill;
 
-  beforeAll(() => {
-    typeorm = new MockTypeORM();
-
+  beforeEach(() => {
     transactionQueries = new TransactionQueries();
 
     userRequester = new User(
@@ -66,7 +63,7 @@ describe("getTransactionsByUser", () => {
 
   it("should return transactions history for user requester", async () => {
     const mockTransactions = createMockTransactions(2);
-    typeorm.onMock(Transaction).toReturn(mockTransactions, "find");
+    mockTypeOrm().onMock(Transaction).toReturn(mockTransactions, "find");
 
     const transactionsRetrieved = await transactionQueries.getTransactionsHistoryByUser(userRequester.id!);
 
@@ -75,7 +72,7 @@ describe("getTransactionsByUser", () => {
 
   it("should return transactions history for user helper", async () => {
     const mockTransactions = createMockTransactions(2);
-    typeorm.onMock(Transaction).toReturn(mockTransactions, "find");
+    mockTypeOrm().onMock(Transaction).toReturn(mockTransactions, "find");
 
     const transactionsRetrieved = await transactionQueries.getTransactionsHistoryByUser(userHelper.id!);
 
@@ -84,7 +81,7 @@ describe("getTransactionsByUser", () => {
 
   it("should return the correct transactions", async () => {
     const mockTransactions = createMockTransactions(2);
-    typeorm.onMock(Transaction).toReturn(mockTransactions, "find");
+    mockTypeOrm().onMock(Transaction).toReturn(mockTransactions, "find");
 
     const transactionsRetrieved = await transactionQueries.getTransactionsHistoryByUser(userRequester.id!);
 
@@ -92,7 +89,7 @@ describe("getTransactionsByUser", () => {
   });
 
   it("should throw an error if the user does not exist", async () => {
-    typeorm.onMock(User).toReturn(null, "findOne");
+    mockTypeOrm().onMock(User).toReturn(null, "findOne");
 
     try {
       await transactionQueries.getTransactionsHistoryByUser(userRequester.id!);
@@ -105,8 +102,8 @@ describe("getTransactionsByUser", () => {
   });
 
   it("should return an empty array if the user has no transactions", async () => {
-    typeorm.onMock(User).toReturn(userRequester, "findOne");
-    typeorm.onMock(Transaction).toReturn([], "find");
+    mockTypeOrm().onMock(User).toReturn(userRequester, "findOne");
+    mockTypeOrm().onMock(Transaction).toReturn([], "find");
 
     const transactionsRetrieved = await transactionQueries.getTransactionsHistoryByUser(userRequester.id!);
 

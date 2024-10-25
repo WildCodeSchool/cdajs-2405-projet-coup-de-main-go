@@ -72,7 +72,7 @@ export class ReviewMutations {
                 userRequester,
             });
 
-            await review.save();
+            await dataSource.manager.save(review);
             return review;
         } catch (error) {
             console.error(
