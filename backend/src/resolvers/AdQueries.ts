@@ -17,6 +17,11 @@ export class AdQueries {
     const query = dataSource.getRepository(Ad).createQueryBuilder("ad");
     const offset = (page - 1) * limit;
 
+    // Join with Skill and User entities
+    query
+      .leftJoinAndSelect("ad.skill", "skill")
+      .leftJoinAndSelect("ad.userRequester", "userRequester");
+
     // Apply filters if provided
     if (skillId) {
       query.andWhere("ad.skillId = :skillId", { skillId });
