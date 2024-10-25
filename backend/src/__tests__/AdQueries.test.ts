@@ -162,6 +162,7 @@ describe("getAllAds", () => {
     jest
       .spyOn(dataSource.getRepository(Ad), "createQueryBuilder")
       .mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(ads),
@@ -176,6 +177,7 @@ describe("getAllAds", () => {
     jest
       .spyOn(dataSource.getRepository(Ad), "createQueryBuilder")
       .mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(ads),
@@ -195,6 +197,7 @@ describe("getAllAds", () => {
     jest
       .spyOn(dataSource.getRepository(Ad), "createQueryBuilder")
       .mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
         skip: skipSpy,
         take: takeSpy,
         getMany: jest.fn().mockResolvedValue(ads.slice(0, 15)),
@@ -217,6 +220,7 @@ describe("getAllAds", () => {
     jest
       .spyOn(dataSource.getRepository(Ad), "createQueryBuilder")
       .mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(adsWithSkillId1),
@@ -243,6 +247,7 @@ describe("getAllAds", () => {
     jest
       .spyOn(dataSource.getRepository(Ad), "createQueryBuilder")
       .mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(expensiveAds),
@@ -273,6 +278,7 @@ describe("getAllAds", () => {
     jest
       .spyOn(dataSource.getRepository(Ad), "createQueryBuilder")
       .mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(cheapAds),
@@ -304,6 +310,7 @@ describe("getAllAds", () => {
     jest
       .spyOn(dataSource.getRepository(Ad), "createQueryBuilder")
       .mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
         skip: skipSpy,
         take: takeSpy,
         getMany: jest.fn().mockResolvedValue(ads.slice(15, 30)),
@@ -331,6 +338,7 @@ describe("getAllAds", () => {
     jest
       .spyOn(dataSource.getRepository(Ad), "createQueryBuilder")
       .mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
         skip: skipSpy,
         take: takeSpy,
         getMany: jest.fn().mockResolvedValue(ads.slice(0, 20)),
