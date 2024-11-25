@@ -5,44 +5,48 @@ export type Skill = {
 };
 
 export type ChatListProps = {
-  chats: {
-    __typename?: "Chat";
-    id: string;
-    date: Date;
-    messages: {
-      __typename?: "Message";
-      id: string;
-      date: Date;
-      isView: boolean;
-      message: string;
-      author: {
-        __typename?: "User";
-        id: string;
-        firstName: string;
-        lastName: string;
-        picture?: string | null;
-      };
-      chat: {
-        id: string;
-        date: string;
-      };
-    }[];
-    ad: {
-      id: string;
-      title: string;
-    };
-    userHelper: {
-      id: string;
-      firstName: string;
-      lastName: string;
-      picture?: string | null;
-    };
+  userId: string;
+  onSelectChat: (chatId: string) => void;
+};
 
-    userRequester: {
-      id: string;
-      firstName: string;
-      lastName: string;
-      picture?: string | null;
-    };
+export type Chat = {
+  id: string;
+  userRequester: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    picture: string;
+  };
+  userHelper: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    picture: string;
+  };
+  messages: {
+    id: string;
+    message: string;
+    date: string;
   }[];
-}
+};
+
+export type Message = {
+  id: string;
+  message: string;
+  date: string;
+  author: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    picture: string;
+  };
+};
+
+export type ChatConversationProps = {
+  chatId: string;
+  currentUserId: string;
+};
+
+export type MessageForm = {
+  message: string;
+};

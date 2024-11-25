@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 
 import App from "./App.tsx";
 import ChatPage from "./pages/ChatPage.tsx";
-import ChatLayout from "./components/ChatLayout.tsx";
+import ProtectedRoute from './components/ProtectedRoute';
 
 export const router = createBrowserRouter([
   {
@@ -11,12 +11,10 @@ export const router = createBrowserRouter([
   },
   {
     path: "/chat",
-    element: <ChatLayout />,
-    children: [
-      {
-        path: ":chatId",
-        element: <ChatPage />,
-      },
-    ],
+    element: (
+      <ProtectedRoute>
+        <ChatPage />
+      </ProtectedRoute>
+    ),
   },
 ]);

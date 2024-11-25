@@ -115,7 +115,6 @@ async function seed() {
             status: Status.BOOKED,
             picture1: "furniture.jpg",
             userRequester: user2,
-            skill: skill2,
         });
 
         const ad3 = dataSource.manager.create(Ad, {
@@ -220,6 +219,7 @@ async function seed() {
             isView: true,
             chat: chat1,
             author: user2,
+            date: new Date("2024-10-01T10:00:00"),
         });
 
         const message2 = dataSource.manager.create(Message, {
@@ -227,6 +227,7 @@ async function seed() {
             isView: true,
             chat: chat1,
             author: user1,
+            date: new Date("2024-10-02T10:00:00"),
         });
 
         const message3 = dataSource.manager.create(Message, {
@@ -234,11 +235,21 @@ async function seed() {
             isView: true,
             chat: chat3,
             author: user1,
+            date: new Date("2024-11-25T10:00:00"),
+        });
+
+        const message4 = dataSource.manager.create(Message, {
+            message: "Je suis disponible demain.",
+            isView: true,
+            chat: chat2,
+            author: user1,
+            date: new Date("2024-11-23T10:00:00"),
         });
 
         await message1.save();
         await message2.save();
         await message3.save();
+        await message4.save();
         console.log("Messages créés avec succès.");
 
         console.log("Données fictives insérées avec succès !");
