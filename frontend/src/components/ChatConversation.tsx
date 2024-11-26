@@ -5,9 +5,10 @@ import {
   Typography,
   Button,
   Paper,
+  CircularProgress,
 } from "@mui/material";
 import { Send } from "@mui/icons-material";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_USER_CHATS } from "../graphql/chatQueries";
@@ -21,6 +22,19 @@ export default function ChatConversation({
   chatId,
   currentUserId,
 }: ChatConversationProps) {
+  const [messageInput, setMessageInput] = useState<string>("");
+  const [displayedMessages, setDisplayedMessages] = useState<Message[]>([]);
+  const [messageCount, setMessageCount] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (displayedMessages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+    }
+  }, [displayedMessages]);
+
   const { register, handleSubmit, reset, setValue } = useForm<MessageForm>();
   const { data, loading } = useQuery(GET_USER_CHATS, {
     variables: { userId: currentUserId },
@@ -36,10 +50,35 @@ export default function ChatConversation({
     (chat: Chat) => chat.id === chatId
   );
 
-  const [messageInput, setMessageInput] = useState<string>("");
+  useEffect(() => {
+    if (currentChat?.messages) {
+      const lastMessages = currentChat.messages.slice(-messageCount);
+      setDisplayedMessages(lastMessages);
+    }
+  }, [currentChat, messageCount]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop } = e.currentTarget;
+    if (
+      scrollTop === 0 &&
+      !isLoading &&
+      currentChat.messages.length > displayedMessages.length
+    ) {
+      loadMoreMessages();
+    }
+  };
+
+  // TODO: Implement pagination backend
+  const loadMoreMessages = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setMessageCount((prevCount) => prevCount + 10);
+      setIsLoading(false);
+    }, 1000);
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(onSubmit)();
     }
@@ -70,6 +109,7 @@ export default function ChatConversation({
       console.error("Erreur lors de l'envoi du message:", error);
     }
   };
+
   if (loading || !currentChat) return null;
 
   return (
@@ -101,8 +141,14 @@ export default function ChatConversation({
           borderBottom: 1,
           borderColor: "divider",
         }}
+        onScroll={handleScroll}
       >
-        {currentChat.messages.map((message: Message) => (
+        {isLoading && (
+          <Box sx={{ textAlign: "center", py: 2 }}>
+            <CircularProgress size={24} sx={{ color: "var(--secondary)" }} />
+          </Box>
+        )}
+        {displayedMessages.map((message: Message) => (
           <ChatMessage
             key={message.id}
             message={message.message}
@@ -111,6 +157,7 @@ export default function ChatConversation({
             author={message.author}
           />
         ))}
+        <div ref={messagesEndRef} />
       </Box>
 
       <Box
