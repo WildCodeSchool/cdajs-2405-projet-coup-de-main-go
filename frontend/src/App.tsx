@@ -1,13 +1,13 @@
+import { useAuth } from "./contexts/AuthContext";
+import Dashboard from "./pages/Dashboard";
+import Homepage from "./pages/Homepage";
+
 import "./App.css";
-import SkillList from "./components/SkillList";
 
 function App() {
-    return (
-        <>
-            <h1>coup-de-main-go</h1>
-            <SkillList />
-        </>
-    );
+    const { isAuthenticated } = useAuth();
+
+    return <main>{isAuthenticated ? <Dashboard /> : <Homepage />}</main>;
 }
 
 export default App;
