@@ -13,4 +13,4 @@ jobs:
               env:
                   JWT_SECRET: ${{ secrets.JWT_SECRET }}
             - name: Goto frontend and run tests
-              run: frontend && npm i && npm test
+              run: cd frontend && npm i && npm test
