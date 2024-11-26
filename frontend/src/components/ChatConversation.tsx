@@ -9,8 +9,9 @@ import {
 import { Send } from "@mui/icons-material";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { GET_USER_CHATS } from "../graphql/chatQueries";
+import { SEND_MESSAGE } from "../graphql/messageMutations";
 import ChatMessage from "./ChatMessage";
 import { Chat } from "../types";
 import type { ChatConversationProps, MessageForm, Message } from "../types";
@@ -20,9 +21,15 @@ export default function ChatConversation({
   chatId,
   currentUserId,
 }: ChatConversationProps) {
-  const { register, handleSubmit, reset } = useForm<MessageForm>();
+  const { register, handleSubmit, reset, setValue } = useForm<MessageForm>();
   const { data, loading } = useQuery(GET_USER_CHATS, {
     variables: { userId: currentUserId },
+  });
+
+  const [sendMessage] = useMutation(SEND_MESSAGE, {
+    refetchQueries: [
+      { query: GET_USER_CHATS, variables: { userId: currentUserId } },
+    ],
   });
 
   const currentChat = data?.getChatsByUserId.find(
@@ -31,12 +38,38 @@ export default function ChatConversation({
 
   const [messageInput, setMessageInput] = useState<string>("");
 
-  const onSubmit = (formData: MessageForm) => {
-    console.log(formData);
-    setMessageInput("");
-    reset();
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(onSubmit)();
+    }
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setMessageInput(value);
+    setValue("message", value);
+  };
+
+  const onSubmit = async (formData: MessageForm) => {
+    try {
+      await sendMessage({
+        variables: {
+          messageData: {
+            message: formData.message,
+            isView: true,
+            chatId: chatId,
+            authorId: currentUserId,
+          },
+        },
+      });
+
+      setMessageInput("");
+      reset();
+    } catch (error) {
+      console.error("Erreur lors de l'envoi du message:", error);
+    }
+  };
   if (loading || !currentChat) return null;
 
   return (
@@ -45,7 +78,11 @@ export default function ChatConversation({
       sx={{ display: "flex", flexDirection: "column", height: "100%" }}
     >
       <Box sx={{ p: 1, pl: 2, borderBottom: 3, borderColor: "divider" }}>
-        <Typography variant="subtitle1" component="span" sx={{ ml: 1, fontWeight: "600" }}>
+        <Typography
+          variant="subtitle1"
+          component="span"
+          sx={{ ml: 1, fontWeight: "600" }}
+        >
           À propos de ce membre
         </Typography>
         <Box sx={{ display: "flex" }}>
@@ -107,7 +144,8 @@ export default function ChatConversation({
           {...register("message", { required: true })}
           fullWidth
           value={messageInput}
-          onChange={(e) => setMessageInput(e.target.value)}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           placeholder="Entrez votre message..."
           variant="outlined"
           size="small"
@@ -120,7 +158,8 @@ export default function ChatConversation({
           }}
         />
         <IconButton
-          type="submit"
+          type="button"
+          onClick={() => handleSubmit(onSubmit)()}
           sx={{
             color: "var(--secondary)",
             borderRadius: "20%",
