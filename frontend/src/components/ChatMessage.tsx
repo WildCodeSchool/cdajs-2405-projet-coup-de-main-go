@@ -38,12 +38,13 @@ export default function ChatMessage({ message, date, isCurrentUser, author }: Me
         <Box>
           <Box
             sx={{
-              bgcolor: isCurrentUser ? 'primary.main' : 'grey.100',
-              color: isCurrentUser ? 'white' : 'text.primary',
-              p: 2,
+              bgcolor: isCurrentUser ? 'var(--secondary)' : 'var(--background-darker)',
+              color: isCurrentUser ? 'var(--white)' : 'var(--text-primary)',
+              p: 1,
               borderRadius: 2,
               maxWidth: '100%',
               wordBreak: 'break-word',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
             }}
           >
             <Typography variant="body1">{message}</Typography>
@@ -54,7 +55,7 @@ export default function ChatMessage({ message, date, isCurrentUser, author }: Me
               mt: 0.5,
               display: 'block',
               textAlign: isCurrentUser ? 'right' : 'left',
-              color: 'text.secondary',
+              color: 'var(--text-secondary)',
             }}
           >
             {formatDistanceToNow(new Date(date), { addSuffix: true, locale: fr })}
@@ -63,4 +64,4 @@ export default function ChatMessage({ message, date, isCurrentUser, author }: Me
       </Box>
     </Box>
   );
-};
+}

@@ -1,34 +1,70 @@
-import { Box, TextField, IconButton } from '@mui/material';
-import { Send } from '@mui/icons-material';
-import { useForm } from 'react-hook-form';
-import ChatMessage from './ChatMessage';
-import { useQuery } from '@apollo/client';
-import { GET_USER_CHATS } from '../graphql/chatQueries';
-import { Chat } from '../types';
-import type { ChatConversationProps, MessageForm, Message } from '../types';
+import {
+  Box,
+  TextField,
+  IconButton,
+  Typography,
+  Button,
+  Paper,
+} from "@mui/material";
+import { Send } from "@mui/icons-material";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useQuery } from "@apollo/client";
+import { GET_USER_CHATS } from "../graphql/chatQueries";
+import ChatMessage from "./ChatMessage";
+import { Chat } from "../types";
+import type { ChatConversationProps, MessageForm, Message } from "../types";
+import PersonIcon from "@mui/icons-material/Person";
 
-export default function ChatConversation({ chatId, currentUserId }: ChatConversationProps) {
+export default function ChatConversation({
+  chatId,
+  currentUserId,
+}: ChatConversationProps) {
   const { register, handleSubmit, reset } = useForm<MessageForm>();
   const { data, loading } = useQuery(GET_USER_CHATS, {
     variables: { userId: currentUserId },
   });
 
-  const currentChat = data?.getChatsByUserId.find((chat: Chat) => chat.id === chatId);
+  const currentChat = data?.getChatsByUserId.find(
+    (chat: Chat) => chat.id === chatId
+  );
 
-  console.log(currentChat);
-  
+  const [messageInput, setMessageInput] = useState<string>("");
 
   const onSubmit = (formData: MessageForm) => {
-    // TODO: Implement send message mutation
     console.log(formData);
+    setMessageInput("");
     reset();
   };
 
   if (loading || !currentChat) return null;
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
+    <Paper
+      elevation={3}
+      sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+    >
+      <Box sx={{ p: 1, pl: 2, borderBottom: 3, borderColor: "divider" }}>
+        <Typography variant="subtitle1" component="span" sx={{ ml: 1, fontWeight: "600" }}>
+          À propos de ce membre
+        </Typography>
+        <Box sx={{ display: "flex" }}>
+          <PersonIcon />
+          <Typography variant="subtitle2" color="text.secondary">
+            Membre depuis Septembre 2024
+          </Typography>
+        </Box>
+      </Box>
+
+      <Box
+        sx={{
+          flex: 1,
+          overflow: "auto",
+          p: 1,
+          borderBottom: 1,
+          borderColor: "divider",
+        }}
+      >
         {currentChat.messages.map((message: Message) => (
           <ChatMessage
             key={message.id}
@@ -39,28 +75,64 @@ export default function ChatConversation({ chatId, currentUserId }: ChatConversa
           />
         ))}
       </Box>
+
+      <Box
+        sx={{ p: 1, display: "flex", borderBottom: 1, borderColor: "divider" }}
+      >
+        <Button
+          variant="contained"
+          sx={{
+            margin: "auto",
+            bgcolor: "var(--secondary)",
+            "&:hover": {
+              bgcolor: "var(--secondary-hover)",
+            },
+          }}
+        >
+          Proposer mon aide
+        </Button>
+      </Box>
+
       <Box
         component="form"
         onSubmit={handleSubmit(onSubmit)}
         sx={{
-          p: 2,
-          borderTop: 1,
-          borderColor: 'divider',
-          display: 'flex',
+          py: 1,
+          px: 4,
+          display: "flex",
           gap: 1,
         }}
       >
         <TextField
-          {...register('message', { required: true })}
+          {...register("message", { required: true })}
           fullWidth
-          placeholder="Écrivez votre message..."
+          value={messageInput}
+          onChange={(e) => setMessageInput(e.target.value)}
+          placeholder="Entrez votre message..."
           variant="outlined"
           size="small"
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              "&.Mui-focused fieldset": {
+                borderColor: "var(--secondary)",
+              },
+            },
+          }}
         />
-        <IconButton type="submit" color="primary">
+        <IconButton
+          type="submit"
+          sx={{
+            color: "var(--secondary)",
+            borderRadius: "20%",
+            "&:hover": {
+              bgcolor: "var(--secondary)",
+              color: "var(--white)",
+            },
+          }}
+        >
           <Send />
         </IconButton>
       </Box>
-    </Box>
+    </Paper>
   );
-};
+}

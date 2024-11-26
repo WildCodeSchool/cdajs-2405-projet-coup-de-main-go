@@ -27,6 +27,8 @@ export type Chat = {
     id: string;
     message: string;
     date: string;
+    isView: boolean;
+    authorId: string;
   }[];
 };
 
@@ -34,6 +36,7 @@ export type Message = {
   id: string;
   message: string;
   date: string;
+  isView: boolean;
   author: {
     id: string;
     firstName: string;
@@ -43,7 +46,7 @@ export type Message = {
 };
 
 export type ChatConversationProps = {
-  chatId: string;
+  chatId?: string;
   currentUserId: string;
 };
 
