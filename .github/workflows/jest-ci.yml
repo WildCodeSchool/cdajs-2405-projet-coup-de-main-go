@@ -1,0 +1,16 @@
+name: jest-ci
+
+on: push
+
+jobs:
+    tests:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out code
+              uses: actions/checkout@v2
+            - name: Goto backend and run tests
+              run: cd backend && npm i && npm test
+              env:
+                  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+            - name: Goto frontend and run tests
+              run: cd frontend && npm i && npm test
