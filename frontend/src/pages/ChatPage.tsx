@@ -31,7 +31,7 @@ export default function ChatPage() {
           minWidth: 0,
         }}
       >
-        <ChatList userId={userId} onSelectChat={setSelectedChatId} />
+        <ChatList userId={userId} onSelectChat={setSelectedChatId} selectedChatId={selectedChatId} />
       </Box>
       <Box
         sx={{

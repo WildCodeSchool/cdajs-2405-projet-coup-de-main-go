@@ -13,14 +13,16 @@ import {
 } from "@mui/material";
 import { GET_USER_CHATS } from "../graphql/chatQueries";
 import type { ChatListProps, Chat } from "../types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { formatDurationToNow } from "../utils/date";
 import { formatFullName } from "../utils/formatName";
 
-export default function ChatList({ userId, onSelectChat }: ChatListProps) {
+export default function ChatList({ userId, onSelectChat, selectedChatId }: ChatListProps & { selectedChatId: string | undefined }) {
   const { loading, error, data } = useQuery(GET_USER_CHATS, {
     variables: { userId },
   });
+
+  const [initialSelectionMade, setInitialSelectionMade] = useState(false);
 
   // Sort chats by last message date
   const sortedChats = [...(data?.getChatsByUserId || [])].sort(
@@ -28,13 +30,8 @@ export default function ChatList({ userId, onSelectChat }: ChatListProps) {
       const lastMessageA = chatA.messages[chatA.messages.length - 1];
       const lastMessageB = chatB.messages[chatB.messages.length - 1];
 
-      // Check if last message exists
-      const dateA = lastMessageA?.date
-        ? new Date(lastMessageA.date)
-        : new Date(0);
-      const dateB = lastMessageB?.date
-        ? new Date(lastMessageB.date)
-        : new Date(0);
+      const dateA = lastMessageA?.date ? new Date(lastMessageA.date) : new Date(0);
+      const dateB = lastMessageB?.date ? new Date(lastMessageB.date) : new Date(0);
 
       return dateB.getTime() - dateA.getTime();
     }
@@ -42,10 +39,11 @@ export default function ChatList({ userId, onSelectChat }: ChatListProps) {
 
   // Select first chat by default
   useEffect(() => {
-    if (sortedChats.length > 0) {
+    if (!initialSelectionMade && sortedChats.length > 0) {
       onSelectChat(sortedChats[0].id);
+      setInitialSelectionMade(true);
     }
-  }, [sortedChats, onSelectChat]);
+  }, [sortedChats, onSelectChat, initialSelectionMade]);
 
   if (loading) return <Typography>Chargement...</Typography>;
   if (error)
@@ -83,7 +81,17 @@ export default function ChatList({ userId, onSelectChat }: ChatListProps) {
               <ListItem key={chat.id} disablePadding>
                 <ListItemButton
                   onClick={() => onSelectChat(chat.id)}
-                  sx={{ position: "relative" }}
+                  sx={{
+                    position: "relative",
+                    backgroundColor:
+                      chat.id === selectedChatId ? "var(--primary)" : "inherit",
+                    "&:hover": {
+                      backgroundColor:
+                        chat.id === selectedChatId
+                          ? "var(--primary-hover)"
+                          : "action.hover",
+                    },
+                  }}
                 >
                   <ListItemAvatar>
                     <Avatar
