@@ -5,7 +5,14 @@ import ChatListHeader from "./ChatListHeader";
 import ChatListContainer from "./ChatListContainer";
 import { GET_USER_CHATS } from "../graphql/chatQueries";
 import { MARK_MESSAGES_AS_READ_FOR_USER } from "../graphql/messageMutations";
-import type { ChatListProps, Chat } from "../types";
+import type { Chat } from "../types";
+
+type ChatListProps = {
+  chats: Chat[];
+  userId: string;
+  onSelectChat: (chatId: string) => void;
+  selectedChatId: string | undefined;
+};
 
 export default function ChatList({
   chats,

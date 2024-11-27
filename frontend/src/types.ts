@@ -4,13 +4,6 @@ export type Skill = {
   picture: string;
 };
 
-export type ChatListProps = {
-  chats: Chat[];
-  userId: string;
-  onSelectChat: (chatId: string) => void;
-  selectedChatId: string | undefined;
-};
-
 export type Chat = {
   id: string;
   userRequester: {
@@ -47,12 +40,6 @@ export type Message = {
     lastName: string;
     picture: string;
   };
-};
-
-export type ChatConversationProps = {
-  chats: Chat[];
-  chatId?: string;
-  currentUserId: string;
 };
 
 export type MessageForm = {

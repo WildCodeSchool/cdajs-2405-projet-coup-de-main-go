@@ -7,11 +7,17 @@ import { useMutation } from "@apollo/client";
 import { GET_USER_CHATS } from "../graphql/chatQueries";
 import { SEND_MESSAGE } from "../graphql/messageMutations";
 import { Chat } from "../types";
-import type { ChatConversationProps, MessageForm, Message } from "../types";
+import type { MessageForm, Message } from "../types";
 import ChatConversationHeader from "./ChatConversationHeader";
 import { ChatMessageList } from "./ChatMessageList";
 import { ChatActionButton } from "./ChatActionButton";
 import { ChatInput } from "./ChatInput";
+
+type ChatConversationProps = {
+  chats: Chat[];
+  chatId?: string;
+  currentUserId: string;
+};
 
 export default function ChatConversation({
   chats,

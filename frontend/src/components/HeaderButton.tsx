@@ -1,6 +1,6 @@
 import { Box, Button } from "@mui/material";
 
-type CustomButtonProps = {
+type HeaderButtonProps = {
   variant: "contained" | "outlined" | "text";
   color: string;
   text: string;
@@ -14,7 +14,7 @@ export default function HeaderButton({
   text,
   icon,
   onClick,
-}: CustomButtonProps) {
+}: HeaderButtonProps) {
   const hoverColor = color.replace(")", "-hover)").replace(" ", ""); 
 
   return (

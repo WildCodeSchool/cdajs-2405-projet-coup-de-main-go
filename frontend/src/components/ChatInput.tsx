@@ -1,7 +1,6 @@
 import { Box, TextField, IconButton } from "@mui/material";
 import { Send } from "@mui/icons-material";
 
-
 type ChatInputProps = {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
