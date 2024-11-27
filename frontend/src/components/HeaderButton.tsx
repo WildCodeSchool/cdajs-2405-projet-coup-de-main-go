@@ -15,12 +15,14 @@ export default function HeaderButton({
   icon,
   onClick,
 }: CustomButtonProps) {
+  const hoverColor = color.replace(")", "-hover)").replace(" ", ""); 
+
   return (
     <Button
       variant={variant}
       sx={{
         bgcolor: color,
-        "&:hover": { bgcolor: `${color}-hover` },
+        "&:hover": { bgcolor: hoverColor },
         mr: 1,
       }}
       onClick={onClick}
