@@ -216,7 +216,8 @@ async function seed() {
         console.log("Création des messages...");
         const message1 = dataSource.manager.create(Message, {
             message: "Bonjour, je suis disponible pour vous aider.",
-            isView: true,
+            isViewedByRequester: true,
+            isViewedByHelper: true,
             chat: chat1,
             author: user2,
             date: new Date("2024-10-01T10:00:00"),
@@ -224,7 +225,8 @@ async function seed() {
 
         const message2 = dataSource.manager.create(Message, {
             message: "Merci, ça serait super!",
-            isView: true,
+            isViewedByRequester: true,
+            isViewedByHelper: true,
             chat: chat1,
             author: user1,
             date: new Date("2024-10-02T10:00:00"),
@@ -232,7 +234,8 @@ async function seed() {
 
         const message3 = dataSource.manager.create(Message, {
             message: "Je suis intéressé par votre cours.",
-            isView: true,
+            isViewedByRequester: true,
+            isViewedByHelper: true,
             chat: chat3,
             author: user1,
             date: new Date("2024-11-25T10:00:00"),
@@ -240,7 +243,8 @@ async function seed() {
 
         const message4 = dataSource.manager.create(Message, {
             message: "Je suis disponible demain.",
-            isView: true,
+            isViewedByRequester: true,
+            isViewedByHelper: true,
             chat: chat2,
             author: user1,
             date: new Date("2024-11-23T10:00:00"),
