@@ -36,11 +36,15 @@ export default function ChatList({
 
   const [initialSelectionMade, setInitialSelectionMade] = useState(false);
 
+  const getLastMessage = (chat: Chat) => {
+    return chat.messages[chat.messages.length - 1];
+  };
+
   // Sort chats by last message date
   const sortedChats = [...(data?.getChatsByUserId || [])].sort(
     (chatA: Chat, chatB: Chat) => {
-      const lastMessageA = chatA.messages[chatA.messages.length - 1];
-      const lastMessageB = chatB.messages[chatB.messages.length - 1];
+      const lastMessageA = getLastMessage(chatA);
+      const lastMessageB = getLastMessage(chatB);
 
       const dateA = lastMessageA?.date
         ? new Date(lastMessageA.date)
@@ -56,18 +60,45 @@ export default function ChatList({
   // Select first chat by default
   useEffect(() => {
     if (!initialSelectionMade && sortedChats.length > 0) {
-      onSelectChat(sortedChats[1].id);
+      onSelectChat(sortedChats[0].id);
       setInitialSelectionMade(true);
     }
-  }, [sortedChats, onSelectChat, initialSelectionMade, userId, markMessagesAsReadForUser]);
+  }, [
+    sortedChats,
+    onSelectChat,
+    initialSelectionMade,
+    userId,
+    markMessagesAsReadForUser,
+  ]);
 
   const handleChatSelection = async (chatId: string) => {
+    const selectedChat = sortedChats.find((chat) => chat.id === chatId);
+
+    if (!selectedChat) return;
+
+    const unreadMessages = getUnreadMessagesCount(selectedChat, userId);
+
     onSelectChat(chatId);
-    try {
-      await markMessagesAsReadForUser({ variables: { chatId, userId } });
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour des messages :", error);
+
+    // Mark messages as read if there are unread messages in the chat
+    if (unreadMessages > 0) {
+      try {
+        await markMessagesAsReadForUser({ variables: { chatId, userId } });
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour des messages :", error);
+      }
     }
+  };
+
+  const getUnreadMessagesCount = (chat: Chat, userId: string): number => {
+    return chat.messages.filter((message) => {
+      if (chat.userRequester.id === userId) {
+        return !message.isViewedByRequester && message.authorId !== userId;
+      } else if (chat.userHelper.id === userId) {
+        return !message.isViewedByHelper && message.authorId !== userId;
+      }
+      return false;
+    }).length;
   };
 
   if (loading) return <Typography>Chargement...</Typography>;
@@ -96,17 +127,8 @@ export default function ChatList({
                 ? chat.userRequester
                 : chat.userHelper;
 
-            const lastMessage = chat.messages[chat.messages.length - 1];
-            const unreadMessages = chat.messages.filter((message) => {
-              if (chat.userRequester.id === userId) {
-                return (
-                  !message.isViewedByRequester && message.authorId !== userId
-                );
-              } else if (chat.userHelper.id === userId) {
-                return !message.isViewedByHelper && message.authorId !== userId;
-              }
-              return false;
-            }).length;
+            const lastMessage = getLastMessage(chat);
+            const unreadMessages = getUnreadMessagesCount(chat, userId);
 
             return (
               <ListItem key={chat.id} disablePadding>
