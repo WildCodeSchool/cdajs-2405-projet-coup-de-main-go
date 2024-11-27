@@ -8,42 +8,26 @@ import {
   Button,
 } from "@mui/material";
 import { Help } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import Logo from "./Logo";
+import HeaderButton from "./HeaderButton";
 
 export default function Header() {
   return (
     <AppBar position="static" sx={{ bgcolor: "transparent" }}>
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-            <img src="/logo.png" alt="Coup de main-go" height="40" />
-          </Link>
-          <Button
+          <Logo />
+          <HeaderButton
             variant="contained"
-            sx={{
-              bgcolor: "var(--tertiary)",
-              "&:hover": { bgcolor: "var(--tertiary-hover)" },
-              mr: 1,
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <img
-                src="./mango.png"
-                alt="mango"
-                style={{ width: 16, paddingRight: 4 }}
-              />
-              Créer une annonce
-            </Box>
-          </Button>
-          <Button
+            color="var(--tertiary)"
+            text="Créer une annonce"
+            icon="./mango.png"
+          />
+          <HeaderButton
             variant="contained"
-            sx={{
-              bgcolor: "var(--secondary)",
-              "&:hover": { bgcolor: "var(--secondary-hover)" },
-            }}
-          >
-            Explorer
-          </Button>
+            color="var(--secondary)"
+            text="Explorer"
+          />
         </Box>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
