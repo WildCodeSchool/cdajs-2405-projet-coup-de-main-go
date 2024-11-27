@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const SEND_MESSAGE = gql`
-  mutation SendMessage($messageData: MessageInput!) {
-    sendMessage(messageData: $messageData) {
+  mutation SendMessage($messageData: MessageInput!, $currentUserId: String!) {
+    sendMessage(messageData: $messageData, currentUserId: $currentUserId) {
       id
       message
       date

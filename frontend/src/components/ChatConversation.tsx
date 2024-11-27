@@ -50,10 +50,7 @@ export default function ChatConversation({
 
   useEffect(() => {
     if (currentChat?.messages) {
-      const lastMessages = currentChat.messages.slice(-messageCount).map(msg => ({
-        ...msg,
-        author: msg.authorId === currentChat.userRequester.id ? currentChat.userRequester : currentChat.userHelper
-      }));
+      const lastMessages = currentChat.messages.slice(-messageCount)
       setDisplayedMessages(lastMessages);
     }
   }, [currentChat, messageCount]);
@@ -97,11 +94,12 @@ export default function ChatConversation({
         variables: {
           messageData: {
             message: formData.message,
-            isViewedByHelper: false,
-            isViewedByRequester: false,
             chatId: chatId,
             authorId: currentUserId,
+            isViewedByRequester: false,
+            isViewedByHelper: false,
           },
+          currentUserId,
         },
       });
 

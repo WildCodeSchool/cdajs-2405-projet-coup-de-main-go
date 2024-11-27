@@ -36,7 +36,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     if (cookieUserId && userId !== cookieUserId) {
       setUserIdState(cookieUserId);
     }
-  }, []);
+  }, [userId]);
 
   return (
     <UserContext.Provider value={{ userId, setUserId, clearUserId }}>

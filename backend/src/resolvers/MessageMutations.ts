@@ -26,7 +26,8 @@ export class MessageInput {
 export class MessageMutations {
     @Mutation(() => Message)
     async sendMessage(
-        @Arg("messageData") messageData: MessageInput
+        @Arg("messageData") messageData: MessageInput,
+        @Arg("currentUserId") currentUserId: string
     ): Promise<Message> {
         // Check if the chat exists
         const chat = await dataSource.manager.findOne(Chat, {
@@ -56,13 +57,23 @@ export class MessageMutations {
             );
         }
 
+        let isViewedByRequester = messageData.isViewedByRequester;
+        let isViewedByHelper = messageData.isViewedByHelper;
+
+        // Automatically set the viewed status based on the current user 
+        if ((chat.userRequester?.id)?.toString() === currentUserId) {
+            isViewedByRequester = true;
+        } else if ((chat.userHelper?.id)?.toString() === currentUserId) {
+            isViewedByHelper = true;
+        }
+
         try {
             const message = dataSource.manager.create(Message, {
                 message: messageData.message,
                 chat,
                 author,
-                isViewedByRequester: messageData.isViewedByRequester,
-                isViewedByHelper: messageData.isViewedByHelper,
+                isViewedByRequester,
+                isViewedByHelper,
             });
 
             await dataSource.manager.save(message);

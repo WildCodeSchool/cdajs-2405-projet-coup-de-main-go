@@ -1,6 +1,6 @@
-import { Avatar, Box, Typography } from '@mui/material';
-import { formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { Avatar, Box, Typography } from "@mui/material";
+import { formatDistanceToNow } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface MessageProps {
   message: string;
@@ -13,21 +13,26 @@ interface MessageProps {
   };
 }
 
-export default function ChatMessage({ message, date, isCurrentUser, author }: MessageProps) {
+export default function ChatMessage({
+  message,
+  date,
+  isCurrentUser,
+  author,
+}: MessageProps) {
   return (
     <Box
       sx={{
-        display: 'flex',
-        justifyContent: isCurrentUser ? 'flex-end' : 'flex-start',
+        display: "flex",
+        justifyContent: isCurrentUser ? "flex-end" : "flex-start",
         mb: 2,
       }}
     >
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: isCurrentUser ? 'row-reverse' : 'row',
-          alignItems: 'flex-end',
-          maxWidth: '70%',
+          display: "flex",
+          flexDirection: isCurrentUser ? "row-reverse" : "row",
+          alignItems: "flex-end",
+          maxWidth: "70%",
         }}
       >
         <Avatar
@@ -38,13 +43,15 @@ export default function ChatMessage({ message, date, isCurrentUser, author }: Me
         <Box>
           <Box
             sx={{
-              bgcolor: isCurrentUser ? 'var(--secondary)' : 'var(--background-darker)',
-              color: isCurrentUser ? 'var(--white)' : 'var(--text-primary)',
+              bgcolor: isCurrentUser
+                ? "var(--secondary)"
+                : "var(--background-darker)",
+              color: isCurrentUser ? "var(--white)" : "var(--text-primary)",
               p: 1,
               borderRadius: 2,
-              maxWidth: '100%',
-              wordBreak: 'break-word',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+              maxWidth: "100%",
+              wordBreak: "break-word",
+              boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
             }}
           >
             <Typography variant="body1">{message}</Typography>
@@ -53,12 +60,15 @@ export default function ChatMessage({ message, date, isCurrentUser, author }: Me
             variant="caption"
             sx={{
               mt: 0.5,
-              display: 'block',
-              textAlign: isCurrentUser ? 'right' : 'left',
-              color: 'var(--text-secondary)',
+              display: "block",
+              textAlign: isCurrentUser ? "right" : "left",
+              color: "var(--text-secondary)",
             }}
           >
-            {formatDistanceToNow(new Date(date), { addSuffix: true, locale: fr })}
+            {formatDistanceToNow(new Date(date), {
+              addSuffix: true,
+              locale: fr,
+            })}
           </Typography>
         </Box>
       </Box>
