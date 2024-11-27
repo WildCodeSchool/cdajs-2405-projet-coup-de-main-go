@@ -12,6 +12,7 @@ export default function ChatListLastMessage({
 }) {
   return (
     <Box
+      component="span"
       sx={{
         display: "flex",
         justifyContent: "space-between",
@@ -29,7 +30,10 @@ export default function ChatListLastMessage({
       >
         {message || "Pas de message"}
       </Typography>
-      <Typography variant="caption" component="span">
+      <Typography
+        variant="caption"
+        component="span"
+      >
         {date && formatDurationToNow(new Date(date))}
       </Typography>
     </Box>
