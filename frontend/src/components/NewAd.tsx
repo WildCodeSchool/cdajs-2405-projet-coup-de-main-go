@@ -1,4 +1,4 @@
-import { Button, Input, MenuItem, Select } from "@mui/material";
+import { Button, Input, MenuItem, Select, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import {
   AdInput,
@@ -8,7 +8,13 @@ import {
 import type { Skill } from "../types";
 
 export default function NewAd() {
-  const { register, handleSubmit } = useForm<AdInput>();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<AdInput>({ defaultValues: { title: "", description: "" } });
+
   const {
     loading: skillsLoading,
     error: skillsError,
@@ -17,6 +23,8 @@ export default function NewAd() {
   const [createAdMutation, { data, loading, error }] = useCreateAdMutation();
 
   const skills: Skill[] = skillsData?.getAllSkills ?? [];
+
+  const [title, description] = watch("title", "description");
 
   const onFormSubmitted = async (formData: AdInput) => {
     console.log("data", formData);
@@ -45,15 +53,35 @@ export default function NewAd() {
         {/* Titre de l'annonce */}
         <Input
           type="text"
-          {...register("title", { required: true })}
+          {...register("title", {
+            required: "Champ obligatoire",
+            maxLength: {
+              value: 50,
+              message: "50 caractères maximum",
+            },
+          })}
           placeholder="Titre de l'annonce"
         />
+        <Typography>
+          {title?.length > 50 ? "50 caractères maximum" : errors.title?.message}
+        </Typography>
         {/* Description de l'annonce */}
         <Input
           type="text"
-          {...register("description", { required: true })}
+          {...register("description", {
+            required: "Champ obligatoire",
+            maxLength: {
+              value: 255,
+              message: "255 caractères maximum",
+            },
+          })}
           placeholder="Description"
         />
+        <Typography>
+          {description?.length > 255
+            ? "255 caractères maximum"
+            : errors.description?.message}
+        </Typography>
         {/* Adresse de l'annonce */}
         <Input
           type="text"
