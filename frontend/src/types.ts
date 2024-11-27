@@ -5,8 +5,10 @@ export type Skill = {
 };
 
 export type ChatListProps = {
+  chats: Chat[];
   userId: string;
   onSelectChat: (chatId: string) => void;
+  selectedChatId: string | undefined;
 };
 
 export type Chat = {
@@ -48,6 +50,7 @@ export type Message = {
 };
 
 export type ChatConversationProps = {
+  chats: Chat[];
   chatId?: string;
   currentUserId: string;
 };

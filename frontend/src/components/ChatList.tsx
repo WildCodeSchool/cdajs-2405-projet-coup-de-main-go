@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import {
   Avatar,
   Badge,
@@ -19,20 +19,17 @@ import { formatDurationToNow } from "../utils/date";
 import { formatFullName } from "../utils/formatName";
 
 export default function ChatList({
+  chats,
   userId,
   onSelectChat,
   selectedChatId,
-}: ChatListProps & { selectedChatId: string | undefined }) {
-  const { loading, error, data } = useQuery(GET_USER_CHATS, {
-    variables: { userId },
-  });
-
+}: ChatListProps) {
   const [markMessagesAsReadForUser] = useMutation(
     MARK_MESSAGES_AS_READ_FOR_USER,
     {
       refetchQueries: [{ query: GET_USER_CHATS, variables: { userId } }],
     }
-  );
+  );  
 
   const [initialSelectionMade, setInitialSelectionMade] = useState(false);
 
@@ -41,7 +38,7 @@ export default function ChatList({
   };
 
   // Sort chats by last message date
-  const sortedChats = [...(data?.getChatsByUserId || [])].sort(
+  const sortedChats = [...chats].sort(
     (chatA: Chat, chatB: Chat) => {
       const lastMessageA = getLastMessage(chatA);
       const lastMessageB = getLastMessage(chatB);
@@ -100,14 +97,6 @@ export default function ChatList({
       return false;
     }).length;
   };
-
-  if (loading) return <Typography>Chargement...</Typography>;
-  if (error)
-    return (
-      <Typography color="error">
-        Erreur de chargement des conversations
-      </Typography>
-    );
 
   return (
     <Paper

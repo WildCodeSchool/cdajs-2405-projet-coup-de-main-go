@@ -10,7 +10,7 @@ import {
 import { Send } from "@mui/icons-material";
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { useQuery, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { GET_USER_CHATS } from "../graphql/chatQueries";
 import { SEND_MESSAGE } from "../graphql/messageMutations";
 import ChatMessage from "./ChatMessage";
@@ -19,6 +19,7 @@ import type { ChatConversationProps, MessageForm, Message } from "../types";
 import PersonIcon from "@mui/icons-material/Person";
 
 export default function ChatConversation({
+  chats,
   chatId,
   currentUserId,
 }: ChatConversationProps) {
@@ -36,9 +37,6 @@ export default function ChatConversation({
   }, [displayedMessages]);
 
   const { register, handleSubmit, reset, setValue } = useForm<MessageForm>();
-  const { data, loading } = useQuery(GET_USER_CHATS, {
-    variables: { userId: currentUserId },
-  });
 
   const [sendMessage] = useMutation(SEND_MESSAGE, {
     refetchQueries: [
@@ -46,13 +44,16 @@ export default function ChatConversation({
     ],
   });
 
-  const currentChat = data?.getChatsByUserId.find(
+  const currentChat = chats.find(
     (chat: Chat) => chat.id === chatId
   );
 
   useEffect(() => {
     if (currentChat?.messages) {
-      const lastMessages = currentChat.messages.slice(-messageCount);
+      const lastMessages = currentChat.messages.slice(-messageCount).map(msg => ({
+        ...msg,
+        author: msg.authorId === currentChat.userRequester.id ? currentChat.userRequester : currentChat.userHelper
+      }));
       setDisplayedMessages(lastMessages);
     }
   }, [currentChat, messageCount]);
@@ -62,7 +63,7 @@ export default function ChatConversation({
     if (
       scrollTop === 0 &&
       !isLoading &&
-      currentChat.messages.length > displayedMessages.length
+      currentChat && currentChat.messages.length > displayedMessages.length
     ) {
       loadMoreMessages();
     }
@@ -110,8 +111,6 @@ export default function ChatConversation({
       console.error("Erreur lors de l'envoi du message:", error);
     }
   };
-
-  if (loading || !currentChat) return null;
 
   return (
     <Paper
