@@ -402,7 +402,8 @@ export const GetChatsByUserIdDocument = gql`
         date
       }
       date
-      isView
+      isViewedByRequester
+      isViewedByHelper
       message
     }
     ad {

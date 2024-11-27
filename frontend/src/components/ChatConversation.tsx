@@ -96,7 +96,8 @@ export default function ChatConversation({
         variables: {
           messageData: {
             message: formData.message,
-            isView: true,
+            isViewedByHelper: false,
+            isViewedByRequester: false,
             chatId: chatId,
             authorId: currentUserId,
           },

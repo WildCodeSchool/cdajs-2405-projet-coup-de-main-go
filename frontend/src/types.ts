@@ -27,7 +27,8 @@ export type Chat = {
     id: string;
     message: string;
     date: string;
-    isView: boolean;
+    isViewedByRequester: boolean;
+    isViewedByHelper: boolean;
     authorId: string;
   }[];
 };
@@ -36,7 +37,8 @@ export type Message = {
   id: string;
   message: string;
   date: string;
-  isView: boolean;
+  isViewedByRequester: boolean;
+  isViewedByHelper: boolean;
   author: {
     id: string;
     firstName: string;

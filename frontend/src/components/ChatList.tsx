@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import {
   Avatar,
   Badge,
@@ -12,15 +12,27 @@ import {
   Typography,
 } from "@mui/material";
 import { GET_USER_CHATS } from "../graphql/chatQueries";
+import { MARK_MESSAGES_AS_READ_FOR_USER } from "../graphql/messageMutations";
 import type { ChatListProps, Chat } from "../types";
 import { useEffect, useState } from "react";
 import { formatDurationToNow } from "../utils/date";
 import { formatFullName } from "../utils/formatName";
 
-export default function ChatList({ userId, onSelectChat, selectedChatId }: ChatListProps & { selectedChatId: string | undefined }) {
+export default function ChatList({
+  userId,
+  onSelectChat,
+  selectedChatId,
+}: ChatListProps & { selectedChatId: string | undefined }) {
   const { loading, error, data } = useQuery(GET_USER_CHATS, {
     variables: { userId },
   });
+
+  const [markMessagesAsReadForUser] = useMutation(
+    MARK_MESSAGES_AS_READ_FOR_USER,
+    {
+      refetchQueries: [{ query: GET_USER_CHATS, variables: { userId } }],
+    }
+  );
 
   const [initialSelectionMade, setInitialSelectionMade] = useState(false);
 
@@ -30,8 +42,12 @@ export default function ChatList({ userId, onSelectChat, selectedChatId }: ChatL
       const lastMessageA = chatA.messages[chatA.messages.length - 1];
       const lastMessageB = chatB.messages[chatB.messages.length - 1];
 
-      const dateA = lastMessageA?.date ? new Date(lastMessageA.date) : new Date(0);
-      const dateB = lastMessageB?.date ? new Date(lastMessageB.date) : new Date(0);
+      const dateA = lastMessageA?.date
+        ? new Date(lastMessageA.date)
+        : new Date(0);
+      const dateB = lastMessageB?.date
+        ? new Date(lastMessageB.date)
+        : new Date(0);
 
       return dateB.getTime() - dateA.getTime();
     }
@@ -40,10 +56,19 @@ export default function ChatList({ userId, onSelectChat, selectedChatId }: ChatL
   // Select first chat by default
   useEffect(() => {
     if (!initialSelectionMade && sortedChats.length > 0) {
-      onSelectChat(sortedChats[0].id);
+      onSelectChat(sortedChats[1].id);
       setInitialSelectionMade(true);
     }
-  }, [sortedChats, onSelectChat, initialSelectionMade]);
+  }, [sortedChats, onSelectChat, initialSelectionMade, userId, markMessagesAsReadForUser]);
+
+  const handleChatSelection = async (chatId: string) => {
+    onSelectChat(chatId);
+    try {
+      await markMessagesAsReadForUser({ variables: { chatId, userId } });
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour des messages :", error);
+    }
+  };
 
   if (loading) return <Typography>Chargement...</Typography>;
   if (error)
@@ -72,15 +97,21 @@ export default function ChatList({ userId, onSelectChat, selectedChatId }: ChatL
                 : chat.userHelper;
 
             const lastMessage = chat.messages[chat.messages.length - 1];
-            const unreadMessages = chat.messages.filter(
-              (message) =>
-                message.isView === false && message.authorId !== userId
-            ).length;
+            const unreadMessages = chat.messages.filter((message) => {
+              if (chat.userRequester.id === userId) {
+                return (
+                  !message.isViewedByRequester && message.authorId !== userId
+                );
+              } else if (chat.userHelper.id === userId) {
+                return !message.isViewedByHelper && message.authorId !== userId;
+              }
+              return false;
+            }).length;
 
             return (
               <ListItem key={chat.id} disablePadding>
                 <ListItemButton
-                  onClick={() => onSelectChat(chat.id)}
+                  onClick={() => handleChatSelection(chat.id)}
                   sx={{
                     position: "relative",
                     backgroundColor:

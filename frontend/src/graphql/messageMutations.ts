@@ -6,7 +6,8 @@ export const SEND_MESSAGE = gql`
       id
       message
       date
-      isView
+      isViewedByRequester
+      isViewedByHelper
       author {
         id
         firstName
@@ -14,5 +15,11 @@ export const SEND_MESSAGE = gql`
         picture
       }
     }
+  }
+`;
+
+export const MARK_MESSAGES_AS_READ_FOR_USER = gql`
+  mutation MarkMessagesAsReadForUser($chatId: String!, $userId: String!) {
+    markMessagesAsReadForUser(chatId: $chatId, userId: $userId)
   }
 `;

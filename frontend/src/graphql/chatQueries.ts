@@ -18,7 +18,8 @@ export const GET_USER_CHATS = gql`
           date
         }
         date
-        isView
+        isViewedByRequester
+        isViewedByHelper
         message
       }
       ad {
