@@ -63,7 +63,7 @@ export default function ChatPage() {
         />
       </Box>
       <Box sx={{ flex: 0.25, minWidth: 0 }}>
-        <ChatDetail />
+        <ChatDetail chats={data?.getChatsByUserId || []} chatId={selectedChatId} />
       </Box>
     </Container>
   );

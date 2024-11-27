@@ -1,27 +1,30 @@
-import { Avatar, Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
+import ChatDetailProfile from "./ChatDetailProfile";
+import { Chat, User } from "../types";
+import { useEffect, useState } from "react";
 
-export default function ChatDetail() {
+type ChatDetailProps = {
+  chats: Chat[];
+  chatId?: string;
+};
+
+export default function ChatDetail({
+  chats,
+  chatId,
+}: ChatDetailProps) {
+   const [userHelper, setUserHelper] = useState<User | undefined>(undefined);
+  
+  const currentChat = chats.find((chat: Chat) => chat.id === chatId);
+
+  useEffect(() => {
+    if (currentChat?.userHelper) {
+      setUserHelper(currentChat.userHelper);
+    }
+  }, [currentChat]);
+
   return (
     <Paper elevation={3} sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <Box
-        sx={{
-          p: 1,
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          borderBottom: 2,
-          borderColor: "divider",
-        }}
-      >
-        <Avatar
-          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330"
-          sx={{ width: 54, height: 54, mr: 2 }}
-        />
-        <Box>
-          <Typography variant="h6">Anna B.</Typography>
-        </Box>
-      </Box>
-
+      <ChatDetailProfile userHelper={userHelper} />
       <Box
         sx={{
           p: 1,

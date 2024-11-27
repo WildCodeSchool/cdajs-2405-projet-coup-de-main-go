@@ -4,6 +4,28 @@ export type Skill = {
   picture: string;
 };
 
+export type User = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  picture: string;
+  skills?: Skill[];
+};
+
+export type Ad = {
+  id: string;
+  title: string;
+  description: string;
+  picture: string;
+  userRequester: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    picture: string;
+  };
+  skills: Skill[];
+};
+
 export type Chat = {
   id: string;
   userRequester: {
@@ -26,6 +48,7 @@ export type Chat = {
     isViewedByHelper: boolean;
     authorId: string;
   }[];
+  ad: Ad;
 };
 
 export type Message = {
