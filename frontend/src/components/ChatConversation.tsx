@@ -1,22 +1,17 @@
 import {
-  Box,
-  TextField,
-  IconButton,
-  Typography,
-  Button,
   Paper,
-  CircularProgress,
 } from "@mui/material";
-import { Send } from "@mui/icons-material";
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@apollo/client";
 import { GET_USER_CHATS } from "../graphql/chatQueries";
 import { SEND_MESSAGE } from "../graphql/messageMutations";
-import ChatMessage from "./ChatMessage";
 import { Chat } from "../types";
 import type { ChatConversationProps, MessageForm, Message } from "../types";
-import PersonIcon from "@mui/icons-material/Person";
+import ChatConversationHeader from "./ChatConversationHeader";
+import { ChatMessageList } from "./ChatMessageList";
+import { ChatActionButton } from "./ChatActionButton";
+import { ChatInput } from "./ChatInput";
 
 export default function ChatConversation({
   chats,
@@ -36,7 +31,7 @@ export default function ChatConversation({
     }
   }, [displayedMessages]);
 
-  const { register, handleSubmit, reset, setValue } = useForm<MessageForm>();
+  const { handleSubmit, reset, setValue } = useForm<MessageForm>();
 
   const [sendMessage] = useMutation(SEND_MESSAGE, {
     refetchQueries: [
@@ -44,13 +39,11 @@ export default function ChatConversation({
     ],
   });
 
-  const currentChat = chats.find(
-    (chat: Chat) => chat.id === chatId
-  );
+  const currentChat = chats.find((chat: Chat) => chat.id === chatId);
 
   useEffect(() => {
     if (currentChat?.messages) {
-      const lastMessages = currentChat.messages.slice(-messageCount)
+      const lastMessages = currentChat.messages.slice(-messageCount);
       setDisplayedMessages(lastMessages);
     }
   }, [currentChat, messageCount]);
@@ -60,7 +53,8 @@ export default function ChatConversation({
     if (
       scrollTop === 0 &&
       !isLoading &&
-      currentChat && currentChat.messages.length > displayedMessages.length
+      currentChat &&
+      currentChat.messages.length > displayedMessages.length
     ) {
       loadMoreMessages();
     }
@@ -115,108 +109,21 @@ export default function ChatConversation({
       elevation={3}
       sx={{ display: "flex", flexDirection: "column", height: "100%" }}
     >
-      <Box sx={{ p: 1, pl: 2, borderBottom: 3, borderColor: "divider" }}>
-        <Typography
-          variant="subtitle1"
-          component="span"
-          sx={{ ml: 1, fontWeight: "600" }}
-        >
-          À propos de ce membre
-        </Typography>
-        <Box sx={{ display: "flex" }}>
-          <PersonIcon />
-          <Typography variant="subtitle2" color="text.secondary">
-            Membre depuis Septembre 2024
-          </Typography>
-        </Box>
-      </Box>
-
-      <Box
-        sx={{
-          flex: 1,
-          overflow: "auto",
-          p: 1,
-          borderBottom: 1,
-          borderColor: "divider",
-        }}
+      <ChatConversationHeader userRegistrationDate="Septembre 2024" />
+      <ChatMessageList
+        messages={displayedMessages}
+        isLoading={isLoading}
+        currentUserId={currentUserId}
+        messagesEndRef={messagesEndRef}
         onScroll={handleScroll}
-      >
-        {isLoading && (
-          <Box sx={{ textAlign: "center", py: 2 }}>
-            <CircularProgress size={24} sx={{ color: "var(--secondary)" }} />
-          </Box>
-        )}
-        {displayedMessages.map((message: Message) => (
-          <ChatMessage
-            key={message.id}
-            message={message.message}
-            date={message.date}
-            isCurrentUser={message.author.id === currentUserId}
-            author={message.author}
-          />
-        ))}
-        <div ref={messagesEndRef} />
-      </Box>
-
-      <Box
-        sx={{ p: 1, display: "flex", borderBottom: 1, borderColor: "divider" }}
-      >
-        <Button
-          variant="contained"
-          sx={{
-            margin: "auto",
-            bgcolor: "var(--secondary)",
-            "&:hover": {
-              bgcolor: "var(--secondary-hover)",
-            },
-          }}
-        >
-          Proposer mon aide
-        </Button>
-      </Box>
-
-      <Box
-        component="form"
+      />
+      <ChatActionButton label="Proposer mon aide" />
+      <ChatInput
+        value={messageInput}
+        onChange={handleInputChange}
         onSubmit={handleSubmit(onSubmit)}
-        sx={{
-          py: 1,
-          px: 4,
-          display: "flex",
-          gap: 1,
-        }}
-      >
-        <TextField
-          {...register("message", { required: true })}
-          fullWidth
-          value={messageInput}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          placeholder="Entrez votre message..."
-          variant="outlined"
-          size="small"
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              "&.Mui-focused fieldset": {
-                borderColor: "var(--secondary)",
-              },
-            },
-          }}
-        />
-        <IconButton
-          type="button"
-          onClick={() => handleSubmit(onSubmit)()}
-          sx={{
-            color: "var(--secondary)",
-            borderRadius: "20%",
-            "&:hover": {
-              bgcolor: "var(--secondary)",
-              color: "var(--white)",
-            },
-          }}
-        >
-          <Send />
-        </IconButton>
-      </Box>
+        onKeyDown={handleKeyDown}
+      />
     </Paper>
   );
 }
