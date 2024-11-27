@@ -1,79 +1,65 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { gql } from "@apollo/client";
-import * as Apollo from "@apollo/client";
+import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = {
-  [K in keyof T]: T[K];
-};
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]?: Maybe<T[SubKey]>;
-};
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]: Maybe<T[SubKey]>;
-};
-export type MakeEmpty<
-  T extends { [key: string]: unknown },
-  K extends keyof T
-> = { [_ in K]?: never };
-export type Incremental<T> =
-  | T
-  | {
-      [P in keyof T]?: P extends " $fragmentName" | "__typename" ? T[P] : never;
-    };
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string };
-  String: { input: string; output: string };
-  Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
-  DateTimeISO: { input: any; output: any };
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  DateTimeISO: { input: any; output: any; }
 };
 
 export type Ad = {
-  __typename?: "Ad";
-  address: Scalars["String"]["output"];
+  __typename?: 'Ad';
+  address: Scalars['String']['output'];
   chats: Array<Chat>;
-  city: Scalars["String"]["output"];
-  createdAt: Scalars["DateTimeISO"]["output"];
-  description: Scalars["String"]["output"];
-  duration: Scalars["Float"]["output"];
-  id: Scalars["ID"]["output"];
-  mangoAmount: Scalars["Float"]["output"];
-  picture1?: Maybe<Scalars["String"]["output"]>;
-  picture2?: Maybe<Scalars["String"]["output"]>;
-  picture3?: Maybe<Scalars["String"]["output"]>;
+  city: Scalars['String']['output'];
+  createdAt: Scalars['DateTimeISO']['output'];
+  description: Scalars['String']['output'];
+  duration: Scalars['Float']['output'];
+  id: Scalars['ID']['output'];
+  mangoAmount: Scalars['Float']['output'];
+  picture1?: Maybe<Scalars['String']['output']>;
+  picture2?: Maybe<Scalars['String']['output']>;
+  picture3?: Maybe<Scalars['String']['output']>;
   skill: Skill;
   status: Status;
-  title: Scalars["String"]["output"];
+  title: Scalars['String']['output'];
   transaction: Transaction;
-  updatedAt: Scalars["DateTimeISO"]["output"];
+  updatedAt: Scalars['DateTimeISO']['output'];
   userRequester: User;
-  zipCode: Scalars["String"]["output"];
+  zipCode: Scalars['String']['output'];
 };
 
 export type AdInput = {
-  address: Scalars["String"]["input"];
-  city: Scalars["String"]["input"];
-  description: Scalars["String"]["input"];
-  duration: Scalars["Int"]["input"];
-  mangoAmount: Scalars["Int"]["input"];
-  picture1?: InputMaybe<Scalars["String"]["input"]>;
-  picture2?: InputMaybe<Scalars["String"]["input"]>;
-  picture3?: InputMaybe<Scalars["String"]["input"]>;
-  skillId: Scalars["String"]["input"];
-  title: Scalars["String"]["input"];
-  userRequesterId: Scalars["String"]["input"];
-  zipCode: Scalars["String"]["input"];
+  address: Scalars['String']['input'];
+  city: Scalars['String']['input'];
+  description: Scalars['String']['input'];
+  duration: Scalars['Int']['input'];
+  mangoAmount: Scalars['Int']['input'];
+  picture1?: InputMaybe<Scalars['String']['input']>;
+  picture2?: InputMaybe<Scalars['String']['input']>;
+  picture3?: InputMaybe<Scalars['String']['input']>;
+  skillId: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  userRequesterId: Scalars['String']['input'];
+  zipCode: Scalars['String']['input'];
 };
 
 export type Chat = {
-  __typename?: "Chat";
+  __typename?: 'Chat';
   ad: Ad;
-  date: Scalars["DateTimeISO"]["output"];
-  id: Scalars["ID"]["output"];
+  date: Scalars['DateTimeISO']['output'];
+  id: Scalars['ID']['output'];
   messages: Array<Message>;
   userHelper: User;
   userRequester: User;
