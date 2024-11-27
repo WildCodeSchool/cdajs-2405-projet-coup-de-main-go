@@ -1,6 +1,6 @@
 import { Status } from "./generated/graphql-types";
 
-export type AdCard = {
+export type AdCardType = {
   id: string;
   title: string;
   updatedAt: Date;
