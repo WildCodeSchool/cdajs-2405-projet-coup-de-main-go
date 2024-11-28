@@ -1,4 +1,5 @@
 import { Box, Typography } from "@mui/material";
+import { formatDurationToHours } from "../utils/duration";
 
 type ChatDetailExtraInformationProps = {
   ad?: {
@@ -18,7 +19,9 @@ export default function ChatDetailExtraInformation({
         <Typography variant="body2" color="text.secondary">
           Durée:
         </Typography>
-        <Typography variant="body2">{ad?.duration}</Typography>
+        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+          {formatDurationToHours(ad?.duration)}
+        </Typography>
       </Box>
     </Box>
   );
