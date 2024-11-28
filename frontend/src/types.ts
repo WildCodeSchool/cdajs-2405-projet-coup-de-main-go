@@ -17,6 +17,8 @@ export type Ad = {
   title: string;
   description: string;
   picture: string;
+  mangoAmount: number;
+  duration: number;
   userRequester: {
     id: string;
     firstName: string;

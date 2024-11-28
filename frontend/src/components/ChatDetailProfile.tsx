@@ -30,7 +30,6 @@ export default function ChatDetailProfile({
             userHelper?.firstName ?? "Inconnu",
             userHelper?.lastName ?? ""
           )}
-          .
         </Typography>
       </Box>
     </Box>
