@@ -1,3 +1,9 @@
+export enum Status {
+  POSTED = "posted",
+  BOOKED = "booked",
+  FINALISED = "finalised",
+}
+
 export type Skill = {
   id: string;
   name: string;
@@ -28,10 +34,12 @@ export type Ad = {
     createdAt: Date;
   };
   skills: Skill[];
+  status: Status;
 };
 
 export type Chat = {
   id: string;
+  isHelpProposed: boolean;
   userRequester: {
     id: string;
     firstName: string;

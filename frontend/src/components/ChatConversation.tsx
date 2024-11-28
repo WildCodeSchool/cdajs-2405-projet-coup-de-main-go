@@ -4,8 +4,11 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "@apollo/client";
 import { GET_USER_CHATS } from "../graphql/chatQueries";
 import { SEND_MESSAGE } from "../graphql/messageMutations";
+import { UPDATE_CHAT_HELP_PROPOSAL } from "../graphql/chatMutations";
+import { UPDATE_AD_STATUS } from "../graphql/adMutations";
 import { Chat } from "../types";
 import type { MessageForm, Message, User } from "../types";
+import { Status } from "../types";
 import ChatConversationHeader from "./ChatConversationHeader";
 import { ChatMessageList } from "./ChatMessageList";
 import { ChatActionButton } from "./ChatActionButton";
@@ -34,6 +37,7 @@ export default function ChatConversation({
   const [messageCount, setMessageCount] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const [otherUser, setOtherUser] = useState<User | null>(null);
+  const [status, setStatus] = useState<Status | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -51,14 +55,102 @@ export default function ChatConversation({
     ],
   });
 
+  const [updateAdStatus] = useMutation(UPDATE_AD_STATUS, {
+    refetchQueries: [
+      { query: GET_USER_CHATS, variables: { userId: currentUserId } },
+    ],
+  });
+
+  const handleStatusChange = async (newStatus: Status) => {
+    try {
+      await updateAdStatus({
+        variables: { id: currentChat?.ad.id, status: newStatus },
+      });
+    } catch (error) {
+      console.error("Erreur lors du changement de statut de l'annonce:", error);
+    }
+  };
+
+  const [updateChatHelpProposal] = useMutation(UPDATE_CHAT_HELP_PROPOSAL, {
+    refetchQueries: [
+      { query: GET_USER_CHATS, variables: { userId: currentUserId } },
+    ],
+  });
+
   const currentChat = chats.find((chat: Chat) => chat.id === chatId);
 
-  useEffect(() => {
-    if (currentChat?.messages) {
-      const lastMessages = currentChat.messages.slice(-messageCount);
-      setDisplayedMessages(lastMessages);
+  const isRequester = currentUserId === currentChat?.userRequester.id;
+
+  const handleProposeHelp = () => {
+    updateChatHelpProposal({
+      variables: { chatId: chatId, isHelpProposed: true },
+    });
+  };
+
+  const handleAcceptHelp = () => {
+    handleStatusChange(Status.BOOKED);
+  };
+
+  const handleCancelHelp = () => {
+    handleStatusChange(Status.POSTED);
+    updateChatHelpProposal({
+      variables: { chatId: chatId, isHelpProposed: false },
+    });
+  };
+
+  const handleFinalisedlHelp = () => {
+    handleStatusChange(Status.FINALISED);
+  };
+
+  const getActionButtonProps = () => {
+    // If the help has not been proposed yet, the requester can propose help
+    if (!currentChat?.isHelpProposed) {
+      return isRequester
+        ? []
+        : [{ label: "Proposer mon aide", onClick: handleProposeHelp }];
     }
 
+    // If the help has been proposed, the requester can accept or refuse the help
+    switch (status) {
+      case Status.POSTED:
+        return isRequester
+          ? [
+              {
+                label: "Refuser l'aide",
+                onClick: handleCancelHelp,
+                variant: "outlined" as const,
+              },
+              { label: "Accepter l'aide", onClick: handleAcceptHelp },
+            ]
+          : [
+              {
+                label: "En attente d'acceptation",
+                onClick: () => {},
+                disabled: true,
+              },
+            ];
+      case Status.BOOKED:
+        return isRequester
+          ? [
+              {
+                label: "Annuler ma demande d'aide",
+                onClick: handleCancelHelp,
+                variant: "outlined" as const,
+              },
+              {
+                label: "Valider l'aide réalisée",
+                onClick: handleFinalisedlHelp,
+              },
+            ]
+          : [{ label: "Annuler l'aide", onClick: handleCancelHelp }];
+      case Status.FINALISED:
+        return [{ label: "Terminé", onClick: () => {}, disabled: true }];
+      default:
+        return [{ label: "Indisponible", onClick: () => {}, disabled: true }];
+    }
+  };
+
+  useEffect(() => {
     if (currentChat) {
       const otherUserId =
         currentUserId === currentChat.userRequester.id
@@ -66,6 +158,14 @@ export default function ChatConversation({
           : currentChat.userRequester;
 
       setOtherUser(otherUserId);
+
+      const adStatus = currentChat.ad.status.toLowerCase() as Status;
+      setStatus(adStatus);
+
+      if (currentChat?.messages) {
+        const lastMessages = currentChat.messages.slice(-messageCount);
+        setDisplayedMessages(lastMessages);
+      }
     }
   }, [currentChat, messageCount, currentUserId]);
 
@@ -148,7 +248,7 @@ export default function ChatConversation({
         messagesEndRef={messagesEndRef}
         onScroll={handleScroll}
       />
-      <ChatActionButton label="Proposer mon aide" />
+      <ChatActionButton actions={getActionButtonProps()} />
       <ChatInput
         value={messageInput}
         onChange={handleInputChange}

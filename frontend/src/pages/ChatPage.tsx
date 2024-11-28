@@ -51,7 +51,7 @@ export default function ChatPage() {
     return (
       <Box sx={{ p: 4, display: "flex", alignItems: "center" }}>
         <Typography color="error">
-          Erreur de chargement des conversations
+          Erreur lors du chargement des conversations
         </Typography>
       </Box>
     );

@@ -12,14 +12,14 @@ type ChatDetailProps = {
 };
 
 export default function ChatDetail({ chats, chatId }: ChatDetailProps) {
-  const [userHelper, setUserHelper] = useState<User | undefined>(undefined);
+  const [userRequester, setUserRequester] = useState<User | undefined>(undefined);
   const [ad, setAd] = useState<Ad | undefined>(undefined);
 
   const currentChat = chats.find((chat: Chat) => chat.id === chatId);
 
   useEffect(() => {
-    if (currentChat?.userHelper) {
-      setUserHelper(currentChat.userHelper);
+    if (currentChat?.userRequester) {
+      setUserRequester(currentChat.userRequester);
     }
     if (currentChat?.ad) {
       setAd(currentChat.ad);
@@ -31,7 +31,7 @@ export default function ChatDetail({ chats, chatId }: ChatDetailProps) {
       elevation={3}
       sx={{ display: "flex", flexDirection: "column", height: "100%" }}
     >
-      <ChatDetailProfile userHelper={userHelper} />
+      <ChatDetailProfile userRequester={userRequester} />
       <ChatDetailPicture ad={ad} />
       <ChatDetailDescription ad={ad} />
       <ChatDetailExtraInformation ad={ad} />

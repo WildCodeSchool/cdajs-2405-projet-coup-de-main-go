@@ -3,11 +3,11 @@ import { formatFullName } from "../utils/formatName";
 import { User } from "../types";
 
 type ChatDetailProfileProps = {
-  userHelper?: User;
+  userRequester?: User;
 };
 
 export default function ChatDetailProfile({
-  userHelper,
+  userRequester,
 }: ChatDetailProfileProps) {
   return (
     <Box
@@ -21,18 +21,18 @@ export default function ChatDetailProfile({
       }}
     >
       <Avatar
-        src={`person/${userHelper?.picture}`}
+        src={`person/${userRequester?.picture}`}
         alt={formatFullName(
-          userHelper?.firstName ?? "Inconnu",
-          userHelper?.lastName ?? ""
+          userRequester?.firstName ?? "Inconnu",
+          userRequester?.lastName ?? ""
         )}
         sx={{ width: 54, height: 54, mr: 2 }}
       />
       <Box>
         <Typography variant="h6">
           {formatFullName(
-            userHelper?.firstName ?? "Inconnu",
-            userHelper?.lastName ?? ""
+            userRequester?.firstName ?? "Inconnu",
+            userRequester?.lastName ?? ""
           )}
         </Typography>
       </Box>

@@ -5,6 +5,7 @@ export const GET_USER_CHATS = gql`
     getChatsByUserId(userId: $userId) {
       id
       date
+      isHelpProposed
       messages {
         id
         author {
@@ -12,10 +13,6 @@ export const GET_USER_CHATS = gql`
           firstName
           lastName
           picture
-        }
-        chat {
-          id
-          date
         }
         date
         isViewedByRequester
@@ -28,6 +25,7 @@ export const GET_USER_CHATS = gql`
         description
         mangoAmount
         duration
+        status
       }
       userHelper {
         id
