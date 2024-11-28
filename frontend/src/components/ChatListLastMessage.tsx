@@ -23,7 +23,7 @@ export default function ChatListLastMessage({
         variant="subtitle2"
         component="span"
         sx={{
-          fontWeight: unreadMessages > 0 ? "bold" : "normal",
+          fontWeight: unreadMessages > 0 ? 600 : 500,
           mr: 2,
         }}
         noWrap

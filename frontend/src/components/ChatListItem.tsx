@@ -56,7 +56,7 @@ export default function ChatListItem({
         <ListItemText
           primary={
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: unreadMessages > 0 ? 600 : 500 }}>
                 {formatFullName(otherUser.firstName, otherUser.lastName)}
               </Typography>
               <Badge

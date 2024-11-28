@@ -42,7 +42,7 @@ export default function GenericModal({
           }}
         >
           {title && (
-            <Box sx={{ mb: 2, fontSize: 20, fontWeight: "bold" }}>
+            <Box sx={{ mb: 2, fontSize: 20, fontWeight: 600 }}>
               {title}
             </Box>
           )}
