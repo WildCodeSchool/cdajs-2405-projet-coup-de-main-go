@@ -148,6 +148,7 @@ export type MutationRegisterArgs = {
   firstName: Scalars['String']['input'];
   lastName: Scalars['String']['input'];
   password: Scalars['String']['input'];
+  skillsId: Array<Scalars['String']['input']>;
   zipCode: Scalars['String']['input'];
 };
 
@@ -343,6 +344,7 @@ export type RegisterUserMutationVariables = Exact<{
   address: Scalars['String']['input'];
   zipCode: Scalars['String']['input'];
   city: Scalars['String']['input'];
+  skillsId: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
@@ -458,7 +460,7 @@ export type GetAllSkillsLazyQueryHookResult = ReturnType<typeof useGetAllSkillsL
 export type GetAllSkillsSuspenseQueryHookResult = ReturnType<typeof useGetAllSkillsSuspenseQuery>;
 export type GetAllSkillsQueryResult = Apollo.QueryResult<GetAllSkillsQuery, GetAllSkillsQueryVariables>;
 export const RegisterUserDocument = gql`
-    mutation RegisterUser($email: String!, $password: String!, $firstName: String!, $lastName: String!, $address: String!, $zipCode: String!, $city: String!) {
+    mutation RegisterUser($email: String!, $password: String!, $firstName: String!, $lastName: String!, $address: String!, $zipCode: String!, $city: String!, $skillsId: [String!]!) {
   register(
     email: $email
     password: $password
@@ -467,6 +469,7 @@ export const RegisterUserDocument = gql`
     address: $address
     zipCode: $zipCode
     city: $city
+    skillsId: $skillsId
   ) {
     id
     email
@@ -495,6 +498,7 @@ export type RegisterUserMutationFn = Apollo.MutationFunction<RegisterUserMutatio
  *      address: // value for 'address'
  *      zipCode: // value for 'zipCode'
  *      city: // value for 'city'
+ *      skillsId: // value for 'skillsId'
  *   },
  * });
  */

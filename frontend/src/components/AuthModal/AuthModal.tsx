@@ -15,14 +15,21 @@ function AuthModal({ closeModal }: AuthModalProps) {
 
     return (
         <div id="auth">
-            <button id="closeModal" onClick={() => closeModal()}>
+            <button
+                id="closeModal"
+                className="clickable"
+                onClick={() => closeModal()}
+            >
                 <p>X</p>
             </button>
-            {alreadyHasAnAccount ? (
-                <Login goToRegister={() => setAlreadyHasAnAccount(false)} />
-            ) : (
-                <Register goToLogin={() => setAlreadyHasAnAccount(true)} />
-            )}
+            <div id="modal-content">
+                <img src="/images/auth-modal-img.png" />
+                {alreadyHasAnAccount ? (
+                    <Login goToRegister={() => setAlreadyHasAnAccount(false)} />
+                ) : (
+                    <Register goToLogin={() => setAlreadyHasAnAccount(true)} />
+                )}
+            </div>
         </div>
     );
 }

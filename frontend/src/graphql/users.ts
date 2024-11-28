@@ -9,6 +9,7 @@ export const USER_REGISTER_MUTATION = gql`
         $address: String!
         $zipCode: String!
         $city: String!
+        $skillsId: [String!]!
     ) {
         register(
             email: $email
@@ -18,6 +19,7 @@ export const USER_REGISTER_MUTATION = gql`
             address: $address
             zipCode: $zipCode
             city: $city
+            skillsId: $skillsId
         ) {
             id
             email

@@ -20,7 +20,8 @@ interface LoginProps {
 function Login({ goToRegister }: LoginProps) {
     const { login } = useAuth();
 
-    const [sendLoginQuery, { loading, error }] = useLoginUserLazyQuery({
+    // Requête Apollo : Login
+    const [sendLoginQuery] = useLoginUserLazyQuery({
         onCompleted: (data: LoginUserQuery) => {
             const token: string = data.login;
             login(token);
@@ -29,9 +30,9 @@ function Login({ goToRegister }: LoginProps) {
             console.error("login failed", error);
         },
     });
-
+    // Récupération des méthodes de LoginFormData
     const { handleSubmit, register } = useForm<LoginFormData>();
-
+    // Lors de la soumission du formulaire
     const onLoginFormSubmitted = (formData: LoginFormData) => {
         sendLoginQuery({
             variables: formData,
@@ -40,14 +41,12 @@ function Login({ goToRegister }: LoginProps) {
 
     return (
         <form id="login" onSubmit={handleSubmit(onLoginFormSubmitted)}>
-            <strong>CONNEXION</strong>
-            <br />
+            <strong id="auth-title">CONNEXION</strong>
             <input
                 type="email"
                 placeholder="E-mail"
                 {...register("email", { required: true })}
             />
-            <br />
             <input
                 type="password"
                 placeholder="Mot de passe"
@@ -55,15 +54,16 @@ function Login({ goToRegister }: LoginProps) {
             />
             <p>
                 Envie de nous rejoindre ?{" "}
-                <strong className="clickable" onClick={() => goToRegister()}>
+                <strong
+                    className="clickable underline"
+                    onClick={() => goToRegister()}
+                >
                     Créer un compte
                 </strong>
             </p>
-            <button type="submit">Se connecter</button>
-            {loading && "Loading..."}
-            <br />
-            {error && "Une erreur est survenue, merci de réessayer..."}
-            <br />
+            <button type="submit" className="clickable">
+                Se connecter
+            </button>
         </form>
     );
 }

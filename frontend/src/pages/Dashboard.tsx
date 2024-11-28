@@ -12,6 +12,7 @@ interface UserProps {
 
 function Dashboard() {
     const { logout } = useAuth();
+    // Requête Apollo : GetAllUsers
     const { data, error, loading } = useGetAllUsersQuery();
 
     if (error) {
@@ -22,6 +23,7 @@ function Dashboard() {
         return <p>Loading...</p>;
     }
 
+    // Initialisation de la variable users
     const users: UserProps[] = data?.getAllUsers || [];
 
     return (
@@ -32,6 +34,11 @@ function Dashboard() {
                 {users.map((user) => (
                     <li key={user.id}>
                         {user.firstName} {user.lastName}
+                        <ul>
+                            {user.skills.map((skill) => (
+                                <li key={skill.id}>{skill.name}</li>
+                            ))}
+                        </ul>
                     </li>
                 ))}
             </ul>

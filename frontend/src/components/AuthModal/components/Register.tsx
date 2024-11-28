@@ -1,12 +1,19 @@
 import { ApolloError } from "@apollo/client";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import {
     RegisterUserMutation,
+    useGetAllSkillsQuery,
     useRegisterUserMutation,
 } from "../../../generated/graphql-types";
+import { Skill } from "../../../types";
 
-interface RegisterFormData {
+import Step1 from "./Register/Step1";
+import Step2 from "./Register/Step2";
+import Step3 from "./Register/Step3";
+
+export interface RegisterFormData {
     email: string;
     password: string;
     passwordConfirmation: string;
@@ -15,6 +22,7 @@ interface RegisterFormData {
     address: string;
     zipCode: string;
     city: string;
+    skillsId: string[];
 }
 
 interface RegisterProps {
@@ -22,23 +30,32 @@ interface RegisterProps {
 }
 
 function Register({ goToLogin }: RegisterProps) {
-    const [sendRegisterQuery, { loading, error }] = useRegisterUserMutation({
+    // Trois étapes pour s'inscrire
+    const [step, setStep] = useState<number>(1);
+
+    // Requête Apollo : Enregistrement de l'utilisateur
+    const [sendRegisterQuery] = useRegisterUserMutation({
         onCompleted: (data: RegisterUserMutation) => {
             data.register;
+            goToLogin();
         },
         onError: (error: ApolloError) => {
             console.error("register failed", error);
         },
     });
-
+    // Récupération des méthodes de RegisterFormData
     const { handleSubmit, register } = useForm<RegisterFormData>();
 
+    // Requête Apollo : Récupération des Skills
+    const { data } = useGetAllSkillsQuery();
+    // Initialisation de la variable skills
+    const skills: Skill[] = data?.getAllSkills || [];
+    // Lors de la soumission du formulaire
     const onRegisterFormSubmitted = (formData: RegisterFormData) => {
-        formData.firstName = "Mattéo";
-        formData.lastName = "Donatelli";
-        formData.address = "address";
-        formData.zipCode = "67540";
-        formData.city = "Strasbourg";
+        // Si pas de Skills alors return un tableau vide
+        if (!formData.skillsId) {
+            formData.skillsId = [];
+        }
 
         sendRegisterQuery({
             variables: formData,
@@ -47,36 +64,17 @@ function Register({ goToLogin }: RegisterProps) {
 
     return (
         <form id="register" onSubmit={handleSubmit(onRegisterFormSubmitted)}>
-            <strong>S’INSCRIRE</strong>
-            <br />
-            <input
-                type="email"
-                placeholder="E-mail"
-                {...register("email", { required: true })}
-            />
-            <br />
-            <input
-                type="password"
-                placeholder="Mot de passe"
-                {...register("password", { required: true })}
-            />
-            <br />
-            <input
-                type="password"
-                placeholder="Confirmer le mot de passe"
-                {...register("passwordConfirmation", { required: true })}
-            />
-            <p>
-                Vous avez déjà un compte ?{" "}
-                <strong className="clickable" onClick={() => goToLogin()}>
-                    Me connecter
-                </strong>
-            </p>
-            <button type="submit">Continuer</button>
-            {loading && "Loading..."}
-            <br />
-            {error && "Une erreur est survenue, merci de réessayer..."}
-            <br />
+            {step === 1 && (
+                <Step1
+                    goToLogin={goToLogin}
+                    setStep={setStep}
+                    register={register}
+                />
+            )}
+            {step === 2 && <Step2 setStep={setStep} register={register} />}
+            {step === 3 && (
+                <Step3 skills={skills} setStep={setStep} register={register} />
+            )}
         </form>
     );
 }
