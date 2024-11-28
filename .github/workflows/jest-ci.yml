@@ -8,9 +8,9 @@ jobs:
         steps:
             - name: Check out code
               uses: actions/checkout@v2
-            - name: Goto backend and run tests
-              run: cd backend && npm i && npm test
+            - name: Install dependencies
+              run: cd backend/ && npm i && cd ../frontend/ npm i
+            - name: Run the tests
+              run: run tests
               env:
                   JWT_SECRET: ${{ secrets.JWT_SECRET }}
-            - name: Goto frontend and run tests
-              run: cd frontend && npm i && npm test
