@@ -1,33 +1,39 @@
-import {
-  Paper,
-} from "@mui/material";
+import { Paper } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@apollo/client";
 import { GET_USER_CHATS } from "../graphql/chatQueries";
 import { SEND_MESSAGE } from "../graphql/messageMutations";
 import { Chat } from "../types";
-import type { MessageForm, Message } from "../types";
+import type { MessageForm, Message, User } from "../types";
 import ChatConversationHeader from "./ChatConversationHeader";
 import { ChatMessageList } from "./ChatMessageList";
 import { ChatActionButton } from "./ChatActionButton";
 import { ChatInput } from "./ChatInput";
+import ChatConversationMobileBanner from "./ChatConversationMobileBanner";
 
 type ChatConversationProps = {
   chats: Chat[];
   chatId?: string;
   currentUserId: string;
+  isMobile: boolean;
+  onBack?: () => void;
+  onOpenModal?: () => void;
 };
 
 export default function ChatConversation({
   chats,
   chatId,
   currentUserId,
+  isMobile,
+  onBack,
+  onOpenModal,
 }: ChatConversationProps) {
   const [messageInput, setMessageInput] = useState<string>("");
   const [displayedMessages, setDisplayedMessages] = useState<Message[]>([]);
   const [messageCount, setMessageCount] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
+  const [otherUser, setOtherUser] = useState<User | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -52,7 +58,16 @@ export default function ChatConversation({
       const lastMessages = currentChat.messages.slice(-messageCount);
       setDisplayedMessages(lastMessages);
     }
-  }, [currentChat, messageCount]);
+
+    if (currentChat) {
+      const otherUserId =
+        currentUserId === currentChat.userRequester.id
+          ? currentChat.userHelper
+          : currentChat.userRequester;
+
+      setOtherUser(otherUserId);
+    }
+  }, [currentChat, messageCount, currentUserId]);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop } = e.currentTarget;
@@ -115,6 +130,13 @@ export default function ChatConversation({
       elevation={3}
       sx={{ display: "flex", flexDirection: "column", height: "100%" }}
     >
+      {isMobile && otherUser && (
+        <ChatConversationMobileBanner
+          otherUser={otherUser}
+          onBack={onBack}
+          onOpenModal={onOpenModal}
+        />
+      )}
       <ChatConversationHeader userRegistrationDate="Septembre 2024" />
       <ChatMessageList
         messages={displayedMessages}

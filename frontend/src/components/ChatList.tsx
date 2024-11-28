@@ -12,6 +12,7 @@ type ChatListProps = {
   userId: string;
   onSelectChat: (chatId: string) => void;
   selectedChatId: string | undefined;
+  isMobile: boolean;
 };
 
 export default function ChatList({
@@ -19,6 +20,7 @@ export default function ChatList({
   userId,
   onSelectChat,
   selectedChatId,
+  isMobile,
 }: ChatListProps) {
   const [markMessagesAsReadForUser] = useMutation(
     MARK_MESSAGES_AS_READ_FOR_USER,
@@ -36,11 +38,11 @@ export default function ChatList({
   });
 
   useEffect(() => {
-    if (!initialSelectionMade && sortedChats.length > 0) {
+    if (!initialSelectionMade && sortedChats.length > 0 && !isMobile) {
       onSelectChat(sortedChats[0].id);
       setInitialSelectionMade(true);
     }
-  }, [sortedChats, initialSelectionMade, onSelectChat]);
+  }, [sortedChats, initialSelectionMade, onSelectChat, isMobile]);
 
   const handleChatSelection = async (chatId: string) => {
     const selectedChat = sortedChats.find((chat) => chat.id === chatId);
