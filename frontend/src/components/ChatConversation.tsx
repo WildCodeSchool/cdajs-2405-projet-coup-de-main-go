@@ -137,7 +137,10 @@ export default function ChatConversation({
           onOpenModal={onOpenModal}
         />
       )}
-      <ChatConversationHeader userRegistrationDate="Septembre 2024" />
+      {otherUser && (
+        <ChatConversationHeader userRegistrationDate={otherUser.createdAt} />
+      )}
+
       <ChatMessageList
         messages={displayedMessages}
         isLoading={isLoading}

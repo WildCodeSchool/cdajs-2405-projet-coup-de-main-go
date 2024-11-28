@@ -10,6 +10,7 @@ export type User = {
   lastName: string;
   picture: string;
   skills?: Skill[];
+  createdAt: Date;
 };
 
 export type Ad = {
@@ -24,6 +25,7 @@ export type Ad = {
     firstName: string;
     lastName: string;
     picture: string;
+    createdAt: Date;
   };
   skills: Skill[];
 };
@@ -35,12 +37,14 @@ export type Chat = {
     firstName: string;
     lastName: string;
     picture: string;
+    createdAt: Date;
   };
   userHelper: {
     id: string;
     firstName: string;
     lastName: string;
     picture: string;
+    createdAt: Date;
   };
   messages: {
     id: string;
@@ -64,6 +68,7 @@ export type Message = {
     firstName: string;
     lastName: string;
     picture: string;
+    createdAt: Date;
   };
 };
 

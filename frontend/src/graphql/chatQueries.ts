@@ -34,12 +34,14 @@ export const GET_USER_CHATS = gql`
         firstName
         lastName
         picture
+        createdAt
       }
       userRequester {
         id
         firstName
         lastName
         picture
+        createdAt
       }
     }
   }

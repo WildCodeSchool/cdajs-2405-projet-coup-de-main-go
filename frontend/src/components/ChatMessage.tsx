@@ -19,6 +19,16 @@ export default function ChatMessage({
   isCurrentUser,
   author,
 }: MessageProps) {
+  const distance = formatDistanceToNow(new Date(date), {
+    addSuffix: true,
+    locale: fr,
+  });
+
+  // If the message was sent less than 24 hours ago, we display "1 jour" instead of "environ 24 heures"
+  const formattedDate = distance.includes("environ 24 heures")
+    ? "Il y a 1 jour"
+    : distance;
+
   return (
     <Box
       sx={{
@@ -65,10 +75,7 @@ export default function ChatMessage({
               color: "var(--text-secondary)",
             }}
           >
-            {formatDistanceToNow(new Date(date), {
-              addSuffix: true,
-              locale: fr,
-            })}
+            {formattedDate}
           </Typography>
         </Box>
       </Box>
