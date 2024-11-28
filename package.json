@@ -2,8 +2,12 @@
     "name": "cdajs-2405-projet-coup-de-main-go",
     "version": "1.0.0",
     "main": "index.js",
+    "workspaces": [
+        "backend",
+        "frontend"
+    ],
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "npm test --workspaces",
         "start": "concurrently --raw \"npm run start --prefix backend\" \"npm run dev --prefix frontend\""
     },
     "keywords": [],

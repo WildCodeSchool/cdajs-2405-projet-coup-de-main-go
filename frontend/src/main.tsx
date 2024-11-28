@@ -8,11 +8,14 @@ import { setContext } from "@apollo/client/link/context"; // Importer setContext
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
 
 import { AuthProvider } from "./contexts/AuthContext";
 import { router } from "./routes";
+import { UserProvider } from "./contexts/UserContext";
+import theme from "./mui";
 
-import "./index.css";
+import "./App.css";
 
 const httpLink = createHttpLink({
     uri: import.meta.env.VITE_BACKEND_URL,
@@ -36,9 +39,13 @@ export const apolloClient = new ApolloClient({
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <ApolloProvider client={apolloClient}>
-            <AuthProvider>
-                <RouterProvider router={router} />
-            </AuthProvider>
+            <ThemeProvider theme={theme}>
+                <UserProvider>
+                    <AuthProvider>
+                        <RouterProvider router={router} />
+                    </AuthProvider>
+                </UserProvider>
+            </ThemeProvider>
         </ApolloProvider>
     </StrictMode>
 );
