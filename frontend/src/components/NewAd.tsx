@@ -1,4 +1,12 @@
-import { Button, Input, MenuItem, Select, Typography } from "@mui/material";
+import {
+  Button,
+  Input,
+  List,
+  ListItem,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 import { useForm } from "react-hook-form";
 import {
   AdInput,
@@ -6,6 +14,7 @@ import {
   useGetAllSkillsQuery,
 } from "../generated/graphql-types";
 import type { Skill } from "../types";
+import { useState } from "react";
 
 export default function NewAd() {
   const {
@@ -26,17 +35,59 @@ export default function NewAd() {
 
   const [title, description] = watch("title", "description");
 
+  // Autosuggestion de l'adresse
+  const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
+  const [addressInput, setAddressInput] = useState<string>("");
+  const [selectedSuggestion, setSelectedSuggestion] = useState<any>("");
+
+  const handleAddressChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const query = event.target.value;
+    setAddressInput(query);
+
+    if (!query) {
+      setAddressSuggestions([]);
+      return;
+    }
+
+    if (query.length >= 3) {
+      try {
+        const response = await fetch(
+          `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
+            query
+          )}&limit=5`
+        );
+        const data = await response.json();
+        setAddressSuggestions(data.features || []);
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération des suggestions :",
+          error
+        );
+      }
+    }
+  };
+
+  const handleSuggestionClick = (suggestion: any) => {
+    setSelectedSuggestion(suggestion);
+    setAddressInput(suggestion.properties.label);
+    setAddressSuggestions([]);
+  };
+
+  // Gestion de la soumission du formulaire
   const onFormSubmitted = async (formData: AdInput) => {
     console.log("data", formData);
-
     await createAdMutation({
       variables: {
         formData: {
           title: formData.title,
           description: formData.description,
-          address: formData.address,
-          zipCode: formData.zipCode,
-          city: formData.city,
+          address: selectedSuggestion.properties.name,
+          zipCode: selectedSuggestion.properties.postcode,
+          city: selectedSuggestion.properties.city,
+          latitude: selectedSuggestion.geometry.coordinates[1],
+          longitude: selectedSuggestion.geometry.coordinates[0],
           duration: formData.duration,
           mangoAmount: formData.duration / 30,
           skillId: formData.skillId,
@@ -83,21 +134,25 @@ export default function NewAd() {
             : errors.description?.message}
         </Typography>
         {/* Adresse de l'annonce */}
+
         <Input
           type="text"
-          {...register("address", { required: true })}
+          value={addressInput}
+          onChange={handleAddressChange}
           placeholder="Adresse"
         />
-        <Input
-          type="text"
-          {...register("zipCode", { required: true })}
-          placeholder="Code postal"
-        />
-        <Input
-          type="text"
-          {...register("city", { required: true })}
-          placeholder="Ville"
-        />
+        {addressSuggestions.length > 0 && (
+          <List>
+            {addressSuggestions.map((suggestion: any) => (
+              <ListItem
+                key={suggestion.properties.id}
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
+                {suggestion.properties.label}
+              </ListItem>
+            ))}
+          </List>
+        )}
         {/* Durée de l'annonce */}
         <Input
           type="number"
