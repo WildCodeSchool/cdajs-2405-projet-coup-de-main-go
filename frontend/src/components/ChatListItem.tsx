@@ -47,9 +47,10 @@ export default function ChatListItem({
           },
         }}
       >
+        ¨
         <ListItemAvatar>
           <Avatar
-            src={otherUser.picture}
+            src={`person/${otherUser.picture}`}
             alt={formatFullName(otherUser.firstName, otherUser.lastName)}
           />
         </ListItemAvatar>

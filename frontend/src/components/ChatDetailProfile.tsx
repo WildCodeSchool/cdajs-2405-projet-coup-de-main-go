@@ -21,7 +21,11 @@ export default function ChatDetailProfile({
       }}
     >
       <Avatar
-        src="https://images.unsplash.com/photo-1494790108377-be9c29b29330"
+        src={`person/${userHelper?.picture}`}
+        alt={formatFullName(
+          userHelper?.firstName ?? "Inconnu",
+          userHelper?.lastName ?? ""
+        )}
         sx={{ width: 54, height: 54, mr: 2 }}
       />
       <Box>

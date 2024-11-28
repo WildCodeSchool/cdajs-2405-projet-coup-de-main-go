@@ -36,7 +36,7 @@ export default function ChatMessage({
         }}
       >
         <Avatar
-          src={author.picture}
+          src={`person/${author.picture}`}
           alt={`${author.firstName} ${author.lastName}`}
           sx={{ width: 32, height: 32, mx: 1 }}
         />
