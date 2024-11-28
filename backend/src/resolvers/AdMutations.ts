@@ -1,6 +1,6 @@
 import { Mutation, Resolver, Arg, InputType, Field, Int } from "type-graphql";
 import { Length, IsInt, IsOptional } from "class-validator";
-import { Ad } from "../entities/Ad";
+import { Ad, Status } from "../entities/Ad";
 import { User } from "../entities/User";
 import { Skill } from "../entities/Skill";
 import { dataSource } from "../datasource";
@@ -149,8 +149,8 @@ export class AdMutations {
       // Find ad to delete
       const ad = await transactionalEntityManager.findOne(Ad, {
         where: { id },
-      });      
-      
+      });
+
       if (!ad) {
         throw new Error("Ad not found");
       }
@@ -183,5 +183,24 @@ export class AdMutations {
         return false;
       }
     });
+  }
+
+  @Mutation(() => Ad)
+  async updateAdStatus(
+    @Arg("id") id: string,
+    @Arg("status") status: Status
+  ): Promise<Ad> {
+    const ad = await dataSource.manager.findOneBy(Ad, { id });
+    if (!ad) {
+      throw new Error("Annonce introuvable");
+    }
+
+    ad.status = status;
+    try {
+      await ad.save();
+      return ad;
+    } catch (error) {
+      throw new Error("Échec de la mise à jour de l'annonce");
+    }
   }
 }

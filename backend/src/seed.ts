@@ -191,20 +191,23 @@ async function seed() {
 
         console.log("Création des chats...");
         const chat1 = dataSource.manager.create(Chat, {
+            isHelpProposed: false,
             userHelper: user2,
             userRequester: user1,
             ad: ad1,
         });
 
         const chat2 = dataSource.manager.create(Chat, {
+            isHelpProposed: false,
             userHelper: user1,
             userRequester: user2,
             ad: ad2,
         });
 
         const chat3 = dataSource.manager.create(Chat, {
-            userHelper: user3,
-            userRequester: user1,
+            isHelpProposed: false,
+            userHelper: user1,
+            userRequester: user3,
             ad: ad3,
         });
 

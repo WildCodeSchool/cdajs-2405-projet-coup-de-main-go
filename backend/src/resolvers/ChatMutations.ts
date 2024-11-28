@@ -90,4 +90,24 @@ export class ChatMutations {
       );
     }
   }
+
+  @Mutation(() => Chat)
+  async updateChatHelpProposal(
+    @Arg("chatId") chatId: string,
+    @Arg("isHelpProposed") isHelpProposed: boolean
+  ): Promise<Chat> {
+    const chat = await dataSource.manager.findOneBy(Chat, { id: chatId });
+    if (!chat) {
+      throw new Error("Chat introuvable");
+    }
+
+    chat.isHelpProposed = isHelpProposed;
+
+    try {
+      await chat.save();
+      return chat;
+    } catch (error) {
+      throw new Error("Échec de la mise à jour de l'aide proposée");
+    }
+  }
 }

@@ -20,6 +20,10 @@ export class Chat extends BaseEntity {
     @Field((type) => ID)
     id?: string;
 
+    @Column({ default: false })
+    @Field()
+    isHelpProposed!: boolean;
+
     @IsDate()
     @Column()
     @Field()
@@ -42,12 +46,14 @@ export class Chat extends BaseEntity {
     messages?: Promise<Message[]>;
 
     constructor(
+        isHelpProposed: boolean,
         userHelper: User,
         userRequester: User,
         ad: Ad,
         messages?: Promise<Message[]>
     ) {
         super();
+        this.isHelpProposed = isHelpProposed;
         this.userHelper = userHelper;
         this.userRequester = userRequester;
         this.ad = ad;
