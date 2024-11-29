@@ -45,6 +45,8 @@ export type AdInput = {
   city: Scalars['String']['input'];
   description: Scalars['String']['input'];
   duration: Scalars['Int']['input'];
+  latitude?: InputMaybe<Scalars['Float']['input']>;
+  longitude?: InputMaybe<Scalars['Float']['input']>;
   mangoAmount: Scalars['Int']['input'];
   picture1?: InputMaybe<Scalars['String']['input']>;
   picture2?: InputMaybe<Scalars['String']['input']>;
@@ -66,296 +68,348 @@ export type Chat = {
 };
 
 export type ChatInput = {
-  adId: Scalars["String"]["input"];
-  userHelperId: Scalars["String"]["input"];
-  userRequesterId: Scalars["String"]["input"];
+  adId: Scalars['String']['input'];
+  userHelperId: Scalars['String']['input'];
+  userRequesterId: Scalars['String']['input'];
 };
 
 export type Message = {
-  __typename?: "Message";
+  __typename?: 'Message';
   author: User;
   chat: Chat;
-  date: Scalars["DateTimeISO"]["output"];
-  id: Scalars["ID"]["output"];
-  isView: Scalars["Boolean"]["output"];
-  message: Scalars["String"]["output"];
+  date: Scalars['DateTimeISO']['output'];
+  id: Scalars['ID']['output'];
+  isView: Scalars['Boolean']['output'];
+  message: Scalars['String']['output'];
 };
 
 export type MessageInput = {
-  authorId: Scalars["String"]["input"];
-  chatId: Scalars["String"]["input"];
-  isView: Scalars["Boolean"]["input"];
-  message: Scalars["String"]["input"];
+  authorId: Scalars['String']['input'];
+  chatId: Scalars['String']['input'];
+  isView: Scalars['Boolean']['input'];
+  message: Scalars['String']['input'];
 };
 
 export type Mutation = {
-  __typename?: "Mutation";
+  __typename?: 'Mutation';
   addTransaction: Transaction;
-  changePassword: Scalars["Boolean"]["output"];
+  changePassword: Scalars['Boolean']['output'];
   createAd: Ad;
   createChat: Chat;
   createReview: Review;
-  deleteAccount: Scalars["Boolean"]["output"];
-  deleteAd: Scalars["Boolean"]["output"];
+  deleteAccount: Scalars['Boolean']['output'];
+  deleteAd: Scalars['Boolean']['output'];
   register: User;
   sendMessage: Message;
-  transferMango: Scalars["Float"]["output"];
+  transferMango: Scalars['Float']['output'];
   updateAd: Ad;
   updateUser: User;
 };
+
 
 export type MutationAddTransactionArgs = {
   transactionData: TransactionInput;
 };
 
+
 export type MutationChangePasswordArgs = {
-  id: Scalars["String"]["input"];
-  password: Scalars["String"]["input"];
+  id: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
+
 
 export type MutationCreateAdArgs = {
   adData: AdInput;
 };
 
+
 export type MutationCreateChatArgs = {
   chatData: ChatInput;
 };
+
 
 export type MutationCreateReviewArgs = {
   reviewData: ReviewInput;
 };
 
+
 export type MutationDeleteAccountArgs = {
-  id: Scalars["String"]["input"];
+  id: Scalars['String']['input'];
 };
+
 
 export type MutationDeleteAdArgs = {
-  id: Scalars["String"]["input"];
+  id: Scalars['String']['input'];
 };
 
+
 export type MutationRegisterArgs = {
-  address: Scalars["String"]["input"];
-  city: Scalars["String"]["input"];
-  email: Scalars["String"]["input"];
-  firstName: Scalars["String"]["input"];
-  lastName: Scalars["String"]["input"];
-  password: Scalars["String"]["input"];
-  zipCode: Scalars["String"]["input"];
+  address: Scalars['String']['input'];
+  city: Scalars['String']['input'];
+  email: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  zipCode: Scalars['String']['input'];
 };
+
 
 export type MutationSendMessageArgs = {
   messageData: MessageInput;
 };
 
+
 export type MutationTransferMangoArgs = {
-  amount: Scalars["Float"]["input"];
-  id: Scalars["String"]["input"];
+  amount: Scalars['Float']['input'];
+  id: Scalars['String']['input'];
 };
+
 
 export type MutationUpdateAdArgs = {
   adData: AdInput;
-  id: Scalars["String"]["input"];
+  id: Scalars['String']['input'];
 };
 
+
 export type MutationUpdateUserArgs = {
-  address?: InputMaybe<Scalars["String"]["input"]>;
-  biography?: InputMaybe<Scalars["String"]["input"]>;
-  city?: InputMaybe<Scalars["String"]["input"]>;
-  dateOfBirth?: InputMaybe<Scalars["DateTimeISO"]["input"]>;
-  email?: InputMaybe<Scalars["String"]["input"]>;
-  firstName?: InputMaybe<Scalars["String"]["input"]>;
-  gender?: InputMaybe<Scalars["String"]["input"]>;
-  id: Scalars["String"]["input"];
-  lastName?: InputMaybe<Scalars["String"]["input"]>;
-  picture?: InputMaybe<Scalars["String"]["input"]>;
-  zipCode?: InputMaybe<Scalars["String"]["input"]>;
+  address?: InputMaybe<Scalars['String']['input']>;
+  biography?: InputMaybe<Scalars['String']['input']>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  dateOfBirth?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  gender?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  picture?: InputMaybe<Scalars['String']['input']>;
+  zipCode?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Query = {
-  __typename?: "Query";
+  __typename?: 'Query';
   getAdById: Ad;
   getAdsByUser: Array<Ad>;
   getAllAds: Array<Ad>;
   getAllSkills?: Maybe<Array<Skill>>;
   getAllUsers: Array<User>;
   getChatsByUserId?: Maybe<Array<Chat>>;
-  getMangoBalanceByUserId: Scalars["Float"]["output"];
+  getMangoBalanceByUserId: Scalars['Float']['output'];
   getMessagesByChatId?: Maybe<Array<Message>>;
   getReviewsByUserHelperId?: Maybe<Array<Review>>;
   getTransactionsHistoryByUser?: Maybe<Array<Transaction>>;
   getUserByEmail: User;
-  login: Scalars["String"]["output"];
+  login: Scalars['String']['output'];
 };
+
 
 export type QueryGetAdByIdArgs = {
-  id: Scalars["String"]["input"];
+  id: Scalars['String']['input'];
 };
+
 
 export type QueryGetAdsByUserArgs = {
-  userId: Scalars["String"]["input"];
+  userId: Scalars['String']['input'];
 };
+
 
 export type QueryGetAllAdsArgs = {
-  limit?: Scalars["Int"]["input"];
-  mangoAmountMax?: InputMaybe<Scalars["Int"]["input"]>;
-  mangoAmountMin?: InputMaybe<Scalars["Int"]["input"]>;
-  page?: Scalars["Int"]["input"];
-  skillId?: InputMaybe<Scalars["String"]["input"]>;
+  limit?: Scalars['Int']['input'];
+  mangoAmountMax?: InputMaybe<Scalars['Int']['input']>;
+  mangoAmountMin?: InputMaybe<Scalars['Int']['input']>;
+  page?: Scalars['Int']['input'];
+  skillId?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 export type QueryGetChatsByUserIdArgs = {
-  userId: Scalars["String"]["input"];
+  userId: Scalars['String']['input'];
 };
+
 
 export type QueryGetMangoBalanceByUserIdArgs = {
-  id: Scalars["String"]["input"];
+  id: Scalars['String']['input'];
 };
+
 
 export type QueryGetMessagesByChatIdArgs = {
-  chatId: Scalars["String"]["input"];
+  chatId: Scalars['String']['input'];
 };
+
 
 export type QueryGetReviewsByUserHelperIdArgs = {
-  userHelperId: Scalars["String"]["input"];
+  userHelperId: Scalars['String']['input'];
 };
+
 
 export type QueryGetTransactionsHistoryByUserArgs = {
-  userId: Scalars["String"]["input"];
+  userId: Scalars['String']['input'];
 };
+
 
 export type QueryGetUserByEmailArgs = {
-  email: Scalars["String"]["input"];
+  email: Scalars['String']['input'];
 };
 
+
 export type QueryLoginArgs = {
-  email: Scalars["String"]["input"];
-  password: Scalars["String"]["input"];
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 export type Review = {
-  __typename?: "Review";
-  comment?: Maybe<Scalars["String"]["output"]>;
-  date: Scalars["DateTimeISO"]["output"];
-  id: Scalars["ID"]["output"];
-  rating: Scalars["Float"]["output"];
-  title: Scalars["String"]["output"];
+  __typename?: 'Review';
+  comment?: Maybe<Scalars['String']['output']>;
+  date: Scalars['DateTimeISO']['output'];
+  id: Scalars['ID']['output'];
+  rating: Scalars['Float']['output'];
+  title: Scalars['String']['output'];
   userHelper: User;
   userRequester: User;
 };
 
 export type ReviewInput = {
-  comment?: InputMaybe<Scalars["String"]["input"]>;
-  rating: Scalars["Float"]["input"];
-  title: Scalars["String"]["input"];
-  userHelperId: Scalars["String"]["input"];
-  userRequesterId: Scalars["String"]["input"];
+  comment?: InputMaybe<Scalars['String']['input']>;
+  rating: Scalars['Float']['input'];
+  title: Scalars['String']['input'];
+  userHelperId: Scalars['String']['input'];
+  userRequesterId: Scalars['String']['input'];
 };
 
 export type Skill = {
-  __typename?: "Skill";
+  __typename?: 'Skill';
   ads: Ad;
-  id: Scalars["ID"]["output"];
-  name: Scalars["String"]["output"];
-  picture: Scalars["String"]["output"];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  picture: Scalars['String']['output'];
 };
 
 /** Statut de l'annonce */
 export enum Status {
-  Booked = "BOOKED",
-  Finalised = "FINALISED",
-  Posted = "POSTED",
+  Booked = 'BOOKED',
+  Finalised = 'FINALISED',
+  Posted = 'POSTED'
 }
 
 export type Transaction = {
-  __typename?: "Transaction";
+  __typename?: 'Transaction';
   ad: Ad;
-  date: Scalars["DateTimeISO"]["output"];
-  id: Scalars["ID"]["output"];
+  date: Scalars['DateTimeISO']['output'];
+  id: Scalars['ID']['output'];
   userHelper: User;
   userRequester: User;
 };
 
 export type TransactionInput = {
-  adId: Scalars["String"]["input"];
-  userHelperId: Scalars["String"]["input"];
-  userRequesterId: Scalars["String"]["input"];
+  adId: Scalars['String']['input'];
+  userHelperId: Scalars['String']['input'];
+  userRequesterId: Scalars['String']['input'];
 };
 
 export type User = {
-  __typename?: "User";
-  address: Scalars["String"]["output"];
+  __typename?: 'User';
+  address: Scalars['String']['output'];
   ads: Array<Ad>;
-  biography?: Maybe<Scalars["String"]["output"]>;
+  biography?: Maybe<Scalars['String']['output']>;
   chatsAsHelper: Array<Chat>;
   chatsAsRequester: Array<Chat>;
-  city: Scalars["String"]["output"];
-  createdAt: Scalars["DateTimeISO"]["output"];
-  dateOfBirth?: Maybe<Scalars["DateTimeISO"]["output"]>;
-  email: Scalars["String"]["output"];
-  firstName: Scalars["String"]["output"];
-  gender?: Maybe<Scalars["String"]["output"]>;
-  id: Scalars["ID"]["output"];
-  lastName: Scalars["String"]["output"];
-  mangoBalance: Scalars["Float"]["output"];
+  city: Scalars['String']['output'];
+  createdAt: Scalars['DateTimeISO']['output'];
+  dateOfBirth?: Maybe<Scalars['DateTimeISO']['output']>;
+  email: Scalars['String']['output'];
+  firstName: Scalars['String']['output'];
+  gender?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  lastName: Scalars['String']['output'];
+  mangoBalance: Scalars['Float']['output'];
   messages: Array<Message>;
-  password: Scalars["String"]["output"];
-  picture?: Maybe<Scalars["String"]["output"]>;
+  password: Scalars['String']['output'];
+  picture?: Maybe<Scalars['String']['output']>;
   reviewsAsHelper: Array<Review>;
   reviewsAsRequester: Array<Review>;
   skills: Array<Skill>;
   transactionsAsHelper: Array<Transaction>;
   transactionsAsRequester: Array<Transaction>;
-  zipCode: Scalars["String"]["output"];
+  zipCode: Scalars['String']['output'];
 };
 
-export type GetAllAdsQueryVariables = Exact<{ [key: string]: never }>;
+export type CreateAdMutationVariables = Exact<{
+  formData: AdInput;
+}>;
 
-export type GetAllAdsQuery = {
-  __typename?: "Query";
-  getAllAds: Array<{
-    __typename?: "Ad";
-    id: string;
-    title: string;
-    updatedAt: any;
-    mangoAmount: number;
-    status: Status;
-    skill: { __typename?: "Skill"; id: string; name: string; picture: string };
-    userRequester: { __typename?: "User"; id: string; picture?: string | null };
-  }>;
-};
 
-export type GetAllSkillsQueryVariables = Exact<{ [key: string]: never }>;
+export type CreateAdMutation = { __typename?: 'Mutation', createAd: { __typename?: 'Ad', id: string } };
 
-export type GetAllSkillsQuery = {
-  __typename?: "Query";
-  getAllSkills?: Array<{
-    __typename?: "Skill";
-    id: string;
-    name: string;
-    picture: string;
-  }> | null;
-};
+export type GetAllAdsQueryVariables = Exact<{ [key: string]: never; }>;
 
+
+export type GetAllAdsQuery = { __typename?: 'Query', getAllAds: Array<{ __typename?: 'Ad', id: string, title: string, updatedAt: any, mangoAmount: number, status: Status, skill: { __typename?: 'Skill', id: string, name: string, picture: string }, userRequester: { __typename?: 'User', id: string, picture?: string | null } }> };
+
+export type GetAdByIdQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type GetAdByIdQuery = { __typename?: 'Query', getAdById: { __typename?: 'Ad', id: string, title: string, updatedAt: any, mangoAmount: number, status: Status, address: string, zipCode: string, city: string, picture1?: string | null, picture2?: string | null, picture3?: string | null, skill: { __typename?: 'Skill', id: string, name: string }, userRequester: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null } } };
+
+export type GetAllSkillsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllSkillsQuery = { __typename?: 'Query', getAllSkills?: Array<{ __typename?: 'Skill', id: string, name: string, picture: string }> | null };
+
+
+export const CreateAdDocument = gql`
+    mutation CreateAd($formData: AdInput!) {
+  createAd(adData: $formData) {
+    id
+  }
+}
+    `;
+export type CreateAdMutationFn = Apollo.MutationFunction<CreateAdMutation, CreateAdMutationVariables>;
+
+/**
+ * __useCreateAdMutation__
+ *
+ * To run a mutation, you first call `useCreateAdMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateAdMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createAdMutation, { data, loading, error }] = useCreateAdMutation({
+ *   variables: {
+ *      formData: // value for 'formData'
+ *   },
+ * });
+ */
+export function useCreateAdMutation(baseOptions?: Apollo.MutationHookOptions<CreateAdMutation, CreateAdMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateAdMutation, CreateAdMutationVariables>(CreateAdDocument, options);
+      }
+export type CreateAdMutationHookResult = ReturnType<typeof useCreateAdMutation>;
+export type CreateAdMutationResult = Apollo.MutationResult<CreateAdMutation>;
+export type CreateAdMutationOptions = Apollo.BaseMutationOptions<CreateAdMutation, CreateAdMutationVariables>;
 export const GetAllAdsDocument = gql`
-  query GetAllAds {
-    getAllAds {
+    query GetAllAds {
+  getAllAds {
+    id
+    title
+    updatedAt
+    mangoAmount
+    status
+    skill {
       id
-      title
-      updatedAt
-      mangoAmount
-      status
-      skill {
-        id
-        name
-        picture
-      }
-      userRequester {
-        id
-        picture
-      }
+      name
+      picture
+    }
+    userRequester {
+      id
+      picture
     }
   }
-`;
+}
+    `;
 
 /**
  * __useGetAllAdsQuery__
@@ -372,61 +426,91 @@ export const GetAllAdsDocument = gql`
  *   },
  * });
  */
-export function useGetAllAdsQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetAllAdsQuery, GetAllAdsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetAllAdsQuery, GetAllAdsQueryVariables>(
-    GetAllAdsDocument,
-    options
-  );
-}
-export function useGetAllAdsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetAllAdsQuery,
-    GetAllAdsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetAllAdsQuery, GetAllAdsQueryVariables>(
-    GetAllAdsDocument,
-    options
-  );
-}
-export function useGetAllAdsSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<GetAllAdsQuery, GetAllAdsQueryVariables>
-) {
-  const options =
-    baseOptions === Apollo.skipToken
-      ? baseOptions
-      : { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<GetAllAdsQuery, GetAllAdsQueryVariables>(
-    GetAllAdsDocument,
-    options
-  );
-}
+export function useGetAllAdsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllAdsQuery, GetAllAdsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllAdsQuery, GetAllAdsQueryVariables>(GetAllAdsDocument, options);
+      }
+export function useGetAllAdsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllAdsQuery, GetAllAdsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllAdsQuery, GetAllAdsQueryVariables>(GetAllAdsDocument, options);
+        }
+export function useGetAllAdsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAllAdsQuery, GetAllAdsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAllAdsQuery, GetAllAdsQueryVariables>(GetAllAdsDocument, options);
+        }
 export type GetAllAdsQueryHookResult = ReturnType<typeof useGetAllAdsQuery>;
-export type GetAllAdsLazyQueryHookResult = ReturnType<
-  typeof useGetAllAdsLazyQuery
->;
-export type GetAllAdsSuspenseQueryHookResult = ReturnType<
-  typeof useGetAllAdsSuspenseQuery
->;
-export type GetAllAdsQueryResult = Apollo.QueryResult<
-  GetAllAdsQuery,
-  GetAllAdsQueryVariables
->;
-export const GetAllSkillsDocument = gql`
-  query GetAllSkills {
-    getAllSkills {
+export type GetAllAdsLazyQueryHookResult = ReturnType<typeof useGetAllAdsLazyQuery>;
+export type GetAllAdsSuspenseQueryHookResult = ReturnType<typeof useGetAllAdsSuspenseQuery>;
+export type GetAllAdsQueryResult = Apollo.QueryResult<GetAllAdsQuery, GetAllAdsQueryVariables>;
+export const GetAdByIdDocument = gql`
+    query GetAdById($id: String!) {
+  getAdById(id: $id) {
+    id
+    title
+    updatedAt
+    mangoAmount
+    status
+    address
+    zipCode
+    city
+    picture1
+    picture2
+    picture3
+    skill {
       id
       name
+    }
+    userRequester {
+      id
+      firstName
+      lastName
       picture
     }
   }
-`;
+}
+    `;
+
+/**
+ * __useGetAdByIdQuery__
+ *
+ * To run a query within a React component, call `useGetAdByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAdByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAdByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetAdByIdQuery(baseOptions: Apollo.QueryHookOptions<GetAdByIdQuery, GetAdByIdQueryVariables> & ({ variables: GetAdByIdQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAdByIdQuery, GetAdByIdQueryVariables>(GetAdByIdDocument, options);
+      }
+export function useGetAdByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAdByIdQuery, GetAdByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAdByIdQuery, GetAdByIdQueryVariables>(GetAdByIdDocument, options);
+        }
+export function useGetAdByIdSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAdByIdQuery, GetAdByIdQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAdByIdQuery, GetAdByIdQueryVariables>(GetAdByIdDocument, options);
+        }
+export type GetAdByIdQueryHookResult = ReturnType<typeof useGetAdByIdQuery>;
+export type GetAdByIdLazyQueryHookResult = ReturnType<typeof useGetAdByIdLazyQuery>;
+export type GetAdByIdSuspenseQueryHookResult = ReturnType<typeof useGetAdByIdSuspenseQuery>;
+export type GetAdByIdQueryResult = Apollo.QueryResult<GetAdByIdQuery, GetAdByIdQueryVariables>;
+export const GetAllSkillsDocument = gql`
+    query GetAllSkills {
+  getAllSkills {
+    id
+    name
+    picture
+  }
+}
+    `;
 
 /**
  * __useGetAllSkillsQuery__
@@ -443,57 +527,19 @@ export const GetAllSkillsDocument = gql`
  *   },
  * });
  */
-export function useGetAllSkillsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    GetAllSkillsQuery,
-    GetAllSkillsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetAllSkillsQuery, GetAllSkillsQueryVariables>(
-    GetAllSkillsDocument,
-    options
-  );
-}
-export function useGetAllSkillsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetAllSkillsQuery,
-    GetAllSkillsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetAllSkillsQuery, GetAllSkillsQueryVariables>(
-    GetAllSkillsDocument,
-    options
-  );
-}
-export function useGetAllSkillsSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
-        GetAllSkillsQuery,
-        GetAllSkillsQueryVariables
-      >
-) {
-  const options =
-    baseOptions === Apollo.skipToken
-      ? baseOptions
-      : { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<GetAllSkillsQuery, GetAllSkillsQueryVariables>(
-    GetAllSkillsDocument,
-    options
-  );
-}
-export type GetAllSkillsQueryHookResult = ReturnType<
-  typeof useGetAllSkillsQuery
->;
-export type GetAllSkillsLazyQueryHookResult = ReturnType<
-  typeof useGetAllSkillsLazyQuery
->;
-export type GetAllSkillsSuspenseQueryHookResult = ReturnType<
-  typeof useGetAllSkillsSuspenseQuery
->;
-export type GetAllSkillsQueryResult = Apollo.QueryResult<
-  GetAllSkillsQuery,
-  GetAllSkillsQueryVariables
->;
+export function useGetAllSkillsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllSkillsQuery, GetAllSkillsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllSkillsQuery, GetAllSkillsQueryVariables>(GetAllSkillsDocument, options);
+      }
+export function useGetAllSkillsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllSkillsQuery, GetAllSkillsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllSkillsQuery, GetAllSkillsQueryVariables>(GetAllSkillsDocument, options);
+        }
+export function useGetAllSkillsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAllSkillsQuery, GetAllSkillsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAllSkillsQuery, GetAllSkillsQueryVariables>(GetAllSkillsDocument, options);
+        }
+export type GetAllSkillsQueryHookResult = ReturnType<typeof useGetAllSkillsQuery>;
+export type GetAllSkillsLazyQueryHookResult = ReturnType<typeof useGetAllSkillsLazyQuery>;
+export type GetAllSkillsSuspenseQueryHookResult = ReturnType<typeof useGetAllSkillsSuspenseQuery>;
+export type GetAllSkillsQueryResult = Apollo.QueryResult<GetAllSkillsQuery, GetAllSkillsQueryVariables>;

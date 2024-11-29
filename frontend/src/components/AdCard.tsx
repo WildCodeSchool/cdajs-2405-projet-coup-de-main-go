@@ -7,6 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import type { AdCardType } from "../types";
+import { Link } from "react-router-dom";
 
 interface AdCardProps {
   ad: AdCardType;
@@ -27,7 +28,9 @@ export default function AdCard({ ad }: AdCardProps) {
         {/* A intégrer : photos de l'utilisateur et de la compétence */}
       </CardContent>
       <CardActions>
-        <Button>Plus d'information</Button>
+        <Button component={Link} to={`/ad/${ad.id}`}>
+          Plus d'information
+        </Button>
       </CardActions>
     </Card>
   );

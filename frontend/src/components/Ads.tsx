@@ -13,7 +13,6 @@ export default function Ads() {
   if (adsError) return <p>Error: {adsError.message}</p>;
 
   const adCards: AdCardType[] = adsData!.getAllAds;
-  console.log(adCards);
 
   return (
     <>
