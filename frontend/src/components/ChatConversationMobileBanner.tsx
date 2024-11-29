@@ -47,7 +47,16 @@ export default function ChatConversationMobileBanner({
           )}
         </Typography>
       </Box>
-      <Button variant="contained" onClick={onOpenModal}>
+      <Button
+        variant="contained"
+        onClick={onOpenModal}
+        sx={{
+          bgcolor: "var(--tertiary)",
+          "&:hover": {
+            bgcolor: "var(--tertiary-hover)",
+          },
+        }}
+      >
         Voir l'annonce
       </Button>
     </Box>
