@@ -78,7 +78,6 @@ export default function Header() {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Button
                 sx={{
-                  textTransform: "none",
                   bgcolor: "var(--badge)",
                   color: "white",
                   "&:hover": { bgcolor: "var(--badge-hover)" },

@@ -13,12 +13,26 @@ export default function HomePage() {
       <h1>coup-de-main-go</h1>
       {userId ? (
         <Link to="/chat" style={{ textDecoration: "none" }}>
-          <Button variant="contained" color="primary">
+          <Button
+            variant="contained"
+            sx={{
+              bgcolor: "var(--badge)",
+              color: "white",
+              "&:hover": { bgcolor: "var(--badge-hover)" },
+            }}
+          >
             Accéder au Chat
           </Button>
         </Link>
       ) : (
-        <Button variant="contained" color="primary" onClick={handleLogin}>
+        <Button
+          variant="contained"
+          sx={{
+            bgcolor: "var(--secondary)",
+            "&:hover": { bgcolor: "var(--secondary-hover)" },
+          }}
+          onClick={handleLogin}
+        >
           Se connecter
         </Button>
       )}
