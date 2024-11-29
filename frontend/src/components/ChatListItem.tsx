@@ -63,6 +63,11 @@ export default function ChatListItem({
                 color="warning"
                 badgeContent={unreadMessages}
                 invisible={unreadMessages === 0}
+                sx={{
+                  position: "absolute",
+                  top: 24,
+                  right: 24,
+                }}
               />
             </Box>
           }

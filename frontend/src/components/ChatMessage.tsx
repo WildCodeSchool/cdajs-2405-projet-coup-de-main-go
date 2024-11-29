@@ -1,6 +1,7 @@
 import { Avatar, Box, Typography } from "@mui/material";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useEffect, useState } from "react";
 
 interface MessageProps {
   message: string;
@@ -19,15 +20,26 @@ export default function ChatMessage({
   isCurrentUser,
   author,
 }: MessageProps) {
-  const distance = formatDistanceToNow(new Date(date), {
-    addSuffix: true,
-    locale: fr,
-  });
+  const [formattedDate, setFormattedDate] = useState<string>("");
 
-  // If the message was sent less than 24 hours ago, we display "1 jour" instead of "environ 24 heures"
-  const formattedDate = distance.includes("environ 24 heures")
-    ? "Il y a 1 jour"
-    : distance;
+  useEffect(() => {
+    const calculateDistance = () => {
+      const distance = formatDistanceToNow(new Date(date), {
+        addSuffix: true,
+        locale: fr,
+      });
+
+      return distance.includes("environ 24 heures") ? "Il y a 1 jour" : distance;
+    };
+
+    setFormattedDate(calculateDistance());
+
+    const interval = setInterval(() => {
+      setFormattedDate(calculateDistance());
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [date]);
 
   return (
     <Box

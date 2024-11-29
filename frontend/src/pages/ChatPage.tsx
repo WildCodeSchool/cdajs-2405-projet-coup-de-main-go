@@ -29,6 +29,7 @@ export default function ChatPage() {
 
   const { loading, error, data } = useQuery(GET_USER_CHATS, {
     variables: { userId },
+    pollInterval: 60000, // 60s
   });
 
   useEffect(() => {
