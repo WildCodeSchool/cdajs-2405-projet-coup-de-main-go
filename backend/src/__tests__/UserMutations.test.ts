@@ -58,7 +58,8 @@ describe("userMutations", () => {
                     "doe",
                     "address",
                     "75000",
-                    "paris"
+                    "paris",
+                    []
                 )
             ).rejects.toThrow("email is already in use");
         });
@@ -76,7 +77,8 @@ describe("userMutations", () => {
                 "dur",
                 "address",
                 "75000",
-                "paris"
+                "paris",
+                []
             );
             expect(user).toBeInstanceOf(User);
         });

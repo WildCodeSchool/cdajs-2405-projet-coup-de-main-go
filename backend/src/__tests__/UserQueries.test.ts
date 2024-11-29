@@ -66,10 +66,9 @@ describe("userQueries", () => {
         it("should return a valid JWT token", async () => {
             mockTypeOrm().onMock(User).toReturn(mockUsers[0], "findOne");
 
-            const token: string = await userQueries.login(
-                "john.doe@gmail.com",
-                "password"
-            );
+            const token: string = (
+                await userQueries.login("john.doe@gmail.com", "password")
+            ).token;
 
             const jwtSecret: string = process.env.JWT_SECRET || "itsasecret";
             const decodedToken: jwt.JwtPayload = jwt.verify(
