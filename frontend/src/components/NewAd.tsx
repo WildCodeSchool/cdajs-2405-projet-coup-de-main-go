@@ -3,12 +3,11 @@ import {
   Box,
   Button,
   Input,
-  List,
-  ListItem,
   MenuItem,
   Modal,
   Select,
   Slider,
+  TextField,
   Typography,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
@@ -19,7 +18,6 @@ import {
 } from "../generated/graphql-types";
 import type { Skill } from "../types";
 import { useState } from "react";
-import React from "react";
 
 export default function NewAd() {
   // TODO : à remplacer lorsque la navbar sera créé pour contrôler la visibilité de la modale
@@ -48,26 +46,9 @@ export default function NewAd() {
 
   // Autosuggestion de l'adresse
   const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
-  const [addressInput, setAddressInput] = useState<string>("");
   const [selectedSuggestion, setSelectedSuggestion] = useState<any>("");
-  const [addressError, setAddressError] = useState<string>("");
 
-  const handleAddressChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const query = event.target.value;
-    setAddressInput(query);
-
-    if (!query) {
-      setAddressSuggestions([]);
-      setAddressError("Veuillez entrer une adresse.");
-      return;
-    }
-
-    if (query.length > 1) {
-      setAddressError("");
-    }
-
+  const fetchAddressSuggestions = async (query: string) => {
     if (query.length >= 3) {
       try {
         const response = await fetch(
@@ -82,27 +63,12 @@ export default function NewAd() {
           "Erreur lors de la récupération des suggestions :",
           error
         );
-        setAddressError("Erreur lors de la récupération des suggestions");
       }
     }
   };
 
-  const handleSuggestionClick = (suggestion: any) => {
-    setSelectedSuggestion(suggestion);
-    console.log("selectedSuggestion", suggestion);
-    setAddressInput(suggestion.properties.label);
-    setAddressSuggestions([]);
-    setAddressError("");
-  };
-
   // Gestion de la soumission du formulaire
   const onFormSubmitted = async (formData: AdInput) => {
-    if (!selectedSuggestion) {
-      setAddressError("Veuillez sélectionner une adresse valide.");
-      return;
-    }
-
-    console.log("data", formData);
     await createAdMutation({
       variables: {
         formData: {
@@ -123,15 +89,15 @@ export default function NewAd() {
   };
 
   return (
-    <Modal
-      open={isModalOpen}
-      sx={{
-        width: "60%",
-        height: "80%",
-        margin: "auto",
-      }}
-    >
-      <Box>
+    <Modal open={isModalOpen}>
+      <Box
+        sx={{
+          width: "60%",
+          height: "80%",
+          margin: "auto",
+          backgroundColor: "#e1d2ae",
+        }}
+      >
         <h1>Créer une annonce</h1>
         <form onSubmit={handleSubmit(onFormSubmitted)}>
           {/* Titre de l'annonce */}
@@ -145,8 +111,9 @@ export default function NewAd() {
               },
             })}
             placeholder="Titre de l'annonce"
+            sx={{ backgroundColor: "#FFFFFF" }}
           />
-          <Typography>
+          <Typography color="error">
             {title?.length > 50
               ? "50 caractères maximum"
               : errors.title?.message}
@@ -162,33 +129,39 @@ export default function NewAd() {
               },
             })}
             placeholder="Description"
+            sx={{ backgroundColor: "white" }}
           />
-          <Typography>
+          <Typography color="error">
             {description?.length > 255
               ? "255 caractères maximum"
               : errors.description?.message}
           </Typography>
           {/* Adresse de l'annonce */}
-
-          <Input
-            type="text"
-            value={addressInput}
-            onChange={handleAddressChange}
-            placeholder="Adresse"
+          <Controller
+            name="address"
+            control={control}
+            rules={{
+              required: "Veuillez saisir une adresse.",
+            }}
+            render={({ field }) => (
+              <Autocomplete
+                {...field}
+                options={addressSuggestions}
+                getOptionLabel={(option: any) => option.properties.label}
+                onInputChange={(event, value) => fetchAddressSuggestions(value)}
+                onChange={(event: any, value: string | null) => {
+                  field.onChange(value);
+                  setSelectedSuggestion(value);
+                }}
+                sx={{ backgroundColor: "white" }}
+                renderInput={(params) => (
+                  <TextField {...params} label="Adresse" />
+                )}
+              />
+            )}
           />
-          {addressSuggestions.length > 0 && (
-            <List>
-              {addressSuggestions.map((suggestion: any) => (
-                <ListItem
-                  key={suggestion.properties.id}
-                  onClick={() => handleSuggestionClick(suggestion)}
-                >
-                  {suggestion.properties.label}
-                </ListItem>
-              ))}
-            </List>
-          )}
-          {addressError && <Typography>{addressError}</Typography>}
+
+          {errors.address && <Typography>{errors.address.message}</Typography>}
 
           {/* Durée de l'annonce */}
           <Typography>Sélectionner une durée</Typography>
@@ -223,13 +196,11 @@ export default function NewAd() {
             )}
           />
           {errors.duration && (
-            <Typography color="error" variant="body2">
-              {errors.duration.message}
-            </Typography>
+            <Typography color="error">{errors.duration.message}</Typography>
           )}
           {/* Compétence requise pour l'annonce */}
           <Select
-            {...register("skillId", { required: true })}
+            {...register("skillId", { required: "Champ obligatoire" })}
             defaultValue=""
             displayEmpty
             disabled={skillsLoading || !!skillsError}
@@ -237,7 +208,7 @@ export default function NewAd() {
             <MenuItem value="" disabled>
               {skillsLoading
                 ? "Chargement des compétences..."
-                : "Sélectionnez une compétence"}
+                : "Compétence nécessaire"}
             </MenuItem>
             {skillsError && (
               <MenuItem value="" disabled>
@@ -250,6 +221,9 @@ export default function NewAd() {
               </MenuItem>
             ))}
           </Select>
+          {errors.skillId && (
+            <Typography color="error">{errors.skillId.message}</Typography>
+          )}
           {/* Soumission de  l'annonce */}
           <Button type="submit">Envoyer</Button>
         </form>
