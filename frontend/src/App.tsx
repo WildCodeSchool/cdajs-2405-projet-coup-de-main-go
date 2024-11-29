@@ -1,14 +1,14 @@
 import { Box, Container } from "@mui/material";
 import Header from "./components/Header";
 import { Outlet } from "react-router-dom";
-import { useUser } from "./contexts/UserContext";
+import { useAuth } from "./contexts/AuthContext";
 
 export default function App() {
-  const { userId } = useUser();
+  const { isAuthenticated } = useAuth();
 
   return (
     <Box>
-      {userId && (
+      {isAuthenticated && (
         <Container maxWidth="xl">
           <Header />
         </Container>

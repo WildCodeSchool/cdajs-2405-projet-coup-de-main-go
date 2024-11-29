@@ -1,8 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
-import App from "./App.tsx"; // Le layout principal
+
+import App from "./App.tsx";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Dashboard from "./pages/Dashboard.tsx";
+import HomePage from "./pages/HomePage.tsx";
 import ChatPage from "./pages/ChatPage.tsx";
-import ProtectedRoute from './components/ProtectedRoute';
-import HomePage from "./pages/HomePage.tsx"; // Page d'accueil
 
 export const router = createBrowserRouter([
   {
@@ -12,6 +14,14 @@ export const router = createBrowserRouter([
       {
         path: "/",
         element: <HomePage />,
+      },
+      {
+        path: "/dashboard",
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/chat",

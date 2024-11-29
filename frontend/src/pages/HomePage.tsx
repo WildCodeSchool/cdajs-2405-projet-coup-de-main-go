@@ -1,41 +1,36 @@
-import { Link } from "react-router-dom";
-import { useUser } from "../contexts/UserContext";
-import { Button, Container } from "@mui/material";
+import { useState } from "react";
+import { Navigate } from "react-router-dom";
 
-export default function HomePage() {
-  const { userId, setUserId } = useUser();
+import AuthModal from "../components/AuthModal/AuthModal";
+import { useAuth } from "../contexts/AuthContext";
+import { Button, Container, Typography } from "@mui/material";
 
-  const handleLogin = () => {
-    setUserId("1");
-  };
+function HomePage() {
+  const { isAuthenticated } = useAuth();
+  const [authModalIsOpen, setAuthModalIsOpen] = useState<boolean>(false);
+
+  if (isAuthenticated) {
+    return <Navigate to="/chat" replace />;
+  }
+
   return (
     <Container sx={{ flex: 1, p: 3 }}>
-      <h1>coup-de-main-go</h1>
-      {userId ? (
-        <Link to="/chat" style={{ textDecoration: "none" }}>
-          <Button
-            variant="contained"
-            sx={{
-              bgcolor: "var(--badge)",
-              color: "white",
-              "&:hover": { bgcolor: "var(--badge-hover)" },
-            }}
-          >
-            Accéder au Chat
-          </Button>
-        </Link>
-      ) : (
-        <Button
-          variant="contained"
-          sx={{
-            bgcolor: "var(--secondary)",
-            "&:hover": { bgcolor: "var(--secondary-hover)" },
-          }}
-          onClick={handleLogin}
-        >
-          Se connecter
-        </Button>
+      <Typography variant="h1">Coup-de-main-go</Typography>
+      <Button
+        variant="contained"
+        sx={{
+          bgcolor: "var(--secondary)",
+          "&:hover": { bgcolor: "var(--secondary-hover)" },
+        }}
+        onClick={() => setAuthModalIsOpen(true)}
+      >
+        S’inscrire / Se connecter
+      </Button>
+      {authModalIsOpen && (
+        <AuthModal closeModal={() => setAuthModalIsOpen(false)} />
       )}
     </Container>
   );
 }
+
+export default HomePage;

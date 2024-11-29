@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import ChatList from "../components/ChatList";
 import ChatConversation from "../components/ChatConversation";
-import { useUser } from "../contexts/UserContext";
+import { useAuth } from "../contexts/AuthContext";
 import ChatDetail from "../components/ChatDetail";
 import { GET_USER_CHATS } from "../graphql/chatQueries";
 import GenericModal from "../components/GenericModal";
@@ -23,7 +23,9 @@ export default function ChatPage() {
   const [view, setView] = useState<"list" | "conversation" | "detail">("list");
   const [modalOpen, setModalOpen] = useState(false);
 
-  const { userId } = useUser();
+  const { userId } = useAuth();
+  console.log(userId);
+  
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
