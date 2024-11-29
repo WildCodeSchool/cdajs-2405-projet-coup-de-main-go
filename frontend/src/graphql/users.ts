@@ -82,7 +82,10 @@ export const USER_TRANSFER_MANGO_MUTATION = gql`
 
 export const USER_LOGIN_QUERY = gql`
     query LoginUser($email: String!, $password: String!) {
-        login(email: $email, password: $password)
+        login(email: $email, password: $password) {
+            token
+            userId
+        }
     }
 `;
 

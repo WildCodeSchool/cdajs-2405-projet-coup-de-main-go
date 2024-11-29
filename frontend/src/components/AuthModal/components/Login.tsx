@@ -20,19 +20,18 @@ interface LoginProps {
 function Login({ goToRegister }: LoginProps) {
     const { login } = useAuth();
 
-    // Requête Apollo : Login
     const [sendLoginQuery] = useLoginUserLazyQuery({
         onCompleted: (data: LoginUserQuery) => {
-            const token: string = data.login;
-            login(token);
+            const { token, userId } = data.login;
+            login(token, userId);
         },
         onError: (error: ApolloError) => {
             console.error("login failed", error);
         },
     });
-    // Récupération des méthodes de LoginFormData
+
     const { handleSubmit, register } = useForm<LoginFormData>();
-    // Lors de la soumission du formulaire
+
     const onLoginFormSubmitted = (formData: LoginFormData) => {
         sendLoginQuery({
             variables: formData,

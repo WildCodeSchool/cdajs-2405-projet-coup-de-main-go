@@ -1,13 +1,12 @@
-import { useAuth } from "./contexts/AuthContext";
-import Dashboard from "./pages/Dashboard";
-import Homepage from "./pages/Homepage";
+import { Box, Container } from "@mui/material";
+import { Outlet } from "react-router-dom";
 
-import "./App.css";
-
-function App() {
-    const { isAuthenticated } = useAuth();
-
-    return <main>{isAuthenticated ? <Dashboard /> : <Homepage />}</main>;
+export default function App() {
+    return (
+        <Box>
+            <Container maxWidth="xl">
+                <Outlet />
+            </Container>
+        </Box>
+    );
 }
-
-export default App;

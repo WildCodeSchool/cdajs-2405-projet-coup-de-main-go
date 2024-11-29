@@ -1,8 +1,25 @@
-import { Resolver, Query, Arg, Authorized } from "type-graphql";
 import * as argon2 from "argon2";
 import jwt from "jsonwebtoken";
-import { User } from "../entities/User";
+import {
+    Resolver,
+    Query,
+    Arg,
+    Authorized,
+    ObjectType,
+    Field,
+} from "type-graphql";
+
 import { dataSource } from "../datasource";
+import { User } from "../entities/User";
+
+@ObjectType()
+class LoginResponse {
+    @Field()
+    token!: string;
+
+    @Field()
+    userId!: string;
+}
 
 @Resolver(User)
 export class UserQueries {
@@ -12,11 +29,11 @@ export class UserQueries {
         return await dataSource.manager.find(User, { relations: ["skills"] });
     }
 
-    @Query(() => String)
+    @Query(() => LoginResponse)
     async login(
         @Arg("email") email: string,
         @Arg("password") password: string
-    ): Promise<string> {
+    ): Promise<LoginResponse> {
         const user: User | null = await dataSource.manager.findOne(User, {
             where: { email },
         });
@@ -41,9 +58,14 @@ export class UserQueries {
             throw new Error("invalid JWT secret");
         }
 
-        return jwt.sign({ email }, jwtSecret, {
+        const token: string = jwt.sign({ email }, jwtSecret, {
             expiresIn: "24h",
         });
+
+        return {
+            token,
+            userId: user.id!,
+        };
     }
 
     @Query(() => User)

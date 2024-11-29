@@ -71,6 +71,12 @@ export type ChatInput = {
   userRequesterId: Scalars['String']['input'];
 };
 
+export type LoginResponse = {
+  __typename?: 'LoginResponse';
+  token: Scalars['String']['output'];
+  userId: Scalars['String']['output'];
+};
+
 export type Message = {
   __typename?: 'Message';
   author: User;
@@ -197,7 +203,7 @@ export type Query = {
   getReviewsByUserHelperId?: Maybe<Array<Review>>;
   getTransactionsHistoryByUser?: Maybe<Array<Transaction>>;
   getUserByEmail: User;
-  login: Scalars['String']['output'];
+  login: LoginResponse;
 };
 
 
@@ -396,7 +402,7 @@ export type LoginUserQueryVariables = Exact<{
 }>;
 
 
-export type LoginUserQuery = { __typename?: 'Query', login: string };
+export type LoginUserQuery = { __typename?: 'Query', login: { __typename?: 'LoginResponse', token: string, userId: string } };
 
 export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -664,7 +670,10 @@ export type TransferMangoMutationResult = Apollo.MutationResult<TransferMangoMut
 export type TransferMangoMutationOptions = Apollo.BaseMutationOptions<TransferMangoMutation, TransferMangoMutationVariables>;
 export const LoginUserDocument = gql`
     query LoginUser($email: String!, $password: String!) {
-  login(email: $email, password: $password)
+  login(email: $email, password: $password) {
+    token
+    userId
+  }
 }
     `;
 
