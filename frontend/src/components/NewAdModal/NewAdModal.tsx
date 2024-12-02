@@ -15,14 +15,19 @@ import {
   AdInput,
   useCreateAdMutation,
   useGetAllSkillsQuery,
-} from "../generated/graphql-types";
-import type { Skill } from "../types";
+} from "../../generated/graphql-types";
+import type { Skill } from "../../types";
 import { useState } from "react";
 
-export default function NewAd() {
-  // TODO : à remplacer lorsque la navbar sera créé pour contrôler la visibilité de la modale
-  const [isModalOpen, setIsModalOpen] = useState(true);
+interface NewAdModalProps {
+  isModalOpen: boolean;
+  closeModal: () => void;
+}
 
+export default function NewAdModal({
+  isModalOpen,
+  closeModal,
+}: NewAdModalProps) {
   const {
     control,
     register,
@@ -69,27 +74,32 @@ export default function NewAd() {
 
   // Gestion de la soumission du formulaire
   const onFormSubmitted = async (formData: AdInput) => {
-    await createAdMutation({
-      variables: {
-        formData: {
-          title: formData.title,
-          description: formData.description,
-          address: selectedSuggestion.properties.name,
-          zipCode: selectedSuggestion.properties.postcode,
-          city: selectedSuggestion.properties.city,
-          latitude: selectedSuggestion.geometry.coordinates[1],
-          longitude: selectedSuggestion.geometry.coordinates[0],
-          duration: formData.duration,
-          mangoAmount: formData.duration / 30,
-          skillId: formData.skillId,
-          userRequesterId: "1", // TODO: get the user id from the context
+    try {
+      await createAdMutation({
+        variables: {
+          formData: {
+            title: formData.title,
+            description: formData.description,
+            address: selectedSuggestion.properties.name,
+            zipCode: selectedSuggestion.properties.postcode,
+            city: selectedSuggestion.properties.city,
+            latitude: selectedSuggestion.geometry.coordinates[1],
+            longitude: selectedSuggestion.geometry.coordinates[0],
+            duration: formData.duration,
+            mangoAmount: formData.duration / 30,
+            skillId: formData.skillId,
+            userRequesterId: "1", // TODO: get the user id from the context
+          },
         },
-      },
-    });
+      });
+      closeModal();
+    } catch (error) {
+      console.error("Erreur lors de la création de l'annonce :", error);
+    }
   };
 
   return (
-    <Modal open={isModalOpen}>
+    <Modal open={isModalOpen} onClose={closeModal}>
       <Box
         sx={{
           width: "60%",
@@ -229,6 +239,7 @@ export default function NewAd() {
         </form>
         {loading && "Envoi en cours..."}
         {error && "Une erreur est survenue, merci de réessayer..."}
+        <Button onClick={closeModal}>X</Button>
       </Box>
     </Modal>
   );
