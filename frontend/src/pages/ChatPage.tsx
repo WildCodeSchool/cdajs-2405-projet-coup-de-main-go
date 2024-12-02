@@ -24,14 +24,13 @@ export default function ChatPage() {
   const [modalOpen, setModalOpen] = useState(false);
 
   const { userId } = useAuth();
-  console.log(userId);
-  
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { loading, error, data } = useQuery(GET_USER_CHATS, {
     variables: { userId },
-    pollInterval: 60000, // 60s
+    pollInterval: import.meta.env.VITE_POLL_CHAT_INTERVAL || 60000,
   });
 
   useEffect(() => {
@@ -86,16 +85,24 @@ export default function ChatPage() {
         <>
           {view === "list" && (
             <Box sx={{ flex: 1 }}>
-              <ChatList
-                chats={chats}
-                userId={userId}
-                onSelectChat={(chatId) => {
-                  setSelectedChatId(chatId);
-                  setView("conversation");
-                }}
-                selectedChatId={selectedChatId}
-                isMobile={isMobile}
-              />
+              {chats.length > 0 ? (
+                <ChatList
+                  chats={chats}
+                  userId={userId}
+                  onSelectChat={(chatId) => {
+                    setSelectedChatId(chatId);
+                    setView("conversation");
+                  }}
+                  selectedChatId={selectedChatId}
+                  isMobile={isMobile}
+                />
+              ) : (
+                <Box sx={{ display: "flex", justifyContent: "center", pt: 2  }}>
+                  <Typography variant="h6" color="var(--secondary)">
+                    Aucune conversation disponible
+                  </Typography>
+                </Box>
+              )}
             </Box>
           )}
           {view === "conversation" && (
@@ -127,26 +134,36 @@ export default function ChatPage() {
         </>
       ) : (
         <>
-          <Box sx={{ flex: 0.25, minWidth: 0 }}>
-            <ChatList
-              chats={chats}
-              userId={userId}
-              onSelectChat={setSelectedChatId}
-              selectedChatId={selectedChatId}
-              isMobile={isMobile}
-            />
-          </Box>
-          <Box sx={{ flex: 0.5, minWidth: 0 }}>
-            <ChatConversation
-              chats={chats}
-              chatId={selectedChatId}
-              currentUserId={userId}
-              isMobile={isMobile}
-            />
-          </Box>
-          <Box sx={{ flex: 0.25, minWidth: 0 }}>
-            <ChatDetail chats={chats} chatId={selectedChatId} />
-          </Box>
+          {chats.length > 0 ? (
+            <>
+              <Box sx={{ flex: 0.25, minWidth: 0 }}>
+                <ChatList
+                  chats={chats}
+                  userId={userId}
+                  onSelectChat={setSelectedChatId}
+                  selectedChatId={selectedChatId}
+                  isMobile={isMobile}
+                />
+              </Box>
+              <Box sx={{ flex: 0.5, minWidth: 0 }}>
+                <ChatConversation
+                  chats={chats}
+                  chatId={selectedChatId}
+                  currentUserId={userId}
+                  isMobile={isMobile}
+                />
+              </Box>
+              <Box sx={{ flex: 0.25, minWidth: 0 }}>
+                <ChatDetail chats={chats} chatId={selectedChatId} />
+              </Box>
+            </>
+          ) : (
+            <Box sx={{ pt: 2 }}>
+              <Typography variant="h6" color="var(--secondary)">
+                Aucune conversation disponible
+              </Typography>
+            </Box>
+          )}
         </>
       )}
     </Container>
