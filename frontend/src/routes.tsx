@@ -1,10 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
-import Ads from "./components/Ads.tsx";
+import AdCatalog from "./pages/AdCatalog.tsx";
 import App from "./App.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard.tsx";
 import HomePage from "./pages/HomePage.tsx";
-import AdDetail from "./components/AdDetail.tsx";
+import AdDetail from "./pages/AdDetail.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -25,7 +25,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/ads",
-        element: <Ads />,
+        element: <AdCatalog />,
       },
       {
         path: "/ad/:adId",

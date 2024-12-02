@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 import AuthModal from "../components/AuthModal/AuthModal";
 import { useAuth } from "../contexts/AuthContext";
 import NewAdModal from "../components/NewAdModal/NewAdModal";
+import { Button } from "@mui/material";
 
 function HomePage() {
   const { isAuthenticated } = useAuth();
@@ -23,15 +24,18 @@ function HomePage() {
       {authModalIsOpen && (
         <AuthModal closeModal={() => setAuthModalIsOpen(false)} />
       )}
-      <button onClick={() => setNewAdModalIsOpen(true)}>
+      <Button onClick={() => setNewAdModalIsOpen(true)}>
         Créer une annonce
-      </button>
+      </Button>
       {newAdModalIsOpen && (
         <NewAdModal
           isModalOpen={newAdModalIsOpen}
           closeModal={() => setNewAdModalIsOpen(false)}
         />
       )}
+      <Button component={Link} to={`/ads`}>
+        Explorer
+      </Button>
     </>
   );
 }

@@ -6,7 +6,7 @@ import {
   CardHeader,
   Typography,
 } from "@mui/material";
-import type { AdCardType } from "../types";
+import type { AdCardType } from "../../types";
 import { Link } from "react-router-dom";
 
 interface AdCardProps {

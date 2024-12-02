@@ -1,8 +1,8 @@
-import { useGetAllAdsQuery } from "../generated/graphql-types";
-import type { AdCardType } from "../types";
-import AdCard from "./AdCard.tsx";
+import { useGetAllAdsQuery } from "../generated/graphql-types.ts";
+import type { AdCardType } from "../types.ts";
+import AdCard from "../components/AdCatalog/AdCard.tsx";
 
-export default function Ads() {
+export default function AdCatalog() {
   const {
     loading: adsLoading,
     error: adsError,
