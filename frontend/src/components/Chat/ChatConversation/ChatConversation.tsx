@@ -1,11 +1,7 @@
 import { Paper } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@apollo/client";
 import { GET_USER_CHATS } from "../../../graphql/chatQueries";
-import { SEND_MESSAGE } from "../../../graphql/messageMutations";
-import { UPDATE_CHAT_HELP_PROPOSAL } from "../../../graphql/chatMutations";
-import { UPDATE_AD_STATUS } from "../../../graphql/adMutations";
 import { Chat } from "../../../types";
 import type { MessageForm, Message, User } from "../../../types";
 import { Status } from "../../../types";
@@ -14,6 +10,11 @@ import { ChatMessageList } from "../ChatMessage/ChatMessageList";
 import { ChatActionButton } from "../ChatActionButton";
 import { ChatInput } from "../ChatInput";
 import ChatConversationMobileBanner from "./ChatConversationMobileBanner";
+import {
+  useSendMessageMutation,
+  useUpdateAdStatusMutation,
+  useUpdateChatHelpProposalMutation,
+} from "../../../generated/graphql-types";
 
 type ChatConversationProps = {
   chats: Chat[];
@@ -49,13 +50,13 @@ export default function ChatConversation({
 
   const { handleSubmit, reset, setValue } = useForm<MessageForm>();
 
-  const [sendMessage] = useMutation(SEND_MESSAGE, {
+  const [sendMessage] = useSendMessageMutation({
     refetchQueries: [
       { query: GET_USER_CHATS, variables: { userId: currentUserId } },
     ],
   });
 
-  const [updateAdStatus] = useMutation(UPDATE_AD_STATUS, {
+  const [updateAdStatus] = useUpdateAdStatusMutation({
     refetchQueries: [
       { query: GET_USER_CHATS, variables: { userId: currentUserId } },
     ],
@@ -64,14 +65,14 @@ export default function ChatConversation({
   const handleStatusChange = async (newStatus: Status) => {
     try {
       await updateAdStatus({
-        variables: { id: currentChat?.ad.id, status: newStatus },
+        variables: { id: currentChat!.ad.id, status: newStatus },
       });
     } catch (error) {
       console.error("Erreur lors du changement de statut de l'annonce:", error);
     }
   };
 
-  const [updateChatHelpProposal] = useMutation(UPDATE_CHAT_HELP_PROPOSAL, {
+  const [updateChatHelpProposal] = useUpdateChatHelpProposalMutation({
     refetchQueries: [
       { query: GET_USER_CHATS, variables: { userId: currentUserId } },
     ],
@@ -83,7 +84,7 @@ export default function ChatConversation({
 
   const handleProposeHelp = () => {
     updateChatHelpProposal({
-      variables: { chatId: chatId, isHelpProposed: true },
+      variables: { chatId: chatId!, isHelpProposed: true },
     });
   };
 
@@ -94,7 +95,7 @@ export default function ChatConversation({
   const handleCancelHelp = () => {
     handleStatusChange(Status.POSTED);
     updateChatHelpProposal({
-      variables: { chatId: chatId, isHelpProposed: false },
+      variables: { chatId: chatId!, isHelpProposed: false },
     });
   };
 
@@ -157,7 +158,13 @@ export default function ChatConversation({
           ? currentChat.userHelper
           : currentChat.userRequester;
 
-      setOtherUser(otherUserId);
+      setOtherUser({
+        id: otherUserId.id,
+        createdAt: otherUserId.createdAt,
+        picture: otherUserId.picture || "",
+        firstName: otherUserId.firstName,
+        lastName: otherUserId.lastName,
+      });
 
       const adStatus = currentChat.ad.status.toLowerCase() as Status;
       setStatus(adStatus);
@@ -209,7 +216,7 @@ export default function ChatConversation({
         variables: {
           messageData: {
             message: formData.message,
-            chatId: chatId,
+            chatId: chatId!,
             authorId: currentUserId,
             isViewedByRequester: false,
             isViewedByHelper: false,
@@ -232,12 +239,16 @@ export default function ChatConversation({
     >
       {isMobile && otherUser && (
         <ChatConversationMobileBanner
-          otherUser={otherUser}
+          otherUser={{
+            picture: otherUser.picture || "",
+            firstName: otherUser.firstName,
+            lastName: otherUser.lastName,
+          }}
           onBack={onBack}
           onOpenModal={onOpenModal}
         />
       )}
-      {otherUser && (
+      {otherUser && otherUser.createdAt && (
         <ChatConversationHeader userRegistrationDate={otherUser.createdAt} />
       )}
 

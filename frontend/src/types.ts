@@ -7,61 +7,36 @@ export enum Status {
 export type Skill = {
   id: string;
   name: string;
-  picture: string;
+  picture?: string | null;
 };
 
 export type User = {
   id: string;
   firstName: string;
   lastName: string;
-  picture: string;
+  picture?: string | null;
   skills?: Skill[];
-  createdAt: Date;
+  createdAt?: Date;
 };
 
 export type Ad = {
   id: string;
   title: string;
   description: string;
-  picture: string;
+  picture?: string | null;
   mangoAmount: number;
   duration: number;
-  userRequester: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    picture: string;
-    createdAt: Date;
-  };
-  skills: Skill[];
-  status: Status;
+  userRequester?: User;
+  skills?: Skill[];
+  status: Status
 };
 
 export type Chat = {
   id: string;
   isHelpProposed: boolean;
-  userRequester: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    picture: string;
-    createdAt: Date;
-  };
-  userHelper: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    picture: string;
-    createdAt: Date;
-  };
-  messages: {
-    id: string;
-    message: string;
-    date: string;
-    isViewedByRequester: boolean;
-    isViewedByHelper: boolean;
-    authorId: string;
-  }[];
+  userRequester: User;
+  userHelper: User;
+  messages: Message[];
   ad: Ad;
 };
 
@@ -71,13 +46,8 @@ export type Message = {
   date: string;
   isViewedByRequester: boolean;
   isViewedByHelper: boolean;
-  author: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    picture: string;
-    createdAt: Date;
-  };
+  authorId?: string;
+  author?: User;
 };
 
 export type MessageForm = {

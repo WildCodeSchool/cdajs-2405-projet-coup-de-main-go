@@ -1,11 +1,10 @@
-import { useMutation } from "@apollo/client";
 import { Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import ChatListHeader from "./ChatListHeader";
 import ChatListContainer from "./ChatListContainer";
 import { GET_USER_CHATS } from "../../../graphql/chatQueries";
-import { MARK_MESSAGES_AS_READ_FOR_USER } from "../../../graphql/messageMutations";
 import type { Chat } from "../../../types";
+import { useMarkMessagesAsReadForUserMutation } from "../../../generated/graphql-types";
 
 type ChatListProps = {
   chats: Chat[];
@@ -22,12 +21,9 @@ export default function ChatList({
   selectedChatId,
   isMobile,
 }: ChatListProps) {
-  const [markMessagesAsReadForUser] = useMutation(
-    MARK_MESSAGES_AS_READ_FOR_USER,
-    {
-      refetchQueries: [{ query: GET_USER_CHATS, variables: { userId } }],
-    }
-  );
+  const [markMessagesAsReadForUser] = useMarkMessagesAsReadForUserMutation({
+    refetchQueries: [{ query: GET_USER_CHATS, variables: { userId } }],
+  });
 
   const [initialSelectionMade, setInitialSelectionMade] = useState(false);
 

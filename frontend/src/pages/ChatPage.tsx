@@ -8,13 +8,12 @@ import {
   useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useQuery } from "@apollo/client";
 import ChatList from "../components/Chat/ChatList/ChatList";
 import ChatConversation from "../components/Chat/ChatConversation/ChatConversation";
 import { useAuth } from "../contexts/AuthContext";
 import ChatDetail from "../components/Chat/ChatDetail/ChatDetail";
-import { GET_USER_CHATS } from "../graphql/chatQueries";
 import GenericModal from "../components/Modal/GenericModal";
+import { useGetChatsByUserIdQuery } from "../generated/graphql-types";
 
 export default function ChatPage() {
   const [selectedChatId, setSelectedChatId] = useState<string | undefined>(
@@ -28,11 +27,10 @@ export default function ChatPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const { loading, error, data } = useQuery(GET_USER_CHATS, {
-    variables: { userId },
+  const { loading, error, data } = useGetChatsByUserIdQuery({
+    variables: { userId: userId! },
     pollInterval: import.meta.env.VITE_POLL_CHAT_INTERVAL || 60000,
   });
-
   useEffect(() => {
     if (isMobile) {
       setSelectedChatId(undefined);

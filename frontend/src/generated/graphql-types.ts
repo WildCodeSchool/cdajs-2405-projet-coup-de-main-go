@@ -60,6 +60,7 @@ export type Chat = {
   ad: Ad;
   date: Scalars['DateTimeISO']['output'];
   id: Scalars['ID']['output'];
+  isHelpProposed: Scalars['Boolean']['output'];
   messages: Array<Message>;
   userHelper: User;
   userRequester: User;
@@ -83,14 +84,16 @@ export type Message = {
   chat: Chat;
   date: Scalars['DateTimeISO']['output'];
   id: Scalars['ID']['output'];
-  isView: Scalars['Boolean']['output'];
+  isViewedByHelper: Scalars['Boolean']['output'];
+  isViewedByRequester: Scalars['Boolean']['output'];
   message: Scalars['String']['output'];
 };
 
 export type MessageInput = {
   authorId: Scalars['String']['input'];
   chatId: Scalars['String']['input'];
-  isView: Scalars['Boolean']['input'];
+  isViewedByHelper: Scalars['Boolean']['input'];
+  isViewedByRequester: Scalars['Boolean']['input'];
   message: Scalars['String']['input'];
 };
 
@@ -103,10 +106,13 @@ export type Mutation = {
   createReview: Review;
   deleteAccount: Scalars['Boolean']['output'];
   deleteAd: Scalars['Boolean']['output'];
+  markMessagesAsReadForUser: Scalars['Boolean']['output'];
   register: User;
   sendMessage: Message;
   transferMango: Scalars['Float']['output'];
   updateAd: Ad;
+  updateAdStatus: Ad;
+  updateChatHelpProposal: Chat;
   updateUser: User;
 };
 
@@ -147,6 +153,12 @@ export type MutationDeleteAdArgs = {
 };
 
 
+export type MutationMarkMessagesAsReadForUserArgs = {
+  chatId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
+
 export type MutationRegisterArgs = {
   address: Scalars['String']['input'];
   city: Scalars['String']['input'];
@@ -160,6 +172,7 @@ export type MutationRegisterArgs = {
 
 
 export type MutationSendMessageArgs = {
+  currentUserId: Scalars['String']['input'];
   messageData: MessageInput;
 };
 
@@ -173,6 +186,18 @@ export type MutationTransferMangoArgs = {
 export type MutationUpdateAdArgs = {
   adData: AdInput;
   id: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateAdStatusArgs = {
+  id: Scalars['String']['input'];
+  status: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateChatHelpProposalArgs = {
+  chatId: Scalars['String']['input'];
+  isHelpProposed: Scalars['Boolean']['input'];
 };
 
 
@@ -337,6 +362,14 @@ export type User = {
   zipCode: Scalars['String']['output'];
 };
 
+export type UpdateAdStatusMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+  status: Scalars['String']['input'];
+}>;
+
+
+export type UpdateAdStatusMutation = { __typename?: 'Mutation', updateAdStatus: { __typename?: 'Ad', id: string, status: Status } };
+
 export type CreateChatMutationVariables = Exact<{
   chatData: ChatInput;
 }>;
@@ -344,12 +377,36 @@ export type CreateChatMutationVariables = Exact<{
 
 export type CreateChatMutation = { __typename?: 'Mutation', createChat: { __typename?: 'Chat', id: string, date: any } };
 
+export type UpdateChatHelpProposalMutationVariables = Exact<{
+  chatId: Scalars['String']['input'];
+  isHelpProposed: Scalars['Boolean']['input'];
+}>;
+
+
+export type UpdateChatHelpProposalMutation = { __typename?: 'Mutation', updateChatHelpProposal: { __typename?: 'Chat', id: string, isHelpProposed: boolean } };
+
 export type GetChatsByUserIdQueryVariables = Exact<{
   userId: Scalars['String']['input'];
 }>;
 
 
-export type GetChatsByUserIdQuery = { __typename?: 'Query', getChatsByUserId?: Array<{ __typename?: 'Chat', id: string, date: any, messages: Array<{ __typename?: 'Message', id: string, date: any, isView: boolean, message: string, author: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null }, chat: { __typename?: 'Chat', id: string, date: any } }>, ad: { __typename?: 'Ad', id: string, title: string, description: string }, userHelper: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null }, userRequester: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null } }> | null };
+export type GetChatsByUserIdQuery = { __typename?: 'Query', getChatsByUserId?: Array<{ __typename?: 'Chat', id: string, date: any, isHelpProposed: boolean, messages: Array<{ __typename?: 'Message', id: string, date: any, isViewedByRequester: boolean, isViewedByHelper: boolean, message: string, author: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null } }>, ad: { __typename?: 'Ad', id: string, title: string, description: string, mangoAmount: number, duration: number, status: Status }, userHelper: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null, createdAt: any }, userRequester: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null, createdAt: any } }> | null };
+
+export type SendMessageMutationVariables = Exact<{
+  messageData: MessageInput;
+  currentUserId: Scalars['String']['input'];
+}>;
+
+
+export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'Message', id: string, message: string, date: any, isViewedByRequester: boolean, isViewedByHelper: boolean, author: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null } } };
+
+export type MarkMessagesAsReadForUserMutationVariables = Exact<{
+  chatId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+}>;
+
+
+export type MarkMessagesAsReadForUserMutation = { __typename?: 'Mutation', markMessagesAsReadForUser: boolean };
 
 export type GetAllSkillsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -438,6 +495,41 @@ export type GetMangoBalanceByUserIdQueryVariables = Exact<{
 export type GetMangoBalanceByUserIdQuery = { __typename?: 'Query', getMangoBalanceByUserId: number };
 
 
+export const UpdateAdStatusDocument = gql`
+    mutation UpdateAdStatus($id: String!, $status: String!) {
+  updateAdStatus(id: $id, status: $status) {
+    id
+    status
+  }
+}
+    `;
+export type UpdateAdStatusMutationFn = Apollo.MutationFunction<UpdateAdStatusMutation, UpdateAdStatusMutationVariables>;
+
+/**
+ * __useUpdateAdStatusMutation__
+ *
+ * To run a mutation, you first call `useUpdateAdStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAdStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateAdStatusMutation, { data, loading, error }] = useUpdateAdStatusMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      status: // value for 'status'
+ *   },
+ * });
+ */
+export function useUpdateAdStatusMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAdStatusMutation, UpdateAdStatusMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateAdStatusMutation, UpdateAdStatusMutationVariables>(UpdateAdStatusDocument, options);
+      }
+export type UpdateAdStatusMutationHookResult = ReturnType<typeof useUpdateAdStatusMutation>;
+export type UpdateAdStatusMutationResult = Apollo.MutationResult<UpdateAdStatusMutation>;
+export type UpdateAdStatusMutationOptions = Apollo.BaseMutationOptions<UpdateAdStatusMutation, UpdateAdStatusMutationVariables>;
 export const CreateChatDocument = gql`
     mutation CreateChat($chatData: ChatInput!) {
   createChat(chatData: $chatData) {
@@ -472,11 +564,47 @@ export function useCreateChatMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateChatMutationHookResult = ReturnType<typeof useCreateChatMutation>;
 export type CreateChatMutationResult = Apollo.MutationResult<CreateChatMutation>;
 export type CreateChatMutationOptions = Apollo.BaseMutationOptions<CreateChatMutation, CreateChatMutationVariables>;
+export const UpdateChatHelpProposalDocument = gql`
+    mutation UpdateChatHelpProposal($chatId: String!, $isHelpProposed: Boolean!) {
+  updateChatHelpProposal(chatId: $chatId, isHelpProposed: $isHelpProposed) {
+    id
+    isHelpProposed
+  }
+}
+    `;
+export type UpdateChatHelpProposalMutationFn = Apollo.MutationFunction<UpdateChatHelpProposalMutation, UpdateChatHelpProposalMutationVariables>;
+
+/**
+ * __useUpdateChatHelpProposalMutation__
+ *
+ * To run a mutation, you first call `useUpdateChatHelpProposalMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateChatHelpProposalMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateChatHelpProposalMutation, { data, loading, error }] = useUpdateChatHelpProposalMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      isHelpProposed: // value for 'isHelpProposed'
+ *   },
+ * });
+ */
+export function useUpdateChatHelpProposalMutation(baseOptions?: Apollo.MutationHookOptions<UpdateChatHelpProposalMutation, UpdateChatHelpProposalMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateChatHelpProposalMutation, UpdateChatHelpProposalMutationVariables>(UpdateChatHelpProposalDocument, options);
+      }
+export type UpdateChatHelpProposalMutationHookResult = ReturnType<typeof useUpdateChatHelpProposalMutation>;
+export type UpdateChatHelpProposalMutationResult = Apollo.MutationResult<UpdateChatHelpProposalMutation>;
+export type UpdateChatHelpProposalMutationOptions = Apollo.BaseMutationOptions<UpdateChatHelpProposalMutation, UpdateChatHelpProposalMutationVariables>;
 export const GetChatsByUserIdDocument = gql`
     query GetChatsByUserId($userId: String!) {
   getChatsByUserId(userId: $userId) {
     id
     date
+    isHelpProposed
     messages {
       id
       author {
@@ -484,10 +612,6 @@ export const GetChatsByUserIdDocument = gql`
         firstName
         lastName
         picture
-      }
-      chat {
-        id
-        date
       }
       date
       isViewedByRequester
@@ -498,18 +622,23 @@ export const GetChatsByUserIdDocument = gql`
       id
       title
       description
+      mangoAmount
+      duration
+      status
     }
     userHelper {
       id
       firstName
       lastName
       picture
+      createdAt
     }
     userRequester {
       id
       firstName
       lastName
       picture
+      createdAt
     }
   }
 }
@@ -547,6 +676,82 @@ export type GetChatsByUserIdQueryHookResult = ReturnType<typeof useGetChatsByUse
 export type GetChatsByUserIdLazyQueryHookResult = ReturnType<typeof useGetChatsByUserIdLazyQuery>;
 export type GetChatsByUserIdSuspenseQueryHookResult = ReturnType<typeof useGetChatsByUserIdSuspenseQuery>;
 export type GetChatsByUserIdQueryResult = Apollo.QueryResult<GetChatsByUserIdQuery, GetChatsByUserIdQueryVariables>;
+export const SendMessageDocument = gql`
+    mutation SendMessage($messageData: MessageInput!, $currentUserId: String!) {
+  sendMessage(messageData: $messageData, currentUserId: $currentUserId) {
+    id
+    message
+    date
+    isViewedByRequester
+    isViewedByHelper
+    author {
+      id
+      firstName
+      lastName
+      picture
+    }
+  }
+}
+    `;
+export type SendMessageMutationFn = Apollo.MutationFunction<SendMessageMutation, SendMessageMutationVariables>;
+
+/**
+ * __useSendMessageMutation__
+ *
+ * To run a mutation, you first call `useSendMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendMessageMutation, { data, loading, error }] = useSendMessageMutation({
+ *   variables: {
+ *      messageData: // value for 'messageData'
+ *      currentUserId: // value for 'currentUserId'
+ *   },
+ * });
+ */
+export function useSendMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendMessageMutation, SendMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendMessageMutation, SendMessageMutationVariables>(SendMessageDocument, options);
+      }
+export type SendMessageMutationHookResult = ReturnType<typeof useSendMessageMutation>;
+export type SendMessageMutationResult = Apollo.MutationResult<SendMessageMutation>;
+export type SendMessageMutationOptions = Apollo.BaseMutationOptions<SendMessageMutation, SendMessageMutationVariables>;
+export const MarkMessagesAsReadForUserDocument = gql`
+    mutation MarkMessagesAsReadForUser($chatId: String!, $userId: String!) {
+  markMessagesAsReadForUser(chatId: $chatId, userId: $userId)
+}
+    `;
+export type MarkMessagesAsReadForUserMutationFn = Apollo.MutationFunction<MarkMessagesAsReadForUserMutation, MarkMessagesAsReadForUserMutationVariables>;
+
+/**
+ * __useMarkMessagesAsReadForUserMutation__
+ *
+ * To run a mutation, you first call `useMarkMessagesAsReadForUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkMessagesAsReadForUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markMessagesAsReadForUserMutation, { data, loading, error }] = useMarkMessagesAsReadForUserMutation({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useMarkMessagesAsReadForUserMutation(baseOptions?: Apollo.MutationHookOptions<MarkMessagesAsReadForUserMutation, MarkMessagesAsReadForUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<MarkMessagesAsReadForUserMutation, MarkMessagesAsReadForUserMutationVariables>(MarkMessagesAsReadForUserDocument, options);
+      }
+export type MarkMessagesAsReadForUserMutationHookResult = ReturnType<typeof useMarkMessagesAsReadForUserMutation>;
+export type MarkMessagesAsReadForUserMutationResult = Apollo.MutationResult<MarkMessagesAsReadForUserMutation>;
+export type MarkMessagesAsReadForUserMutationOptions = Apollo.BaseMutationOptions<MarkMessagesAsReadForUserMutation, MarkMessagesAsReadForUserMutationVariables>;
 export const GetAllSkillsDocument = gql`
     query GetAllSkills {
   getAllSkills {
