@@ -1,10 +1,10 @@
 import { MiddlewareFn } from "type-graphql";
 
-interface MyContext {
+interface AuthContext {
   user: { id: string } | null;
 }
 
-export const checkUserId: MiddlewareFn<MyContext> = (
+export const checkUserId: MiddlewareFn<AuthContext> = (
   { context, args },
   next
 ) => {
