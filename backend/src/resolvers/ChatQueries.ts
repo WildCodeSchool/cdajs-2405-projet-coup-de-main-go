@@ -1,11 +1,13 @@
-import { Resolver, Query, Arg } from "type-graphql";
+import { Resolver, Query, Arg, UseMiddleware } from "type-graphql";
 import { Chat } from "../entities/Chat";
 import { User } from "../entities/User";
 import { dataSource } from "../datasource";
+import { checkUserId } from "../middlewares/userAuthMiddleware";
 
 @Resolver(Chat)
 export class ChatQueries {
   @Query(() => [Chat], { nullable: true })
+  @UseMiddleware(checkUserId)
   async getChatsByUserId(
     @Arg("userId") userId: string
   ): Promise<Chat[] | null> {

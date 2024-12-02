@@ -8,11 +8,9 @@ export default function App() {
 
   return (
     <Box>
-      {isAuthenticated && (
         <Container maxWidth="xl">
-          <Header />
+          <Header isAuthenticated={isAuthenticated} />
         </Container>
-      )}
 
       <Container maxWidth="xl">
         <Outlet />
