@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { formatDurationToNow } from "../utils/date";
+import { formatDurationToNow } from "../../../utils/date";
 
 export default function ChatListLastMessage({
   message,

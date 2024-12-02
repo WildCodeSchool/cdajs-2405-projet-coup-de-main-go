@@ -1,6 +1,6 @@
 import { Avatar, Box, Typography } from "@mui/material";
-import { formatFullName } from "../utils/formatName";
-import { User } from "../types";
+import { formatFullName } from "../../../utils/formatName";
+import { User } from "../../../types";
 
 type ChatDetailProfileProps = {
   userRequester?: User;

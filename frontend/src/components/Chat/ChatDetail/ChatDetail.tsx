@@ -1,6 +1,6 @@
 import { Paper } from "@mui/material";
 import ChatDetailProfile from "./ChatDetailProfile";
-import { Ad, Chat, User } from "../types";
+import { Ad, Chat, User } from "../../../types";
 import { useEffect, useState } from "react";
 import ChatDetailPicture from "./ChatDetailPicture";
 import ChatDetailExtraInformation from "./ChatDetailExtraInformation";

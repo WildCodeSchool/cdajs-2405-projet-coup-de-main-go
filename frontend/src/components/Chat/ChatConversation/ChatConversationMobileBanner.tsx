@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { formatFullName } from "../utils/formatName";
+import { formatFullName } from "../../../utils/formatName";
 
 type ChatConversationMobileBannerProps = {
   otherUser: { picture: string; firstName: string; lastName: string };

@@ -3,9 +3,9 @@ import { Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import ChatListHeader from "./ChatListHeader";
 import ChatListContainer from "./ChatListContainer";
-import { GET_USER_CHATS } from "../graphql/chatQueries";
-import { MARK_MESSAGES_AS_READ_FOR_USER } from "../graphql/messageMutations";
-import type { Chat } from "../types";
+import { GET_USER_CHATS } from "../../../graphql/chatQueries";
+import { MARK_MESSAGES_AS_READ_FOR_USER } from "../../../graphql/messageMutations";
+import type { Chat } from "../../../types";
 
 type ChatListProps = {
   chats: Chat[];

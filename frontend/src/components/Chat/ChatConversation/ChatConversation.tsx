@@ -2,17 +2,17 @@ import { Paper } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@apollo/client";
-import { GET_USER_CHATS } from "../graphql/chatQueries";
-import { SEND_MESSAGE } from "../graphql/messageMutations";
-import { UPDATE_CHAT_HELP_PROPOSAL } from "../graphql/chatMutations";
-import { UPDATE_AD_STATUS } from "../graphql/adMutations";
-import { Chat } from "../types";
-import type { MessageForm, Message, User } from "../types";
-import { Status } from "../types";
+import { GET_USER_CHATS } from "../../../graphql/chatQueries";
+import { SEND_MESSAGE } from "../../../graphql/messageMutations";
+import { UPDATE_CHAT_HELP_PROPOSAL } from "../../../graphql/chatMutations";
+import { UPDATE_AD_STATUS } from "../../../graphql/adMutations";
+import { Chat } from "../../../types";
+import type { MessageForm, Message, User } from "../../../types";
+import { Status } from "../../../types";
 import ChatConversationHeader from "./ChatConversationHeader";
-import { ChatMessageList } from "./ChatMessageList";
-import { ChatActionButton } from "./ChatActionButton";
-import { ChatInput } from "./ChatInput";
+import { ChatMessageList } from "../ChatMessage/ChatMessageList";
+import { ChatActionButton } from "../ChatActionButton";
+import { ChatInput } from "../ChatInput";
 import ChatConversationMobileBanner from "./ChatConversationMobileBanner";
 
 type ChatConversationProps = {

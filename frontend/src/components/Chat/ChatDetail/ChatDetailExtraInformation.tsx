@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { formatDurationToHours } from "../utils/duration";
+import { formatDurationToHours } from "../../../utils/duration";
 
 type ChatDetailExtraInformationProps = {
   ad?: {

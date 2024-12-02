@@ -8,9 +8,9 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import { Chat } from "../types";
+import { Chat } from "../../../types";
 import ChatListLastMessage from "./ChatListLastMessage";
-import { formatFullName } from "../utils/formatName";
+import { formatFullName } from "../../../utils/formatName";
 
 type ChatListItemProps = {
   chat: Chat;

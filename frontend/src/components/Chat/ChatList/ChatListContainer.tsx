@@ -1,6 +1,6 @@
 import { Box, List } from "@mui/material";
 import ChatListItem from "./ChatListItem";
-import { Chat } from "../types";
+import { Chat } from "../../../types";
 
 type ChatListContainerProps = {
   chats: Chat[];

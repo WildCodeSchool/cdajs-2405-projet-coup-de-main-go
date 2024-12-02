@@ -1,6 +1,6 @@
 import { Box, CircularProgress } from "@mui/material";
 import ChatMessage from "./ChatMessage";
-import { Message } from "../types";
+import { Message } from "../../../types";
 
 type ChatMessageListProps = {
   messages: Message[];

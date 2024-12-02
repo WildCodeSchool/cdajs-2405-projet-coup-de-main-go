@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { Help, Menu as MenuIcon } from "@mui/icons-material";
 import Logo from "./Logo";
-import HeaderButton from "./HeaderButton";
+import HeaderButton from "../Header/HeaderButton";
 import { useState } from "react";
 
 export default function Header() {

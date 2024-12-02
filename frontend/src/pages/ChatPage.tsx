@@ -9,12 +9,12 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
-import ChatList from "../components/ChatList";
-import ChatConversation from "../components/ChatConversation";
+import ChatList from "../components/Chat/ChatList/ChatList";
+import ChatConversation from "../components/Chat/ChatConversation/ChatConversation";
 import { useAuth } from "../contexts/AuthContext";
-import ChatDetail from "../components/ChatDetail";
+import ChatDetail from "../components/Chat/ChatDetail/ChatDetail";
 import { GET_USER_CHATS } from "../graphql/chatQueries";
-import GenericModal from "../components/GenericModal";
+import GenericModal from "../components/Modal/GenericModal";
 
 export default function ChatPage() {
   const [selectedChatId, setSelectedChatId] = useState<string | undefined>(
