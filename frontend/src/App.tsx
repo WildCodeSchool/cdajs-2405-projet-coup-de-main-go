@@ -1,13 +1,12 @@
-import "./App.css";
-import SkillList from "./components/SkillList";
+import { Box, Container } from "@mui/material";
+import { Outlet } from "react-router-dom";
 
-function App() {
+export default function App() {
     return (
-        <>
-            <h1>coup-de-main-go</h1>
-            <SkillList />
-        </>
+        <Box>
+            <Container maxWidth="xl">
+                <Outlet />
+            </Container>
+        </Box>
     );
 }
-
-export default App;

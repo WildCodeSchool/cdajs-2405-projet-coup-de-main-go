@@ -1,8 +1,9 @@
 import { Resolver, Mutation, Arg } from "type-graphql";
 import * as argon2 from "argon2";
 
-import { User } from "../entities/User";
 import { dataSource } from "../datasource";
+import { Skill } from "../entities/Skill";
+import { User } from "../entities/User";
 
 @Resolver(User)
 export class UserMutations {
@@ -14,7 +15,8 @@ export class UserMutations {
         @Arg("lastName") lastName: string,
         @Arg("address") address: string,
         @Arg("zipCode") zipCode: string,
-        @Arg("city") city: string
+        @Arg("city") city: string,
+        @Arg("skillsId", () => [String]) skillsId: string[]
     ): Promise<User> {
         const isEmailUsed: User | null = await dataSource.manager.findOne(
             User,
@@ -30,6 +32,17 @@ export class UserMutations {
         // argon2
         const passwordHashed: string = await argon2.hash(password);
 
+        // Charger les skills en fonction de leur id
+        const skills = (
+            await Promise.all(
+                skillsId.map(async (skillId) => {
+                    return await dataSource.manager.findOne(Skill, {
+                        where: { id: skillId },
+                    });
+                })
+            )
+        ).filter((skill): skill is Skill => skill !== null); // Filtrer les null
+
         let user: User;
         try {
             user = dataSource.manager.create(User, {
@@ -40,6 +53,7 @@ export class UserMutations {
                 address,
                 zipCode,
                 city,
+                skills,
             });
 
             await dataSource.manager.save(user);
