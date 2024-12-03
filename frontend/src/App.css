@@ -9,6 +9,7 @@
   --badge-hover: #e6a82c;
   --text-primary: #333333;
   --text-secondary: #666666;
+  --text-tertiary: #959393;
   --white: #ffffff;
   --background: #edeae4;
   --background-darker: #e8eae3;
@@ -17,4 +18,7 @@
 body {
   background-color: var(--background);
   color: var(--text-primary);
+  box-sizing: border-box;
+  padding: 0px;
+  margin: 0px;
 }

@@ -3,6 +3,7 @@ import { Status } from "./generated/graphql-types";
 export type AdCardType = {
   id: string;
   title: string;
+  description: string;
   updatedAt: Date;
   mangoAmount: number;
   status: Status;

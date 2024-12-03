@@ -349,7 +349,7 @@ export type CreateAdMutation = { __typename?: 'Mutation', createAd: { __typename
 export type GetAllAdsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllAdsQuery = { __typename?: 'Query', getAllAds: Array<{ __typename?: 'Ad', id: string, title: string, updatedAt: any, mangoAmount: number, status: Status, skill: { __typename?: 'Skill', id: string, name: string, picture: string }, userRequester: { __typename?: 'User', id: string, picture?: string | null } }> };
+export type GetAllAdsQuery = { __typename?: 'Query', getAllAds: Array<{ __typename?: 'Ad', id: string, title: string, description: string, updatedAt: any, mangoAmount: number, status: Status, skill: { __typename?: 'Skill', id: string, name: string, picture: string }, userRequester: { __typename?: 'User', id: string, picture?: string | null } }> };
 
 export type GetAdByIdQueryVariables = Exact<{
   id: Scalars['String']['input'];
@@ -483,6 +483,7 @@ export const GetAllAdsDocument = gql`
   getAllAds {
     id
     title
+    description
     updatedAt
     mangoAmount
     status

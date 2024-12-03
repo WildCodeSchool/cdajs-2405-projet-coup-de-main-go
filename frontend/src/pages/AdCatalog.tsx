@@ -1,6 +1,7 @@
 import { useGetAllAdsQuery } from "../generated/graphql-types.ts";
 import type { AdCardType } from "../types.ts";
 import AdCard from "../components/AdCatalog/AdCard.tsx";
+import { Stack } from "@mui/material";
 
 export default function AdCatalog() {
   const {
@@ -17,11 +18,21 @@ export default function AdCatalog() {
   return (
     <>
       <h1>Catalogue des annonces</h1>
-      <ul>
+      <Stack
+        spacing="50px"
+        direction="row"
+        useFlexGap
+        sx={{
+          flexWrap: "wrap",
+          justifyContent: "center",
+          maxWidth: "1400px",
+          margin: "0 auto",
+        }}
+      >
         {adCards.map((ad: AdCardType) => (
           <AdCard key={ad.id} ad={ad} />
         ))}
-      </ul>
+      </Stack>
     </>
   );
 }

@@ -5,6 +5,7 @@ export const GET_ALL_ADS_QUERY = gql`
     getAllAds {
       id
       title
+      description
       updatedAt
       mangoAmount
       status
