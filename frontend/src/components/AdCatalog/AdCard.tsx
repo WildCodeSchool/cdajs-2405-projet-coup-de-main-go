@@ -57,7 +57,13 @@ export default function AdCard({ ad }: AdCardProps) {
             {ad.skill.name}
           </Typography>
         </Stack>
-        <Stack sx={{ alignSelf: "flex-start" }}>
+        <Stack
+          sx={{
+            alignSelf: "flex-start",
+            justifySelf: "flex-end",
+            paddingLeft: "8px",
+          }}
+        >
           <Typography sx={{ color: "var(--text-tertiary)", fontSize: "12px" }}>
             {timeAgo}
           </Typography>
@@ -74,7 +80,16 @@ export default function AdCard({ ad }: AdCardProps) {
 
       {/* Content */}
       <CardContent sx={{ height: "80px", padding: "25px" }}>
-        <Typography>{ad.title}</Typography>
+        <Typography
+          sx={{
+            display: "-webkit-box",
+            WebkitLineClamp: 4,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
+          {ad.description}
+        </Typography>
       </CardContent>
 
       {/* Footer */}
