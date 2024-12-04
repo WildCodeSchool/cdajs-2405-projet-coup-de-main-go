@@ -27,10 +27,11 @@ export interface RegisterFormData {
 }
 
 interface RegisterProps {
+    setJustRegistered: (justRegistered: Boolean) => void;
     goToLogin: () => void;
 }
 
-function Register({ goToLogin }: RegisterProps) {
+function Register({ setJustRegistered, goToLogin }: RegisterProps) {
     // Récupération des méthodes de RegisterFormData
     const { handleSubmit, register } = useForm<RegisterFormData>();
     // Trois étapes pour s'inscrire
@@ -42,6 +43,7 @@ function Register({ goToLogin }: RegisterProps) {
         { loading: registerLoading, error: registerError },
     ] = useRegisterUserMutation({
         onCompleted: () => {
+            setJustRegistered(true);
             goToLogin();
         },
     });

@@ -12,6 +12,7 @@ interface AuthModalProps {
 function AuthModal({ closeModal }: AuthModalProps) {
     const [alreadyHasAnAccount, setAlreadyHasAnAccount] =
         useState<Boolean>(false);
+    const [justRegistered, setJustRegistered] = useState<Boolean>(false);
 
     return (
         <div id="auth">
@@ -25,9 +26,16 @@ function AuthModal({ closeModal }: AuthModalProps) {
             <div id="modal-content">
                 <img src="/images/auth-modal-img.png" />
                 {alreadyHasAnAccount ? (
-                    <Login goToRegister={() => setAlreadyHasAnAccount(false)} />
+                    <Login
+                        justRegistered={justRegistered}
+                        setJustRegistered={setJustRegistered}
+                        goToRegister={() => setAlreadyHasAnAccount(false)}
+                    />
                 ) : (
-                    <Register goToLogin={() => setAlreadyHasAnAccount(true)} />
+                    <Register
+                        setJustRegistered={setJustRegistered}
+                        goToLogin={() => setAlreadyHasAnAccount(true)}
+                    />
                 )}
             </div>
         </div>

@@ -14,10 +14,16 @@ export interface LoginFormData {
 }
 
 interface LoginProps {
+    justRegistered: Boolean;
+    setJustRegistered: (justRegistered: Boolean) => void;
     goToRegister: () => void;
 }
 
-function Login({ goToRegister }: LoginProps) {
+function Login({
+    justRegistered,
+    setJustRegistered,
+    goToRegister,
+}: LoginProps) {
     const { login } = useAuth();
 
     const [sendLoginQuery, { loading, error }] = useLoginUserLazyQuery({
@@ -30,6 +36,7 @@ function Login({ goToRegister }: LoginProps) {
     const { handleSubmit, register } = useForm<LoginFormData>();
 
     const onLoginFormSubmitted = (formData: LoginFormData) => {
+        setJustRegistered(false);
         sendLoginQuery({
             variables: formData,
         });
@@ -62,6 +69,9 @@ function Login({ goToRegister }: LoginProps) {
             </button>
             {error && <Alert severity="error">{error.message}</Alert>}
             {loading && <CircularProgress />}
+            {justRegistered && (
+                <Alert severity="info">Inscription réussi !</Alert>
+            )}
         </form>
     );
 }
