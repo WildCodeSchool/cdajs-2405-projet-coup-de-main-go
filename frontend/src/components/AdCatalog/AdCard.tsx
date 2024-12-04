@@ -61,7 +61,9 @@ export default function AdCard({ ad }: AdCardProps) {
           sx={{
             alignSelf: "flex-start",
             justifySelf: "flex-end",
-            paddingLeft: "8px",
+            marginLeft: "8px",
+            maxWidth: "70px",
+            textAlign: "right",
           }}
         >
           <Typography sx={{ color: "var(--text-tertiary)", fontSize: "12px" }}>
