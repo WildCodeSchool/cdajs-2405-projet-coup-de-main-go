@@ -28,9 +28,9 @@ export default function AdCard({ ad }: AdCardProps) {
     <Card
       key={ad.id}
       sx={{
-        borderRadius: "20px",
-        height: isMobile ? "324px" : "360px",
-        width: "288px",
+        borderRadius: "1.25rem",
+        height: isMobile ? "20.5rem" : "22.5rem",
+        width: "18rem",
       }}
     >
       {/* Header */}
@@ -39,19 +39,20 @@ export default function AdCard({ ad }: AdCardProps) {
         sx={{
           justifyContent: "space-between",
           alignItems: "center",
-          padding: isMobile ? "10px 20px" : "20px",
+          padding: isMobile ? "0.6rem 1.25rem" : "1.25rem",
         }}
       >
         <Stack direction="row" sx={{ alignItems: "center" }}>
           <Avatar
             src="/images/auth-modal-img.png"
-            sx={{ width: "25px", height: "25px" }}
+            sx={{ width: "1.5rem", height: "1.5rem" }}
           />
           <Typography
+            variant="h5"
+            component="h2"
             sx={{
               fontWeight: "bold",
-              fontSize: isMobile ? "16px" : "26px",
-              marginLeft: "5px",
+              marginLeft: "0.03rem",
             }}
           >
             {ad.skill.name}
@@ -61,14 +62,12 @@ export default function AdCard({ ad }: AdCardProps) {
           sx={{
             alignSelf: "flex-start",
             justifySelf: "flex-end",
-            marginLeft: "8px",
-            maxWidth: "70px",
+            marginLeft: "0.5rem",
+            maxWidth: "5rem",
             textAlign: "right",
           }}
         >
-          <Typography sx={{ color: "var(--text-tertiary)", fontSize: "12px" }}>
-            {timeAgo}
-          </Typography>
+          <Typography variant="message">{timeAgo}</Typography>
         </Stack>
       </Stack>
 
@@ -81,11 +80,11 @@ export default function AdCard({ ad }: AdCardProps) {
       />
 
       {/* Content */}
-      <CardContent sx={{ height: "80px", padding: "25px" }}>
+      <CardContent sx={{ height: "4.5rem", padding: "1.5rem" }}>
         <Typography
           sx={{
             display: "-webkit-box",
-            WebkitLineClamp: 4,
+            WebkitLineClamp: 3,
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
           }}
@@ -99,30 +98,24 @@ export default function AdCard({ ad }: AdCardProps) {
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        sx={{ padding: "12px 25px" }}
+        sx={{ padding: "0.75rem 1.5rem" }}
       >
-        <Stack direction="row">
-          <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>
-            {ad.mangoAmount}
-          </Typography>
+        <Stack direction="row" alignItems="center" spacing={0.5}>
+          <Typography sx={{ fontWeight: "bold" }}>{ad.mangoAmount}</Typography>
           <img
             src="/images/Mango.png"
             alt="mango"
-            style={{ width: "20px", height: "20px", marginRight: "8px" }}
+            style={{ width: "1.25rem", height: "1.25rem" }}
           />
         </Stack>
         <Button
           component={Link}
+          color={"secondary"}
           to={`/ad/${ad.id}`}
           sx={{
-            backgroundColor: "var(--tertiary)",
-            color: "var(--white)",
-            textTransform: "none",
             textAlign: "center",
-            lineHeight: "0.7rem",
-            padding: "0.5rem 1rem",
-            fontSize: "0.7rem",
-            fontWeight: "bold",
+            lineHeight: "1rem",
+            padding: "0.5rem 1.25rem",
           }}
         >
           Plus

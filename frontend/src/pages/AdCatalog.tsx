@@ -19,13 +19,13 @@ export default function AdCatalog() {
     <>
       <h1>Catalogue des annonces</h1>
       <Stack
-        spacing="50px"
+        spacing={6}
         direction="row"
         useFlexGap
         sx={{
           flexWrap: "wrap",
           justifyContent: "center",
-          maxWidth: "1400px",
+          maxWidth: "87rem",
           margin: "0 auto",
         }}
       >
