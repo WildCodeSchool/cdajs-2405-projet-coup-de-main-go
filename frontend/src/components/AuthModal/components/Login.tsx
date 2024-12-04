@@ -70,7 +70,7 @@ function Login({
             {error && <Alert severity="error">{error.message}</Alert>}
             {loading && <CircularProgress />}
             {justRegistered && (
-                <Alert severity="info">Inscription réussi !</Alert>
+                <Alert severity="success">Inscription réussi !</Alert>
             )}
         </form>
     );
