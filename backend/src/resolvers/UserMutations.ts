@@ -1,9 +1,11 @@
-import { Resolver, Mutation, Arg } from "type-graphql";
 import * as argon2 from "argon2";
+import { validateOrReject } from "class-validator";
+import { Resolver, Mutation, Arg } from "type-graphql";
 
 import { dataSource } from "../datasource";
 import { Skill } from "../entities/Skill";
 import { User } from "../entities/User";
+import passwordVerification from "../utils/passwordVerification";
 
 @Resolver(User)
 export class UserMutations {
@@ -29,6 +31,8 @@ export class UserMutations {
             throw new Error("L'adresse mail est déjà utilisée");
         }
 
+        passwordVerification(password);
+
         // argon2
         const passwordHashed: string = await argon2.hash(password);
 
@@ -45,6 +49,7 @@ export class UserMutations {
 
         let user: User;
         try {
+            // Créer l'utilisateur
             user = dataSource.manager.create(User, {
                 email,
                 password: passwordHashed,
@@ -56,6 +61,14 @@ export class UserMutations {
                 skills,
             });
 
+            // Valider l'entité avant de la sauvegarder
+            await validateOrReject(user).catch((errors) => {
+                // Si la validation échoue, afficher les erreurs
+                console.log("Erreurs de validation:", errors);
+                throw new Error("Validation échouée");
+            });
+
+            // Sauvegarder l'utilisateur dans la base de données
             await dataSource.manager.save(user);
         } catch (error) {
             console.error(error);
@@ -99,10 +112,20 @@ export class UserMutations {
             throw new Error("L'utilisateur n'existe pas");
         }
 
+        passwordVerification(password);
+
         // argon2
         user.password = await argon2.hash(password);
 
         try {
+            // Valider l'entité avant de la sauvegarder
+            await validateOrReject(user).catch((errors) => {
+                // Si la validation échoue, afficher les erreurs
+                console.log("Erreurs de validation:", errors);
+                throw new Error("Validation échouée");
+            });
+
+            // Sauvegarder l'utilisateur dans la base de données
             await dataSource.manager.save(user);
         } catch (error: unknown) {
             console.error(error);
@@ -124,7 +147,8 @@ export class UserMutations {
         @Arg("biography", { nullable: true }) biography?: string,
         @Arg("gender", { nullable: true }) gender?: string,
         @Arg("dateOfBirth", { nullable: true }) dateOfBirth?: Date,
-        @Arg("picture", { nullable: true }) picture?: string
+        @Arg("picture", { nullable: true }) picture?: string,
+        @Arg("skillsId", () => [String], { nullable: true }) skillsId?: string[]
     ): Promise<User> {
         const user: User | null = await dataSource.manager.findOne(User, {
             where: { id },
@@ -151,12 +175,34 @@ export class UserMutations {
         if (address) user.address = address;
         if (zipCode) user.zipCode = zipCode;
         if (city) user.city = city;
+        if (skillsId) {
+            // Charger les skills en fonction de leur id
+            const skills = (
+                await Promise.all(
+                    skillsId.map(async (skillId) => {
+                        return await dataSource.manager.findOne(Skill, {
+                            where: { id: skillId },
+                        });
+                    })
+                )
+            ).filter((skill): skill is Skill => skill !== null); // Filtrer les null
+
+            user.skills = skills;
+        }
         if (biography) user.biography = biography;
         if (gender) user.gender = gender;
         if (dateOfBirth) user.dateOfBirth = dateOfBirth;
         if (picture) user.picture = picture;
 
         try {
+            // Valider l'entité avant de la sauvegarder
+            await validateOrReject(user).catch((errors) => {
+                // Si la validation échoue, afficher les erreurs
+                console.log("Erreurs de validation:", errors);
+                throw new Error("Validation échouée");
+            });
+
+            // Sauvegarder l'utilisateur dans la base de données
             await dataSource.manager.save(user);
         } catch (error: unknown) {
             console.error(error);
@@ -184,6 +230,14 @@ export class UserMutations {
         user.mangoBalance += amount;
 
         try {
+            // Valider l'entité avant de la sauvegarder
+            await validateOrReject(user).catch((errors) => {
+                // Si la validation échoue, afficher les erreurs
+                console.log("Erreurs de validation:", errors);
+                throw new Error("Validation échouée");
+            });
+
+            // Sauvegarder l'utilisateur dans la base de données
             await dataSource.manager.save(user);
         } catch (error: unknown) {
             console.error(error);

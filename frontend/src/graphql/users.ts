@@ -48,6 +48,7 @@ export const USER_UPDATE_MUTATION = gql`
         $address: String
         $zipCode: String
         $city: String
+        $skillsId: [String!]
         $biography: String
         $gender: String
         $dateOfBirth: DateTimeISO
@@ -61,6 +62,7 @@ export const USER_UPDATE_MUTATION = gql`
             address: $address
             zipCode: $zipCode
             city: $city
+            skillsId: $skillsId
             biography: $biography
             gender: $gender
             dateOfBirth: $dateOfBirth

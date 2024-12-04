@@ -9,7 +9,7 @@ import {
     JoinTable,
 } from "typeorm";
 import { Field, ObjectType, ID } from "type-graphql";
-import { IsDate, IsEmail, Length, Matches } from "class-validator";
+import { IsEmail, Length, Matches } from "class-validator";
 import { Chat } from "./Chat";
 import { Message } from "./Message";
 import { Ad } from "./Ad";
@@ -43,23 +43,10 @@ export class User extends BaseEntity {
     @IsEmail()
     email: string = "";
 
-    @Length(8, 100, {
-        message: "Le mot de passe doit contenir entre 8 et 100 caractères.",
-    })
-    @Matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        {
-            message:
-                "Le mot de passe doit inclure au moins une majuscule, une minuscule, un chiffre et un caractère spécial.",
-        }
-    )
     @Column({ length: 100 })
     @Field()
     password: string = "";
 
-    @Length(1, 255, {
-        message: "La biographie doit contenir entre 1 et 255 caractères.",
-    })
     @Column({ nullable: true, length: 255 })
     @Field({ nullable: true })
     biography?: string;
@@ -68,7 +55,6 @@ export class User extends BaseEntity {
     @Field({ nullable: true })
     gender?: string;
 
-    @IsDate()
     @Column({ nullable: true })
     @Field({ nullable: true })
     dateOfBirth?: Date;
@@ -102,7 +88,6 @@ export class User extends BaseEntity {
     @Field()
     mangoBalance: number = 6;
 
-    @IsDate()
     @Column()
     @Field()
     createdAt?: Date;

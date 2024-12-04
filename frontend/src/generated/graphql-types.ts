@@ -187,6 +187,7 @@ export type MutationUpdateUserArgs = {
   id: Scalars['String']['input'];
   lastName?: InputMaybe<Scalars['String']['input']>;
   picture?: InputMaybe<Scalars['String']['input']>;
+  skillsId?: InputMaybe<Array<Scalars['String']['input']>>;
   zipCode?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -387,6 +388,7 @@ export type UpdateUserMutationVariables = Exact<{
   address?: InputMaybe<Scalars['String']['input']>;
   zipCode?: InputMaybe<Scalars['String']['input']>;
   city?: InputMaybe<Scalars['String']['input']>;
+  skillsId?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
   biography?: InputMaybe<Scalars['String']['input']>;
   gender?: InputMaybe<Scalars['String']['input']>;
   dateOfBirth?: InputMaybe<Scalars['DateTimeISO']['input']>;
@@ -596,7 +598,7 @@ export type ChangeUserPasswordMutationHookResult = ReturnType<typeof useChangeUs
 export type ChangeUserPasswordMutationResult = Apollo.MutationResult<ChangeUserPasswordMutation>;
 export type ChangeUserPasswordMutationOptions = Apollo.BaseMutationOptions<ChangeUserPasswordMutation, ChangeUserPasswordMutationVariables>;
 export const UpdateUserDocument = gql`
-    mutation UpdateUser($id: String!, $email: String, $firstName: String, $lastName: String, $address: String, $zipCode: String, $city: String, $biography: String, $gender: String, $dateOfBirth: DateTimeISO, $picture: String) {
+    mutation UpdateUser($id: String!, $email: String, $firstName: String, $lastName: String, $address: String, $zipCode: String, $city: String, $skillsId: [String!], $biography: String, $gender: String, $dateOfBirth: DateTimeISO, $picture: String) {
   updateUser(
     id: $id
     email: $email
@@ -605,6 +607,7 @@ export const UpdateUserDocument = gql`
     address: $address
     zipCode: $zipCode
     city: $city
+    skillsId: $skillsId
     biography: $biography
     gender: $gender
     dateOfBirth: $dateOfBirth
@@ -639,6 +642,7 @@ export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, U
  *      address: // value for 'address'
  *      zipCode: // value for 'zipCode'
  *      city: // value for 'city'
+ *      skillsId: // value for 'skillsId'
  *      biography: // value for 'biography'
  *      gender: // value for 'gender'
  *      dateOfBirth: // value for 'dateOfBirth'
