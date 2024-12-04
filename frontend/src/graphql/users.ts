@@ -126,3 +126,17 @@ export const GET_MANGO_BALANCE_QUERY = gql`
         getMangoBalanceByUserId(id: $id)
     }
 `;
+
+export const CREDENTIALS_VERIFICATION = gql`
+    query credentialsVerification(
+        $email: String!
+        $password: String!
+        $passwordConfirmation: String!
+    ) {
+        credentialsVerification(
+            email: $email
+            password: $password
+            passwordConfirmation: $passwordConfirmation
+        )
+    }
+`;

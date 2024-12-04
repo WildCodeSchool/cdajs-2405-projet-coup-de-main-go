@@ -52,11 +52,7 @@ function Step3({ setStep, register }: Step2Props) {
                 >
                     Annuler
                 </button>
-                <button
-                    type="button"
-                    onClick={() => setStep(3)}
-                    className="clickable"
-                >
+                <button type="submit" className="clickable">
                     Suivant
                 </button>
             </div>

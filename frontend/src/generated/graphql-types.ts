@@ -192,6 +192,7 @@ export type MutationUpdateUserArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  credentialsVerification: Scalars['Boolean']['output'];
   getAdById: Ad;
   getAdsByUser: Array<Ad>;
   getAllAds: Array<Ad>;
@@ -204,6 +205,13 @@ export type Query = {
   getTransactionsHistoryByUser?: Maybe<Array<Transaction>>;
   getUserByEmail: User;
   login: LoginResponse;
+};
+
+
+export type QueryCredentialsVerificationArgs = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  passwordConfirmation: Scalars['String']['input'];
 };
 
 
@@ -422,6 +430,15 @@ export type GetMangoBalanceByUserIdQueryVariables = Exact<{
 
 
 export type GetMangoBalanceByUserIdQuery = { __typename?: 'Query', getMangoBalanceByUserId: number };
+
+export type CredentialsVerificationQueryVariables = Exact<{
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  passwordConfirmation: Scalars['String']['input'];
+}>;
+
+
+export type CredentialsVerificationQuery = { __typename?: 'Query', credentialsVerification: boolean };
 
 
 export const GetAllSkillsDocument = gql`
@@ -843,3 +860,47 @@ export type GetMangoBalanceByUserIdQueryHookResult = ReturnType<typeof useGetMan
 export type GetMangoBalanceByUserIdLazyQueryHookResult = ReturnType<typeof useGetMangoBalanceByUserIdLazyQuery>;
 export type GetMangoBalanceByUserIdSuspenseQueryHookResult = ReturnType<typeof useGetMangoBalanceByUserIdSuspenseQuery>;
 export type GetMangoBalanceByUserIdQueryResult = Apollo.QueryResult<GetMangoBalanceByUserIdQuery, GetMangoBalanceByUserIdQueryVariables>;
+export const CredentialsVerificationDocument = gql`
+    query credentialsVerification($email: String!, $password: String!, $passwordConfirmation: String!) {
+  credentialsVerification(
+    email: $email
+    password: $password
+    passwordConfirmation: $passwordConfirmation
+  )
+}
+    `;
+
+/**
+ * __useCredentialsVerificationQuery__
+ *
+ * To run a query within a React component, call `useCredentialsVerificationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCredentialsVerificationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCredentialsVerificationQuery({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *      passwordConfirmation: // value for 'passwordConfirmation'
+ *   },
+ * });
+ */
+export function useCredentialsVerificationQuery(baseOptions: Apollo.QueryHookOptions<CredentialsVerificationQuery, CredentialsVerificationQueryVariables> & ({ variables: CredentialsVerificationQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CredentialsVerificationQuery, CredentialsVerificationQueryVariables>(CredentialsVerificationDocument, options);
+      }
+export function useCredentialsVerificationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CredentialsVerificationQuery, CredentialsVerificationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CredentialsVerificationQuery, CredentialsVerificationQueryVariables>(CredentialsVerificationDocument, options);
+        }
+export function useCredentialsVerificationSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CredentialsVerificationQuery, CredentialsVerificationQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CredentialsVerificationQuery, CredentialsVerificationQueryVariables>(CredentialsVerificationDocument, options);
+        }
+export type CredentialsVerificationQueryHookResult = ReturnType<typeof useCredentialsVerificationQuery>;
+export type CredentialsVerificationLazyQueryHookResult = ReturnType<typeof useCredentialsVerificationLazyQuery>;
+export type CredentialsVerificationSuspenseQueryHookResult = ReturnType<typeof useCredentialsVerificationSuspenseQuery>;
+export type CredentialsVerificationQueryResult = Apollo.QueryResult<CredentialsVerificationQuery, CredentialsVerificationQueryVariables>;

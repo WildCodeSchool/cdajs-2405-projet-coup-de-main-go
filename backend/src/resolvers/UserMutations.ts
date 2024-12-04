@@ -26,7 +26,7 @@ export class UserMutations {
         );
 
         if (isEmailUsed) {
-            throw new Error("email is already in use");
+            throw new Error("L'adresse mail est déjà utilisée");
         }
 
         // argon2
@@ -72,7 +72,7 @@ export class UserMutations {
         });
 
         if (!user) {
-            throw new Error("user not found");
+            throw new Error("L'utilisateur n'existe pas");
         }
 
         try {
@@ -96,7 +96,7 @@ export class UserMutations {
         });
 
         if (!user) {
-            throw new Error("user not found");
+            throw new Error("L'utilisateur n'existe pas");
         }
 
         // argon2
@@ -131,7 +131,7 @@ export class UserMutations {
         });
 
         if (!user) {
-            throw new Error("user not found");
+            throw new Error("L'utilisateur n'existe pas");
         }
 
         if (email) {
@@ -142,7 +142,7 @@ export class UserMutations {
                 }
             );
             if (isEmailUsed) {
-                throw new Error("email is already in use");
+                throw new Error("L'adresse mail est déjà utilisée");
             }
             user.email = email;
         }
@@ -178,7 +178,7 @@ export class UserMutations {
         });
 
         if (!user) {
-            throw new Error("user not found");
+            throw new Error("L'utilisateur n'existe pas");
         }
 
         user.mangoBalance += amount;

@@ -1,4 +1,4 @@
-import { ApolloError } from "@apollo/client";
+import { Alert, CircularProgress } from "@mui/material";
 import { useForm } from "react-hook-form";
 
 import {
@@ -20,13 +20,10 @@ interface LoginProps {
 function Login({ goToRegister }: LoginProps) {
     const { login } = useAuth();
 
-    const [sendLoginQuery] = useLoginUserLazyQuery({
+    const [sendLoginQuery, { loading, error }] = useLoginUserLazyQuery({
         onCompleted: (data: LoginUserQuery) => {
             const { token, userId } = data.login;
             login(token, userId);
-        },
-        onError: (error: ApolloError) => {
-            console.error("login failed", error);
         },
     });
 
@@ -63,6 +60,8 @@ function Login({ goToRegister }: LoginProps) {
             <button type="submit" className="clickable">
                 Se connecter
             </button>
+            {error && <Alert severity="error">{error.message}</Alert>}
+            {loading && <CircularProgress />}
         </form>
     );
 }

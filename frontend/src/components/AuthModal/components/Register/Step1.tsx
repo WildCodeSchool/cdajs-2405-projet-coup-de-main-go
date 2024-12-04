@@ -4,11 +4,10 @@ import { RegisterFormData } from "../Register";
 
 interface Step1Props {
     goToLogin: () => void;
-    setStep: (step: number) => void;
     register: UseFormRegister<RegisterFormData>;
 }
 
-function Step1({ goToLogin, setStep, register }: Step1Props) {
+function Step1({ goToLogin, register }: Step1Props) {
     return (
         <>
             <strong id="auth-title">S’INSCRIRE</strong>
@@ -36,11 +35,7 @@ function Step1({ goToLogin, setStep, register }: Step1Props) {
                     Me connecter
                 </strong>
             </p>
-            <button
-                type="button"
-                onClick={() => setStep(2)}
-                className="clickable"
-            >
+            <button type="submit" className="clickable">
                 Continuer
             </button>
         </>

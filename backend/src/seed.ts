@@ -17,21 +17,41 @@ async function seed() {
 
         console.log("Création des compétences...");
         const skill1 = dataSource.manager.create(Skill, {
-            name: "Jardinage",
-            picture: "garden.png",
-        });
-        const skill2 = dataSource.manager.create(Skill, {
             name: "Bricolage",
             picture: "diy.png",
         });
+        const skill2 = dataSource.manager.create(Skill, {
+            name: "Jardinage",
+            picture: "garden.png",
+        });
         const skill3 = dataSource.manager.create(Skill, {
-            name: "Cuisine",
-            picture: "cooking.png",
+            name: "Apprentissage",
+            picture: "learning.png",
+        });
+        const skill4 = dataSource.manager.create(Skill, {
+            name: "Déplacements",
+            picture: "shift.png",
+        });
+        const skill5 = dataSource.manager.create(Skill, {
+            name: "Informatique",
+            picture: "computer.png",
+        });
+        const skill6 = dataSource.manager.create(Skill, {
+            name: "Animaux",
+            picture: "animals.png",
+        });
+        const skill7 = dataSource.manager.create(Skill, {
+            name: "Sport",
+            picture: "sport.png",
         });
 
         await skill1.save();
         await skill2.save();
         await skill3.save();
+        await skill4.save();
+        await skill5.save();
+        await skill6.save();
+        await skill7.save();
         console.log("Compétences créées avec succès.");
 
         console.log("Création des utilisateurs...");

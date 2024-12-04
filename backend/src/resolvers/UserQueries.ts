@@ -39,7 +39,7 @@ export class UserQueries {
         });
 
         if (!user) {
-            throw new Error("incorrect identifiers");
+            throw new Error("Identifiants incorrects");
         }
 
         // argon2
@@ -49,7 +49,7 @@ export class UserQueries {
         );
 
         if (!isCorrectPassword) {
-            throw new Error("incorrect identifiers");
+            throw new Error("Identifiants incorrects");
         }
 
         // jwt
@@ -76,7 +76,7 @@ export class UserQueries {
         });
 
         if (!user) {
-            throw new Error("user not found");
+            throw new Error("L'utilisateur n'existe pas");
         }
 
         return user;
@@ -90,9 +90,32 @@ export class UserQueries {
         });
 
         if (!user) {
-            throw new Error("user not found");
+            throw new Error("L'utilisateur n'existe pas");
         }
 
         return user.mangoBalance;
+    }
+
+    @Query(() => Boolean)
+    async credentialsVerification(
+        @Arg("email") email: string,
+        @Arg("password") password: string,
+        @Arg("passwordConfirmation") passwordConfirmation: string
+    ): Promise<Boolean> {
+        const user: User | null = await dataSource.manager.findOne(User, {
+            where: { email },
+        });
+
+        if (user) {
+            throw new Error("L'adresse mail est déjà utilisée");
+        }
+
+        if (password !== passwordConfirmation) {
+            throw new Error("Les mots de passe doivent être identiques");
+        }
+
+        // TO DO : Vérifier la robustesse du mot de passe ?
+
+        return true;
     }
 }

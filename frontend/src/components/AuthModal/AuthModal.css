@@ -169,7 +169,7 @@
 }
 
 #auth-skills li {
-    width: 40%;
+    width: calc(50% - 30px);
     background-color: var(--white);
     border-radius: 10px;
     padding: 10px;
@@ -183,6 +183,7 @@
 }
 
 #auth-skill {
+    font-size: 14px;
     display: flex;
     align-items: center;
     justify-content: center;

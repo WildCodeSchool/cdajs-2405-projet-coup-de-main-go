@@ -26,7 +26,7 @@ function Step3({ skills, setStep, register }: Step2Props) {
                         >
                             <div id="auth-skill">
                                 <img
-                                    src={skill.picture}
+                                    src={`/images/skills/${skill.picture}`}
                                     alt={skill.name}
                                     width="50"
                                     height="50"
