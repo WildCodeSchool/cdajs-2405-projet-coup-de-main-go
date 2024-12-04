@@ -21,3 +21,15 @@ export type Skill = {
   name: string;
   picture: string;
 };
+
+export type AddressSuggestion = {
+  properties: {
+    label: string;
+    name: string;
+    postcode: string;
+    city: string;
+  };
+  geometry: {
+    coordinates: [number, number];
+  };
+};
