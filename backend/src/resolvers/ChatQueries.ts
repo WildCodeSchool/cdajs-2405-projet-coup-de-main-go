@@ -6,15 +6,15 @@ import { checkUserId } from "../middlewares/userAuthMiddleware";
 
 @Resolver(Chat)
 export class ChatQueries {
-  @Query(() => [Chat], { nullable: true })
-  @UseMiddleware(checkUserId)
-  async getChatsByUserId(
-    @Arg("userId") userId: string
-  ): Promise<Chat[] | null> {
-    // Check if the user exists
-    const user = await dataSource.manager.findOne(User, {
-      where: { id: userId },
-    });
+    @Query(() => [Chat], { nullable: true })
+    @UseMiddleware(checkUserId)
+    async getChatsByUserId(
+        @Arg("userId") userId: string
+    ): Promise<Chat[] | null> {
+        // Check if the user exists
+        const user = await dataSource.manager.findOne(User, {
+            where: { id: userId },
+        });
 
     if (!user) {
       throw new Error("L'utilisateur spécifié n'existe pas.");
