@@ -191,7 +191,7 @@ export class UserMutations {
   @Mutation(() => User)
   async updateProfilePicture(
     @Arg("id") id: string,
-    @Arg("filePath") filePath: string
+    @Arg("picture") picture: string
   ): Promise<User> {
     const user: User | null = await dataSource.manager.findOne(User, {
       where: { id },
@@ -200,15 +200,11 @@ export class UserMutations {
       throw new Error("User not found");
     }
 
-    if(!filePath) {
+    if(!picture) {
       throw new Error("No file path provided");
     }
 
-    const uploadedFileName = await uploadFileToServices(filePath, "user", id);
-
-    if (Array.isArray(uploadedFileName)) {
-      throw new Error("Unexpected array of filenames");
-    }
+    const uploadedFileName = await uploadFileToServices(picture, "user", id);
 
     user.picture = uploadedFileName;
 

@@ -96,15 +96,15 @@ export class Ad extends BaseEntity {
 
   @Column({ nullable: true })
   @Field({ nullable: true })
-  picture1?: string = "";
+  picture1: string = "";
 
   @Column({ nullable: true })
   @Field({ nullable: true })
-  picture2?: string = "";
+  picture2: string = "";
 
   @Column({ nullable: true })
   @Field({ nullable: true })
-  picture3?: string = "";
+  picture3: string = "";
 
   @OneToMany(() => Chat, (chat) => chat.ad)
   @Field((type) => [Chat])

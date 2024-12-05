@@ -52,16 +52,93 @@ export class AdInput {
 
   @Field()
   skillId!: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  picture1?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  picture2?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  picture3?: string;
+}
+
+@InputType()
+export class AdUpdateInput {
+  @Field({ nullable: true })
+  @IsOptional()
+  @Length(1, 50, {
+    message: "Le titre doit contenir entre 1 et 50 caractères.",
+  })
+  title?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @Length(1, 255, {
+    message: "La description doit contenir entre 1 et 255 caractères.",
+  })
+  description?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @Length(1, 255, {
+    message: "L'adresse doit contenir entre 1 et 255 caractères.",
+  })
+  address?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @Length(5, 5, {
+    message: "Le code postal doit contenir 5 caractères.",
+  })
+  zipCode?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @Length(1, 100, {
+    message: "La ville doit contenir entre 1 et 100 caractères.",
+  })
+  city?: string;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  duration?: number;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  mangoAmount?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  userRequesterId?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  skillId?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  picture1?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  picture2?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  picture3?: string;
 }
 
 @Resolver(Ad)
 export class AdMutations {
   // Mutation to create a new Ad
   @Mutation(() => Ad)
-  async createAd(
-    @Arg("adData") adData: AdInput,
-    @Arg("filePaths", () => [String], { nullable: true, defaultValue: [] }) filePaths: string[] = []
-  ): Promise<Ad> {
+  async createAd(@Arg("adData") adData: AdInput): Promise<Ad> {
     // Check if userRequested exists
     const userRequester = await dataSource.manager.findOneBy(User, {
       id: adData.userRequesterId,
@@ -87,19 +164,61 @@ export class AdMutations {
       });
 
       await ad.save();
-      
-      if (filePaths && filePaths.length > 0) {
-        try {
-          const uploadResponse = await uploadFilesToService(filePaths, "ad", (ad.id)?.toString()!);
 
-          ad.picture1 = uploadResponse[0] || "";
-          ad.picture2 = uploadResponse[1] || "";
-          ad.picture3 = uploadResponse[2] || "";
+      if (adData.picture1) {
+        try {
+          const uploadResponse = await uploadFilesToService(
+            adData.picture1,
+            "ad",
+            ad.id?.toString()!,
+            "picture1"
+          );
+          ad.picture1 = uploadResponse;
         } catch (error) {
-          throw new Error(`Échec de l'upload pour les fichiers: ${(error as Error).message || error}`);
+          throw new Error(
+            `Échec de l'upload pour les fichiers: ${
+              (error as Error).message || error
+            }`
+          );
         }
       }
-      
+
+      if (adData.picture2) {
+        try {
+          const uploadResponse = await uploadFilesToService(
+            adData.picture2,
+            "ad",
+            ad.id?.toString()!,
+            "picture2"
+          );
+          ad.picture2 = uploadResponse;
+        } catch (error) {
+          throw new Error(
+            `Échec de l'upload pour les fichiers: ${
+              (error as Error).message || error
+            }`
+          );
+        }
+      }
+
+      if (adData.picture3) {
+        try {
+          const uploadResponse = await uploadFilesToService(
+            adData.picture3,
+            "ad",
+            ad.id?.toString()!,
+            "picture3"
+          );
+          ad.picture3 = uploadResponse;
+        } catch (error) {
+          throw new Error(
+            `Échec de l'upload pour les fichiers: ${
+              (error as Error).message || error
+            }`
+          );
+        }
+      }
+
       await ad.save();
 
       return ad;
@@ -113,7 +232,7 @@ export class AdMutations {
   @Mutation(() => Ad)
   async updateAd(
     @Arg("id") id: string,
-    @Arg("adData") adData: AdInput
+    @Arg("adData", { nullable: true }) adData?: AdUpdateInput
   ): Promise<Ad> {
     // Find the existing Ad
     const ad = await dataSource.manager.findOneBy(Ad, { id });
@@ -121,25 +240,89 @@ export class AdMutations {
       throw new Error("Ad not found");
     }
 
-    // Check if userRequester exists
-    const userRequester = await dataSource.manager.findOneBy(User, {
-      id: adData.userRequesterId,
-    });
-    if (!userRequester) {
-      throw new Error("User not found");
-    }
-
-    // Ckeck if selected skill exists
-    const skill = await dataSource.manager.findOneBy(Skill, {
-      id: adData.skillId,
-    });
-    if (!skill) {
-      throw new Error("Skill not found");
-    }
-
     try {
-      // Update Ad with new data
-      Object.assign(ad, { ...adData, userRequester, skill });
+      if (adData) {
+        if (adData.userRequesterId) {
+          // Check if userRequester exists
+          const userRequester = await dataSource.manager.findOneBy(User, {
+            id: adData.userRequesterId,
+          });
+          if (!userRequester) {
+            throw new Error("User not found");
+          }
+          ad.userRequester = userRequester;
+        }
+
+        if (adData.skillId) {
+          // Ckeck if selected skill exists
+          const skill = await dataSource.manager.findOneBy(Skill, {
+            id: adData.skillId,
+          });
+          if (!skill) {
+            throw new Error("Skill not found");
+          }
+          ad.skill = skill;
+        }
+
+        const { picture1, picture2, picture3, ...rest } = adData;
+
+        if (adData.picture1) {
+          try {
+            const uploadResponse = await uploadFilesToService(
+              adData.picture1,
+              "ad",
+              ad.id?.toString()!,
+              "picture1"
+            );
+            ad.picture1 = uploadResponse || "";
+          } catch (error) {
+            throw new Error(
+              `Échec de l'upload pour les fichiers: ${
+                (error as Error).message || error
+              }`
+            );
+          }
+        }
+
+        if (adData.picture2) {
+          try {
+            const uploadResponse = await uploadFilesToService(
+              adData.picture2,
+              "ad",
+              ad.id?.toString()!,
+              "picture2"
+            );
+            ad.picture2 = uploadResponse;
+          } catch (error) {
+            throw new Error(
+              `Échec de l'upload pour les fichiers: ${
+                (error as Error).message || error
+              }`
+            );
+          }
+        }
+
+        if (adData.picture3) {
+          try {
+            const uploadResponse = await uploadFilesToService(
+              adData.picture3,
+              "ad",
+              ad.id?.toString()!,
+              "picture3"
+            );
+            ad.picture3 = uploadResponse;
+          } catch (error) {
+            throw new Error(
+              `Échec de l'upload pour les fichiers: ${
+                (error as Error).message || error
+              }`
+            );
+          }
+        }
+
+        // Update Ad with new data
+        Object.assign(ad, rest);
+      }
 
       await ad.save();
       return ad;

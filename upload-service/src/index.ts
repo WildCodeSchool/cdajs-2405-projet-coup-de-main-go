@@ -3,6 +3,7 @@ import multer from "multer";
 import { config } from "dotenv";
 import fs from "fs";
 import path from "path";
+import { v4 as uuidv4 } from "uuid";
 
 config();
 
@@ -28,48 +29,38 @@ const ensureDirectoryExists = (dir: string) => {
   }
 };
 
-const userUploadPath = path.join(__dirname, "uploads/users");
-const adUploadPath = path.join(__dirname, "uploads/pictures");
+// Paths for uploads
+const uploadPaths = {
+  user: path.join(__dirname, "uploads/users"),
+  ad: path.join(__dirname, "uploads/ads"),
+};
 
-ensureDirectoryExists(userUploadPath);
-ensureDirectoryExists(adUploadPath);
+Object.values(uploadPaths).forEach(ensureDirectoryExists);
 
-const userStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const userId = req.body.userId;
-    const userFolderPath = path.join(userUploadPath, userId);
-    ensureDirectoryExists(userFolderPath);
-    cb(null, userFolderPath);
-  },
-  filename: (req, file, cb) => {
-    const name = file.originalname.split(".").slice(0, -1).join(".");
-    const extension = MIME_TYPES[file.mimetype] || "jpg";
-    cb(null, `${name}_${Date.now()}.${extension}`);
-  },
-});
+const createStorage = (type: "user" | "ad") =>
+  multer.diskStorage({
+    destination: (req, file, cb) => {
+      const id = type === "user" ? req.body.userId : req.body.adId;
+      const folderPath = path.join(uploadPaths[type], id);
+      ensureDirectoryExists(folderPath);
+      cb(null, folderPath);
+    },
+    filename: (req, file, cb) => {
+      const name = file.originalname.split(".").slice(0, -1).join(".");
+      const extension = MIME_TYPES[file.mimetype] || "jpg";
+      const uniqueId = uuidv4();
+      cb(null, `${name}_${Date.now()}_${uniqueId}.${extension}`);
+    },
+  });
 
-const adStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const adId = req.body.adId;
-    const adFolderPath = path.join(adUploadPath, adId);
-    ensureDirectoryExists(adFolderPath);
-    cb(null, adFolderPath);
-  },
-  filename: (req, file, cb) => {
-    const name = file.originalname.split(".").slice(0, -1).join(".");
-    const extension = MIME_TYPES[file.mimetype] || "jpg";
-    cb(null, `${name}_${Date.now()}.${extension}`);
-  },
-});
+const createUploadRoute = (
+  route: string,
+  type: "user" | "ad",
+  fieldName: string
+) => {
+  const upload = multer({ storage: createStorage(type) });
 
-const uploadUserPicture = multer({ storage: userStorage });
-const uploadAdPictures = multer({ storage: adStorage });
-
-// Route pour uploader une photo de profil (1 fichier)
-app.post(
-  "/upload-user-picture",
-  uploadUserPicture.single("file"),
-  (req: express.Request, res: express.Response): void => {
+  app.post(route, upload.single(fieldName), (req: Request, res: Response) => {
     if (!req.file) {
       res.status(400).send("Aucun fichier uploadé.");
       return;
@@ -78,26 +69,11 @@ app.post(
     const uploadedFileName = (req.file as Express.Multer.File).filename;
 
     res.json({ filename: uploadedFileName });
-  }
-);
+  });
+};
 
-// Route pour uploader des images d'annonces (3 fichiers max)
-app.post(
-  "/upload-ad-picture",
-  uploadAdPictures.array("files", 3),
-  (req: express.Request, res: express.Response): void => {
-    if (!req.files || req.files.length === 0) {
-      res.status(400).send("Aucun fichier uploadé.");
-      return;
-    }
-
-    const uploadedFileNames = (req.files as Express.Multer.File[]).map(
-      (file: Express.Multer.File) => file.filename
-    );
-
-    res.json({ filenames: uploadedFileNames });
-  }
-);
+createUploadRoute("/upload-user-picture", "user", "file");
+createUploadRoute("/upload-ad-picture", "ad", "file");
 
 app.listen(port, () => {
   console.log(`📸 Le serveur d'upload a démarré au port : ${port} !`);
