@@ -13,11 +13,14 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-import { Help, Menu as MenuIcon } from "@mui/icons-material";
+import { Menu as MenuIcon } from "@mui/icons-material";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import Logo from "./Logo";
 import HeaderButton from "../Header/HeaderButton";
 import { useState } from "react";
 import { useAuthModal } from "../../contexts/AuthModalContext";
+import { Link } from "react-router-dom";
 
 interface HeaderProps {
   isAuthenticated: boolean;
@@ -36,23 +39,18 @@ export default function Header({ isAuthenticated }: HeaderProps) {
 
   return (
     <>
-      <AppBar position="static" sx={{ bgcolor: "transparent" }}>
+      <AppBar position="static" sx={{ bgcolor: "transparent", border: 0 }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Logo />
             {isAuthenticated && !isMobile && (
               <>
                 <HeaderButton
-                  variant="contained"
-                  color="var(--tertiary)"
+                  color="secondary"
                   text="Créer une annonce"
                   icon="./mango.png"
                 />
-                <HeaderButton
-                  variant="contained"
-                  color="var(--secondary)"
-                  text="Explorer"
-                />
+                <HeaderButton color="primary" text="Explorer" paddingX={4} />
               </>
             )}
           </Box>
@@ -60,8 +58,17 @@ export default function Header({ isAuthenticated }: HeaderProps) {
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             {isAuthenticated ? (
               <>
+                <IconButton component={Link} to="/chat">
+                  <ChatBubbleOutlineIcon
+                    fontSize="large"
+                    style={{ color: "black" }}
+                  />
+                </IconButton>
                 <IconButton>
-                  <Help />
+                  <HelpOutlineIcon
+                    fontSize="large"
+                    style={{ color: "black" }}
+                  />
                 </IconButton>
                 <IconButton sx={{ position: "relative", pr: 2 }}>
                   <Box
@@ -86,11 +93,7 @@ export default function Header({ isAuthenticated }: HeaderProps) {
                 </IconButton>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <Button
-                    sx={{
-                      bgcolor: "var(--badge)",
-                      color: "white",
-                      "&:hover": { bgcolor: "var(--badge-hover)" },
-                    }}
+                    color="primary"
                     startIcon={<Avatar sx={{ width: 24, height: 24 }} />}
                   >
                     Célia K.

@@ -1,29 +1,26 @@
 import { Box, Button } from "@mui/material";
 
 type HeaderButtonProps = {
-  variant: "contained" | "outlined" | "text";
-  color: string;
+  color: "inherit" | "secondary" | "primary" | "warning" | "error" | "info" | "success";
   text: string;
   icon?: string;
+  paddingX?: number;
   onClick?: () => void;
 };
 
 export default function HeaderButton({
-  variant,
   color,
   text,
   icon,
+  paddingX,
   onClick,
 }: HeaderButtonProps) {
-  const hoverColor = color.replace(")", "-hover)").replace(" ", ""); 
 
   return (
     <Button
-      variant={variant}
+      color={color}
       sx={{
-        bgcolor: color,
-        "&:hover": { bgcolor: hoverColor },
-        mr: 1,
+        paddingX: paddingX,
       }}
       onClick={onClick}
     >
