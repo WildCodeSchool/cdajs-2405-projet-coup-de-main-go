@@ -91,7 +91,13 @@ export default function Header({ isAuthenticated }: HeaderProps) {
                     }}
                   />
                 </IconButton>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Box
+                  sx={{
+                    display: isMobile ? "none" : "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
                   <Button
                     color="primary"
                     startIcon={<Avatar sx={{ width: 24, height: 24 }} />}
@@ -129,6 +135,12 @@ export default function Header({ isAuthenticated }: HeaderProps) {
         <List sx={{ width: 250 }}>
           {isAuthenticated && (
             <>
+              <ListItemButton onClick={handleDrawerToggle}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Avatar sx={{ width: 24, height: 24 }} />
+                  <ListItemText primary="Célia K." />
+                </Box>
+              </ListItemButton>
               <ListItemButton onClick={handleDrawerToggle}>
                 <ListItemText primary="Créer une annonce" />
               </ListItemButton>
