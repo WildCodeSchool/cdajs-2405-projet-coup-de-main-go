@@ -5,6 +5,7 @@ import { User } from "../entities/User";
 import { Skill } from "../entities/Skill";
 import { dataSource } from "../datasource";
 import { Transaction } from "../entities/Transaction";
+import uploadFilesToService from "../services/uploadFilesToService";
 
 @InputType()
 export class AdInput {
@@ -46,18 +47,6 @@ export class AdInput {
   @IsInt()
   mangoAmount!: number;
 
-  @Field({ nullable: true })
-  @IsOptional()
-  picture1?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  picture2?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  picture3?: string;
-
   @Field()
   userRequesterId!: string;
 
@@ -69,7 +58,10 @@ export class AdInput {
 export class AdMutations {
   // Mutation to create a new Ad
   @Mutation(() => Ad)
-  async createAd(@Arg("adData") adData: AdInput): Promise<Ad> {
+  async createAd(
+    @Arg("adData") adData: AdInput,
+    @Arg("filePaths", () => [String], { nullable: true, defaultValue: [] }) filePaths: string[] = []
+  ): Promise<Ad> {
     // Check if userRequested exists
     const userRequester = await dataSource.manager.findOneBy(User, {
       id: adData.userRequesterId,
@@ -95,6 +87,21 @@ export class AdMutations {
       });
 
       await ad.save();
+      
+      if (filePaths && filePaths.length > 0) {
+        try {
+          const uploadResponse = await uploadFilesToService(filePaths, "ad", (ad.id)?.toString()!);
+
+          ad.picture1 = uploadResponse[0] || "";
+          ad.picture2 = uploadResponse[1] || "";
+          ad.picture3 = uploadResponse[2] || "";
+        } catch (error) {
+          throw new Error(`Échec de l'upload pour les fichiers: ${(error as Error).message || error}`);
+        }
+      }
+      
+      await ad.save();
+
       return ad;
     } catch (error) {
       console.error(error);

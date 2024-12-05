@@ -8,6 +8,10 @@ config();
 
 const port: number = parseInt(process.env.EXPRESS_PORT || "", 10);
 
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 interface MIME_TYPES_INTERFACE {
   [key: string]: string;
 }
@@ -32,7 +36,10 @@ ensureDirectoryExists(adUploadPath);
 
 const userStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, userUploadPath);
+    const userId = req.body.userId;
+    const userFolderPath = path.join(userUploadPath, userId);
+    ensureDirectoryExists(userFolderPath);
+    cb(null, userFolderPath);
   },
   filename: (req, file, cb) => {
     const name = file.originalname.split(".").slice(0, -1).join(".");
@@ -43,7 +50,10 @@ const userStorage = multer.diskStorage({
 
 const adStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, adUploadPath);
+    const adId = req.body.adId;
+    const adFolderPath = path.join(adUploadPath, adId);
+    ensureDirectoryExists(adFolderPath);
+    cb(null, adFolderPath);
   },
   filename: (req, file, cb) => {
     const name = file.originalname.split(".").slice(0, -1).join(".");
@@ -55,8 +65,6 @@ const adStorage = multer.diskStorage({
 const uploadUserPicture = multer({ storage: userStorage });
 const uploadAdPictures = multer({ storage: adStorage });
 
-const app = express();
-
 // Route pour uploader une photo de profil (1 fichier)
 app.post(
   "/upload-user-picture",
@@ -66,7 +74,10 @@ app.post(
       res.status(400).send("Aucun fichier uploadé.");
       return;
     }
-    res.send("Photo de profil uploadée avec succès : " + req.file.originalname);
+
+    const uploadedFileName = (req.file as Express.Multer.File).filename;
+
+    res.json({ filename: uploadedFileName });
   }
 );
 
@@ -80,13 +91,11 @@ app.post(
       return;
     }
 
-    const uploadedFiles = (req.files as Express.Multer.File[]).map(
-      (file: Express.Multer.File) => file.originalname
+    const uploadedFileNames = (req.files as Express.Multer.File[]).map(
+      (file: Express.Multer.File) => file.filename
     );
 
-    res.send(
-      "Images d'annonces uploadées avec succès : " + uploadedFiles.join(", ")
-    );
+    res.json({ filenames: uploadedFileNames });
   }
 );
 
