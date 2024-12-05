@@ -12,9 +12,10 @@ export default function AdModalTopRow({ closeModal }: AdModalTopRowProps) {
       sx={{
         position: "relative",
         justifyContent: "center",
+        padding: "1rem",
       }}
     >
-      <Typography variant="h3" component="h2">
+      <Typography variant="h3" component="h2" sx={{ fontWeight: 600 }}>
         Créer une annonce
       </Typography>
       <IconButton

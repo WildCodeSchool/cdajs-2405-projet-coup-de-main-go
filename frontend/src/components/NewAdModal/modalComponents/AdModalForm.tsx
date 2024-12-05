@@ -157,7 +157,7 @@ export default function AdModalForm({ closeModal }: AdModalFormProps) {
 
             {/* Photos */}
             <Typography color="rgba(0, 0, 0, 0.6)" sx={{ textAlign: "center" }}>
-              AJOUTER DES PHOTOS
+              PHOTOS
             </Typography>
             <Stack direction="row" sx={{ justifyContent: "center" }}>
               {/* Affichage des trois conteneurs pour les images */}

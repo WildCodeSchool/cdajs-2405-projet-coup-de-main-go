@@ -23,7 +23,7 @@ export default function AdModalFormDuration() {
             <Slider
               {...field}
               size="small"
-              sx={{ width: "80%", margin: "0 auto" }}
+              sx={{ width: "70%", margin: "0 auto" }}
               valueLabelDisplay="auto"
               step={30}
               min={0}
