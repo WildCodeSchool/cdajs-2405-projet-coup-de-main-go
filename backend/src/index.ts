@@ -70,7 +70,11 @@ async function startApolloServer() {
                 if (!jwtSecret) {
                     throw new Error("Invalid JWT secret");
                 }
-                user = jwt.verify(tokenValue, jwtSecret);
+                try {
+                    user = jwt.verify(tokenValue, jwtSecret) as { id: string };
+                } catch (error) {
+                    console.error("Invalid token:", error);
+                }
             }
 
             return { user };

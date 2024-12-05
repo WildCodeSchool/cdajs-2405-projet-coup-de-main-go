@@ -59,7 +59,7 @@ export class UserQueries {
             throw new Error("invalid JWT secret");
         }
 
-        const token: string = jwt.sign({ email }, jwtSecret, {
+        const token: string = jwt.sign({ email, id: user.id }, jwtSecret, {
             expiresIn: "24h",
         });
 

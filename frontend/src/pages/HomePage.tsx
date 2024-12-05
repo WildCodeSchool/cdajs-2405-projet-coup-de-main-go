@@ -4,9 +4,9 @@ import { Navigate } from "react-router-dom";
 import AuthModal from "../components/AuthModal/AuthModal";
 import { useAuth } from "../contexts/AuthContext";
 
-function Homepage() {
+function HomePage() {
     const { isAuthenticated } = useAuth();
-    const [authModalIsOpen, setAuthModalIsOpen] = useState<Boolean>(false);
+    const [authModalIsOpen, setAuthModalIsOpen] = useState<boolean>(false);
 
     if (isAuthenticated) {
         return <Navigate to="/dashboard" replace />;
@@ -25,4 +25,4 @@ function Homepage() {
     );
 }
 
-export default Homepage;
+export default HomePage;
