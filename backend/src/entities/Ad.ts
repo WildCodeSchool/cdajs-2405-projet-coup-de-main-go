@@ -72,9 +72,11 @@ export class Ad extends BaseEntity {
   city: string = "";
 
   @Column({ type: "double precision", nullable: true })
+  @Field({ nullable: true })
   latitude?: number;
 
   @Column({ type: "double precision", nullable: true })
+  @Field({ nullable: true })
   longitude?: number;
 
   @Column()

@@ -22,6 +22,7 @@ export const GET_ALL_ADS_QUERY = gql`
   }
 `;
 
+// Get detailed information on ad and userRequester for AdDetail page
 export const GET_AD_BY_ID_QUERY = gql`
   query GetAdById($id: String!) {
     getAdById(id: $id) {
@@ -29,6 +30,10 @@ export const GET_AD_BY_ID_QUERY = gql`
       title
       updatedAt
       mangoAmount
+      description
+      duration
+      longitude
+      latitude
       status
       address
       zipCode
@@ -45,6 +50,7 @@ export const GET_AD_BY_ID_QUERY = gql`
         firstName
         lastName
         picture
+        biography
       }
     }
   }

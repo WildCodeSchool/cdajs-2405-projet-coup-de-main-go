@@ -4,7 +4,7 @@ import App from "./App.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard.tsx";
 import HomePage from "./pages/HomePage.tsx";
-import AdDetail from "./pages/AdDetail.tsx";
+import Ad from "./pages/Ad.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -29,7 +29,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/ad/:adId",
-        element: <AdDetail />,
+        element: <Ad />,
       },
     ],
   },

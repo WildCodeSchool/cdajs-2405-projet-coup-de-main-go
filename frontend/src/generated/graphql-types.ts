@@ -27,6 +27,8 @@ export type Ad = {
   description: Scalars['String']['output'];
   duration: Scalars['Float']['output'];
   id: Scalars['ID']['output'];
+  latitude?: Maybe<Scalars['Float']['output']>;
+  longitude?: Maybe<Scalars['Float']['output']>;
   mangoAmount: Scalars['Float']['output'];
   picture1?: Maybe<Scalars['String']['output']>;
   picture2?: Maybe<Scalars['String']['output']>;
@@ -356,7 +358,7 @@ export type GetAdByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetAdByIdQuery = { __typename?: 'Query', getAdById: { __typename?: 'Ad', id: string, title: string, updatedAt: any, mangoAmount: number, status: Status, address: string, zipCode: string, city: string, picture1?: string | null, picture2?: string | null, picture3?: string | null, skill: { __typename?: 'Skill', id: string, name: string }, userRequester: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null } } };
+export type GetAdByIdQuery = { __typename?: 'Query', getAdById: { __typename?: 'Ad', id: string, title: string, updatedAt: any, mangoAmount: number, description: string, duration: number, longitude?: number | null, latitude?: number | null, status: Status, address: string, zipCode: string, city: string, picture1?: string | null, picture2?: string | null, picture3?: string | null, skill: { __typename?: 'Skill', id: string, name: string }, userRequester: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null, biography?: string | null } } };
 
 export type GetAllSkillsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -538,6 +540,10 @@ export const GetAdByIdDocument = gql`
     title
     updatedAt
     mangoAmount
+    description
+    duration
+    longitude
+    latitude
     status
     address
     zipCode
@@ -554,6 +560,7 @@ export const GetAdByIdDocument = gql`
       firstName
       lastName
       picture
+      biography
     }
   }
 }
