@@ -1,18 +1,21 @@
-import { Autocomplete, TextField } from "@mui/material";
-import { AddressSuggestion } from "../../../types";
+import { Controller, useFormContext } from "react-hook-form";
+import { AdInput } from "../../../generated/graphql-types";
 import { useState } from "react";
+import { AddressSuggestion } from "../../../types";
+import { Autocomplete, TextField } from "@mui/material";
 
 interface AdModalFormAddressProps {
-  selectedSuggestion: AddressSuggestion | null;
-  onSuggestionChange: (value: AddressSuggestion | null) => void;
-  error?: string;
+  setSelectedSuggestion: (value: AddressSuggestion | null) => void;
 }
 
 export default function AdModalFormAddress({
-  selectedSuggestion,
-  onSuggestionChange,
-  error,
+  setSelectedSuggestion,
 }: AdModalFormAddressProps) {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<AdInput>();
+
   const [addressSuggestions, setAddressSuggestions] = useState<
     AddressSuggestion[]
   >([]);
@@ -36,25 +39,50 @@ export default function AdModalFormAddress({
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function isAddressSuggestion(value: any): value is AddressSuggestion {
+    return (
+      value &&
+      typeof value === "object" &&
+      "properties" in value &&
+      "label" in value.properties
+    );
+  }
+
   return (
     <>
-      <Autocomplete
-        // {...field}
-        options={addressSuggestions}
-        getOptionLabel={(option: AddressSuggestion) => option.properties.label}
-        value={selectedSuggestion}
-        onInputChange={(_, value) => fetchAddressSuggestions(value)}
-        onChange={(_, value: AddressSuggestion | null) => {
-          onSuggestionChange(value);
+      <Controller
+        name="address"
+        control={control}
+        rules={{
+          required: "Champ obligatoire",
         }}
-        sx={{ backgroundColor: "white" }}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Adresse"
-            variant="standard"
-            error={!!error}
-            helperText={error}
+        render={({ field }) => (
+          <Autocomplete
+            {...field}
+            options={addressSuggestions}
+            getOptionLabel={(option: AddressSuggestion) =>
+              option.properties.label
+            }
+            value={isAddressSuggestion(field.value) ? field.value : null}
+            onInputChange={(_, value) => {
+              fetchAddressSuggestions(value);
+            }}
+            onChange={(_, value: AddressSuggestion | null) => {
+              field.onChange(value);
+              setSelectedSuggestion(value);
+              console.log("selectedSuggestion", value);
+            }}
+            sx={{ backgroundColor: "white" }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Adresse"
+                variant="standard"
+                error={!!errors.address}
+                helperText={errors.address?.message}
+              />
+            )}
           />
         )}
       />
