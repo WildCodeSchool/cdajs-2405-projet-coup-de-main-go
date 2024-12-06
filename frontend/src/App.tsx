@@ -21,7 +21,7 @@ export default function App() {
                 <AuthModal />
             </GenericModal>
             <Container maxWidth="xl" disableGutters>
-                <Outlet />
+                <Outlet context={setAuthModalIsOpen} />
             </Container>
             <Footer />
         </Box>

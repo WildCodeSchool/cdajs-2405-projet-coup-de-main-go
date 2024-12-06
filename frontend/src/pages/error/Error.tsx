@@ -1,15 +1,23 @@
 import { Box, Link, Stack, Typography } from "@mui/material";
 import { useState } from "react";
+import { Navigate } from "react-router-dom";
 
 import AuthModal from "../../components/AuthModal/AuthModal";
 import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
 import GenericModal from "../../components/Modal/GenericModal";
+import { useAuth } from "../../contexts/AuthContext";
 
 import error from "@public/images/undraw_not_found_re_bh2e.svg";
 
 export default function Error() {
+    const { isAuthenticated } = useAuth();
     const [authModalIsOpen, setAuthModalIsOpen] = useState<boolean>(false);
+
+    if (isAuthenticated) {
+        setAuthModalIsOpen(false);
+        return <Navigate to="/dashboard" replace />;
+    }
 
     return (
         <Box>
