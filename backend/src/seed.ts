@@ -17,21 +17,41 @@ async function seed() {
 
         console.log("Création des compétences...");
         const skill1 = dataSource.manager.create(Skill, {
-            name: "Jardinage",
-            picture: "garden.png",
-        });
-        const skill2 = dataSource.manager.create(Skill, {
             name: "Bricolage",
             picture: "diy.png",
         });
+        const skill2 = dataSource.manager.create(Skill, {
+            name: "Jardinage",
+            picture: "garden.png",
+        });
         const skill3 = dataSource.manager.create(Skill, {
-            name: "Cuisine",
-            picture: "cooking.png",
+            name: "Apprentissage",
+            picture: "learning.png",
+        });
+        const skill4 = dataSource.manager.create(Skill, {
+            name: "Déplacements",
+            picture: "shift.png",
+        });
+        const skill5 = dataSource.manager.create(Skill, {
+            name: "Informatique",
+            picture: "computer.png",
+        });
+        const skill6 = dataSource.manager.create(Skill, {
+            name: "Animaux",
+            picture: "animals.png",
+        });
+        const skill7 = dataSource.manager.create(Skill, {
+            name: "Sport",
+            picture: "sport.png",
         });
 
         await skill1.save();
         await skill2.save();
         await skill3.save();
+        await skill4.save();
+        await skill5.save();
+        await skill6.save();
+        await skill7.save();
         console.log("Compétences créées avec succès.");
 
         console.log("Création des utilisateurs...");
@@ -39,7 +59,7 @@ async function seed() {
             firstName: "Jean",
             lastName: "Dupont",
             email: "jean.dupont@example.com",
-            password: "password123",
+            password: "P@assword123",
             biography: "Passionné par l'entraide et les travaux manuels.",
             gender: "Homme",
             dateOfBirth: new Date("1980-05-20"),
@@ -55,7 +75,7 @@ async function seed() {
             firstName: "Marie",
             lastName: "Dubois",
             email: "marie.dubois@example.com",
-            password: "password123",
+            password: "P@assword123",
             biography: "Aime cuisiner et partager ses recettes.",
             gender: "Femme",
             dateOfBirth: new Date("1990-08-15"),
@@ -71,7 +91,7 @@ async function seed() {
             firstName: "Paul",
             lastName: "Martin",
             email: "paul.martin@example.com",
-            password: "password123",
+            password: "P@assword123",
             biography: "Expert en bricolage et jardinage.",
             gender: "Homme",
             dateOfBirth: new Date("1985-10-10"),
