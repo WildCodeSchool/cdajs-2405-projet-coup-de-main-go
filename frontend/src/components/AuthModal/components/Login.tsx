@@ -1,4 +1,12 @@
-import { Alert, CircularProgress } from "@mui/material";
+import {
+    Alert,
+    Box,
+    Button,
+    CircularProgress,
+    Stack,
+    TextField,
+    Typography,
+} from "@mui/material";
 import { useForm } from "react-hook-form";
 
 import {
@@ -44,29 +52,41 @@ function Login({
 
     return (
         <form id="login" onSubmit={handleSubmit(onLoginFormSubmitted)}>
-            <strong id="auth-title">CONNEXION</strong>
-            <input
+            <Typography variant="h2">CONNEXION</Typography>
+            <TextField
                 type="email"
                 placeholder="E-mail"
                 {...register("email", { required: true })}
+                required
             />
-            <input
+            <TextField
                 type="password"
                 placeholder="Mot de passe"
                 {...register("password", { required: true })}
+                required
             />
-            <p>
+            <Typography>
                 Envie de nous rejoindre ?{" "}
-                <strong
-                    className="clickable underline"
+                <Box
+                    component="span"
                     onClick={() => goToRegister()}
+                    sx={{
+                        cursor: "pointer",
+                        fontWeight: "bold",
+                        textDecoration: "underline",
+                    }}
                 >
                     Créer un compte
-                </strong>
-            </p>
-            <button type="submit" className="clickable">
-                Se connecter
-            </button>
+                </Box>
+            </Typography>
+            <Stack
+                direction={"row"}
+                sx={{
+                    justifyContent: "flex-end",
+                }}
+            >
+                <Button type="submit">Se connecter</Button>
+            </Stack>
             {error && <Alert severity="error">{error.message}</Alert>}
             {loading && <CircularProgress />}
             {justRegistered && (

@@ -1,3 +1,11 @@
+import {
+    Box,
+    Button,
+    Checkbox,
+    Stack,
+    Typography,
+    useMediaQuery,
+} from "@mui/material";
 import { UseFormRegister } from "react-hook-form";
 
 import { RegisterFormData } from "../Register";
@@ -10,53 +18,104 @@ interface Step2Props {
 }
 
 function Step3({ skills, setStep, register }: Step2Props) {
+    const isDesktop = useMediaQuery("(min-width:500px)");
+
     return (
         <>
-            <strong id="auth-title">Compétences</strong>
-            <div id="auth-steps">
-                <div id="auth-other-step"></div>
-                <div id="auth-current-step"></div>
-            </div>
-            <ul id="auth-skills">
+            <Typography variant="h2">Compétences</Typography>
+            <Stack direction={"row"} spacing={"20px"}>
+                <Box
+                    sx={{
+                        backgroundColor: "var(--tertiary)",
+                        width: "20px",
+                        height: "10px",
+                        borderRadius: "20px",
+                    }}
+                ></Box>
+                <Box
+                    sx={{
+                        backgroundColor: "var(--tertiary)",
+                        width: "60px",
+                        height: "10px",
+                        borderRadius: "20px",
+                    }}
+                ></Box>
+            </Stack>
+            <Stack
+                direction={"row"}
+                spacing={0}
+                sx={{
+                    backgroundColor: "var(--tertiary)",
+                    borderRadius: "20px",
+                    flexWrap: "wrap",
+                    gap: "20px",
+                    height: "100%",
+                    overflowY: "scroll",
+                    padding: "20px",
+                }}
+                justifyContent={isDesktop ? "space-between" : "center"}
+            >
                 {skills!.map((skill: Skill) => (
-                    <li key={skill.id}>
-                        <label
-                            className="clickable"
-                            htmlFor={`skill-${skill.id}`}
+                    <Stack
+                        key={skill.id}
+                        sx={{
+                            backgroundColor: "var(--white)",
+                            borderRadius: "10px",
+                            height: "fit-content",
+                            padding: "10px",
+                        }}
+                        width={isDesktop ? "42%" : "84%"}
+                    >
+                        <Stack
+                            direction={"row"}
+                            justifyContent={"space-between"}
+                            spacing={0}
                         >
-                            <div id="auth-skill">
-                                <img
+                            <Stack
+                                alignItems={"center"}
+                                direction={"row"}
+                                spacing={"6px"}
+                            >
+                                <Box
+                                    component="img"
                                     src={`/images/skills/${skill.picture}`}
                                     alt={skill.name}
                                     width="50"
                                     height="50"
                                 />
-                                <p>{skill.name}</p>
-                            </div>
-                            <input
-                                type="checkbox"
+                                <Typography fontSize={"12px"}>
+                                    {skill.name}
+                                </Typography>
+                            </Stack>
+                            <Checkbox
                                 value={skill.id}
                                 id={`skill-${skill.id}`}
                                 {...register("skillsId", {
                                     required: false,
                                 })}
+                                sx={{
+                                    padding: 0,
+                                }}
                             />
-                        </label>
-                    </li>
+                        </Stack>
+                    </Stack>
                 ))}
-            </ul>
-            <div id="auth-buttons">
-                <button
+            </Stack>
+            <Stack
+                direction={"row"}
+                justifyContent={"flex-end"}
+                marginRight={"20px"}
+            >
+                <Button
                     type="button"
                     onClick={() => setStep(2)}
-                    className="clickable"
+                    variant="outlined"
+                    sx={{ color: "black" }}
                 >
                     Annuler
-                </button>
-                <button type="submit" className="clickable">
-                    S'inscrire
-                </button>
-            </div>
+                </Button>
+                <Button type="submit">S'inscrire</Button>
+            </Stack>
         </>
     );
 }

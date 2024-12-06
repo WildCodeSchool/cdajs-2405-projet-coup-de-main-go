@@ -33,7 +33,12 @@ interface RegisterProps {
 
 function Register({ setJustRegistered, goToLogin }: RegisterProps) {
     // Récupération des méthodes de RegisterFormData
-    const { handleSubmit, register } = useForm<RegisterFormData>();
+    const {
+        formState: { errors },
+        handleSubmit,
+        register,
+        setValue,
+    } = useForm<RegisterFormData>();
     // Trois étapes pour s'inscrire
     const [step, setStep] = useState<number>(1);
 
@@ -76,10 +81,6 @@ function Register({ setJustRegistered, goToLogin }: RegisterProps) {
         }
 
         if (step === 2) {
-            // TO DO : Vérifier les données ?
-            // Je pense que le formulaire et les compétences peuvent former un "bloc",
-            // pour moi il n'est donc pas utile de vérifier les données.
-            // Elles seront vérifiées au moment de la requête d'inscription.
             setStep(3);
         }
 
@@ -98,7 +99,14 @@ function Register({ setJustRegistered, goToLogin }: RegisterProps) {
     return (
         <form id="register" onSubmit={handleSubmit(onRegisterFormSubmitted)}>
             {step === 1 && <Step1 goToLogin={goToLogin} register={register} />}
-            {step === 2 && <Step2 setStep={setStep} register={register} />}
+            {step === 2 && (
+                <Step2
+                    errors={errors}
+                    register={register}
+                    setStep={setStep}
+                    setValue={setValue}
+                />
+            )}
             {step === 3 && (
                 <Step3 setStep={setStep} skills={skills} register={register} />
             )}
