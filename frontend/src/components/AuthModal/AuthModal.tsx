@@ -1,4 +1,4 @@
-import { Box, Stack, useMediaQuery } from "@mui/material";
+import { Box, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { useState } from "react";
 
 import Login from "./components/Login";
@@ -7,14 +7,15 @@ import Register from "./components/Register";
 import "./AuthModal.css";
 
 function AuthModal() {
-    const isDesktop = useMediaQuery("(min-width:800px)");
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [alreadyHasAnAccount, setAlreadyHasAnAccount] =
         useState<Boolean>(false);
     const [justRegistered, setJustRegistered] = useState<Boolean>(false);
 
     return (
         <Stack direction={"row"} height={"600px"}>
-            {isDesktop && (
+            {!isMobile && (
                 <Box
                     component="img"
                     id="auth-modal-img"

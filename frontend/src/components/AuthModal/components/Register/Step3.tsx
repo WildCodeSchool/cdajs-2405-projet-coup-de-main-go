@@ -5,6 +5,7 @@ import {
     Stack,
     Typography,
     useMediaQuery,
+    useTheme,
 } from "@mui/material";
 import { UseFormRegister } from "react-hook-form";
 
@@ -18,7 +19,8 @@ interface Step2Props {
 }
 
 function Step3({ skills, setStep, register }: Step2Props) {
-    const isDesktop = useMediaQuery("(min-width:500px)");
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
     return (
         <>
@@ -53,7 +55,7 @@ function Step3({ skills, setStep, register }: Step2Props) {
                     overflowY: "scroll",
                     padding: "20px",
                 }}
-                justifyContent={isDesktop ? "space-between" : "center"}
+                justifyContent={!isMobile ? "space-between" : "center"}
             >
                 {skills!.map((skill: Skill) => (
                     <Stack
@@ -64,7 +66,7 @@ function Step3({ skills, setStep, register }: Step2Props) {
                             height: "fit-content",
                             padding: "10px",
                         }}
-                        width={isDesktop ? "42%" : "84%"}
+                        width={!isMobile ? "42%" : "84%"}
                     >
                         <Stack
                             direction={"row"}
