@@ -3,9 +3,8 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "./App.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard.tsx";
-import Home from "./pages/home/Home.tsx";
 import Error from "./pages/error/Error.tsx";
-import Profil from "./pages/profil/Profil.tsx";
+import Home from "./pages/home/Home.tsx";
 
 export const router = createBrowserRouter([
     {
