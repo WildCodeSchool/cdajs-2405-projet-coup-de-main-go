@@ -44,11 +44,11 @@ export default function AdModalForm({ closeModal }: AdModalFormProps) {
   ) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      // Mise à jour de la liste des fichiers
+      // Update file table
       const newFiles = [...files];
       newFiles[index] = selectedFile;
       setFiles(newFiles);
-      // Mise à jour de la liste des URLs des fichiers
+      // Update URLs table
       const fileUrl = URL.createObjectURL(selectedFile);
       const newFileUrls = [...fileUrls];
       newFileUrls[index] = fileUrl;
@@ -57,22 +57,22 @@ export default function AdModalForm({ closeModal }: AdModalFormProps) {
   };
 
   const handleDelete = (index: number) => {
-    // Suppression du fichier
+    // Delete file
     const newFiles = [...files];
     newFiles.splice(index, 1);
     setFiles(newFiles);
-    // Suppression de l'URL du fichier
+    // Delete URL
     URL.revokeObjectURL(fileUrls[index]);
     const newFileUrls = [...fileUrls];
     newFileUrls.splice(index, 1);
     setFileUrls(newFileUrls);
   };
 
-  // Selection de l'adresse
+  // Address selection
   const [selectedSuggestion, setSelectedSuggestion] =
     useState<AddressSuggestion | null>(null);
 
-  // Gestion de la soumission du formulaire
+  // NewAdForm submission
   const onFormSubmitted = async (formData: AdInput) => {
     if (!selectedSuggestion) {
       console.error("Aucune adresse sélectionnée");
@@ -128,16 +128,16 @@ export default function AdModalForm({ closeModal }: AdModalFormProps) {
               },
             }}
           >
-            {/* Titre de l'annonce */}
+            {/* Title */}
             <AdModalFormTitle />
 
-            {/* Description de l'annonce */}
+            {/* Description  */}
             <AdModalFormDescription />
 
-            {/* Adresse de l'annonce */}
+            {/* Adresse autocompletion */}
             <AdModalFormAddress setSelectedSuggestion={setSelectedSuggestion} />
 
-            {/* Compétence requise pour l'annonce */}
+            {/* Skill */}
             <AdModalFormCategory />
           </Stack>
 
@@ -159,15 +159,15 @@ export default function AdModalForm({ closeModal }: AdModalFormProps) {
               },
             }}
           >
-            {/* Durée de l'annonce */}
+            {/* Duration */}
             <AdModalFormDuration />
 
-            {/* Photos */}
+            {/* Pictures */}
             <Typography color="rgba(0, 0, 0, 0.6)" sx={{ textAlign: "center" }}>
               PHOTOS
             </Typography>
             <Stack direction="row" sx={{ justifyContent: "center" }}>
-              {/* Affichage des trois conteneurs pour les images */}
+              {/* Pictures' containers */}
               {[0, 1, 2].map((index) => (
                 <Box
                   key={index}
@@ -183,7 +183,7 @@ export default function AdModalForm({ closeModal }: AdModalFormProps) {
                     position: "relative",
                   }}
                 >
-                  {/* Si un fichier est sélectionné, afficher l'image */}
+                  {/* When a file is selected, preview is visible */}
                   {files[index] ? (
                     <>
                       <img
@@ -196,7 +196,7 @@ export default function AdModalForm({ closeModal }: AdModalFormProps) {
                           borderRadius: 4,
                         }}
                       />
-                      {/* Icône de suppression */}
+                      {/* Delete preview icon */}
                       <IconButton
                         onClick={() => handleDelete(index)}
                         sx={{
@@ -211,7 +211,7 @@ export default function AdModalForm({ closeModal }: AdModalFormProps) {
                     </>
                   ) : (
                     <>
-                      {/* Si aucun fichier sélectionné, afficher l'icône d'appareil photo*/}
+                      {/* When no files is selected, the camera icon is visible*/}
                       <IconButton
                         component="label"
                         sx={{

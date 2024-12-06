@@ -87,7 +87,7 @@ export default function DetailAd({ ad }: DetailAdProps) {
           <Button
             component={Link}
             color={"primary"}
-            // A remplacer par le lien vers la page de chat
+            // TODO: A remplacer par le lien vers la page de chat
             to={"/ads"}
             sx={{
               textAlign: "center",
