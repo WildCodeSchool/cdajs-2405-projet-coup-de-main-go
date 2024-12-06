@@ -75,6 +75,8 @@ const createUploadRoute = (
 createUploadRoute("/upload-user-picture", "user", "file");
 createUploadRoute("/upload-ad-picture", "ad", "file");
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 app.listen(port, () => {
   console.log(`📸 Le serveur d'upload a démarré au port : ${port} !`);
 });
