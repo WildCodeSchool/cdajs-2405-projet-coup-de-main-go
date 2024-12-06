@@ -38,7 +38,13 @@ export default function CreateAdPage() {
   const [previewUrl2, setPreviewUrl2] = useState<string | null>(null);
   const [previewUrl3, setPreviewUrl3] = useState<string | null>(null);
 
+  const [fileError1, setFileError1] = useState<string | null>(null);
+  const [fileError2, setFileError2] = useState<string | null>(null);
+  const [fileError3, setFileError3] = useState<string | null>(null);
+
   const [success, setSuccess] = useState<string | null>(null);
+
+  const MAX_SIZE_MB = 1;
 
   const { handleSubmit } = useForm({
     defaultValues: {
@@ -94,6 +100,15 @@ export default function CreateAdPage() {
       });
 
       setSuccess("Annonce créée avec succès!");
+      setFile1(null);
+      setFile2(null);
+      setFile3(null);
+      setPreviewUrl1(null);
+      setPreviewUrl2(null);
+      setPreviewUrl3(null);
+      setFileError1(null);
+      setFileError2(null);
+      setFileError3(null);
     } catch (error) {
       console.error(error);
       setSuccess(null);
@@ -122,27 +137,43 @@ export default function CreateAdPage() {
   const handleFileChange =
     (index: number) => (e: ChangeEvent<HTMLInputElement>) => {
       const selectedFile = e.target.files?.[0];
+      setSuccess(null);
+      let fileError: string | null = null;
+
       if (selectedFile) {
+        if (selectedFile.size > MAX_SIZE_MB * 1024 * 1024) {
+          fileError = `Les fichiers doivent être inférieur à ${MAX_SIZE_MB}MB`;
+        } else {
+          fileError = null;
+        }
+
         if (index === 1) {
-          setFile1(selectedFile);
-          const reader = new FileReader();
-          reader.onloadend = () => setPreviewUrl1(reader.result as string);
-          reader.readAsDataURL(selectedFile);
+          setFileError1(fileError);
+          if (!fileError) {
+            setFile1(selectedFile);
+            const reader = new FileReader();
+            reader.onloadend = () => setPreviewUrl1(reader.result as string);
+            reader.readAsDataURL(selectedFile);
+          }
         } else if (index === 2) {
-          setFile2(selectedFile);
-          const reader = new FileReader();
-          reader.onloadend = () => setPreviewUrl2(reader.result as string);
-          reader.readAsDataURL(selectedFile);
+          setFileError2(fileError);
+          if (!fileError) {
+            setFile2(selectedFile);
+            const reader = new FileReader();
+            reader.onloadend = () => setPreviewUrl2(reader.result as string);
+            reader.readAsDataURL(selectedFile);
+          }
         } else if (index === 3) {
-          setFile3(selectedFile);
-          const reader = new FileReader();
-          reader.onloadend = () => setPreviewUrl3(reader.result as string);
-          reader.readAsDataURL(selectedFile);
+          setFileError3(fileError);
+          if (!fileError) {
+            setFile3(selectedFile);
+            const reader = new FileReader();
+            reader.onloadend = () => setPreviewUrl3(reader.result as string);
+            reader.readAsDataURL(selectedFile);
+          }
         }
       }
     };
-
-  console.log(data);
 
   return (
     <Box sx={{ maxWidth: 400, margin: "auto", mt: 4 }}>
@@ -156,6 +187,11 @@ export default function CreateAdPage() {
           fullWidth
           sx={{ mt: 2 }}
         />
+        {fileError1 && (
+          <Typography variant="body1" color="error" sx={{ mt: 2 }}>
+            {fileError1}
+          </Typography>
+        )}
         {previewUrl1 && (
           <Box sx={{ mt: 2, mb: 2 }}>
             <img
@@ -165,13 +201,17 @@ export default function CreateAdPage() {
             />
           </Box>
         )}
-
         <TextField
           type="file"
           onChange={handleFileChange(2)}
           fullWidth
           sx={{ mt: 2 }}
         />
+        {fileError2 && (
+          <Typography variant="body1" color="error" sx={{ mt: 2 }}>
+            {fileError2}
+          </Typography>
+        )}
         {previewUrl2 && (
           <Box sx={{ mt: 2, mb: 2 }}>
             <img
@@ -181,13 +221,17 @@ export default function CreateAdPage() {
             />
           </Box>
         )}
-
         <TextField
           type="file"
           onChange={handleFileChange(3)}
           fullWidth
           sx={{ mt: 2 }}
-        />
+        />{" "}
+        {fileError3 && (
+          <Typography variant="body1" color="error" sx={{ mt: 2 }}>
+            {fileError3}
+          </Typography>
+        )}
         {previewUrl3 && (
           <Box sx={{ mt: 2, mb: 2 }}>
             <img
@@ -197,35 +241,31 @@ export default function CreateAdPage() {
             />
           </Box>
         )}
-
         <Button
           type="submit"
           color="primary"
           fullWidth
           sx={{ mt: 2 }}
-          disabled={loading}
+          disabled={loading || !!fileError1 || !!fileError2 || !!fileError3}
         >
           {loading ? <CircularProgress size={24} /> : "Créer l'annonce"}
         </Button>
       </form>
-
       {success && (
         <Typography variant="body1" color="success" sx={{ mt: 2 }}>
           {success}
         </Typography>
       )}
-
       {error && (
         <Typography variant="body1" color="error" sx={{ mt: 2 }}>
           {error.message}
         </Typography>
       )}
-
       {data && data.createAd && (
         <Box sx={{ mt: 2, mb: 2 }}>
           {data.createAd.picture1 && (
             <img
-              src={`${import.meta.env.VITE_UPLOAD_SERVICE_URL}/uploads/ads/${
+              src={`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/ads/${
                 data.createAd.id
               }/${data.createAd.picture1}`}
               alt="Preview 1"
@@ -234,7 +274,7 @@ export default function CreateAdPage() {
           )}
           {data.createAd.picture2 && (
             <img
-              src={`${import.meta.env.VITE_UPLOAD_SERVICE_URL}/uploads/ads/${
+              src={`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/ads/${
                 data.createAd.id
               }/${data.createAd.picture2}`}
               alt="Preview 2"
@@ -243,7 +283,7 @@ export default function CreateAdPage() {
           )}
           {data.createAd.picture3 && (
             <img
-              src={`${import.meta.env.VITE_UPLOAD_SERVICE_URL}/uploads/ads/${
+              src={`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/ads/${
                 data.createAd.id
               }/${data.createAd.picture3}`}
               alt="Preview 3"

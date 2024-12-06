@@ -18,9 +18,12 @@ export default function UpdateProfilePicturePage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { handleSubmit } = useForm();
   const [file, setFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
   const { userId } = useAuth();
 
   const [success, setSuccess] = useState<string | null>(null);
+
+  const MAX_SIZE_MB = 1;
 
   const onSubmit = async () => {
     if (!file) return;
@@ -35,7 +38,10 @@ export default function UpdateProfilePicturePage() {
         },
       });
 
-      setSuccess("Photo de profil mise à jour avec succès!"); 
+      setSuccess("Photo de profil mise à jour avec succès!");
+      setFile(null);
+      setPreviewUrl(null);
+      setFileError(null);
     } catch (error) {
       console.error(error);
       setSuccess(null);
@@ -63,7 +69,13 @@ export default function UpdateProfilePicturePage() {
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
+    setFileError(null);
+    setSuccess(null);
     if (selectedFile) {
+      if (selectedFile.size > MAX_SIZE_MB * 1024 * 1024) {
+        setFileError(`Le fichier doit être inférieur à ${MAX_SIZE_MB}MB`);
+        return;
+      }
       setFile(selectedFile);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -95,13 +107,9 @@ export default function UpdateProfilePicturePage() {
           color="primary"
           fullWidth
           sx={{ mt: 2 }}
-          disabled={loading}
+          disabled={loading || !!fileError}
         >
-          {loading ? (
-            <CircularProgress size={24} />
-          ) : (
-            "Modifier"
-          )}
+          {loading ? <CircularProgress size={24} /> : "Modifier"}
         </Button>
       </form>
       {success && (
@@ -114,14 +122,19 @@ export default function UpdateProfilePicturePage() {
           {error.message}
         </Typography>
       )}
+      {fileError && (
+        <Typography variant="body1" color="error" sx={{ mt: 2 }}>
+          {fileError}
+        </Typography>
+      )}
       {data &&
         data.updateProfilePicture &&
         data.updateProfilePicture.picture && (
           <Box sx={{ mt: 2, mb: 2 }}>
             <img
-              src={`${import.meta.env.VITE_UPLOAD_SERVICE_URL}/uploads/users/${userId}/${
-                data.updateProfilePicture.picture
-              }`}
+              src={`${
+                import.meta.env.VITE_DOMAIN_BACKEND_URL
+              }/uploads/users/${userId}/${data.updateProfilePicture.picture}`}
               alt="Preview"
               style={{ maxWidth: "100%", maxHeight: 200 }}
             />

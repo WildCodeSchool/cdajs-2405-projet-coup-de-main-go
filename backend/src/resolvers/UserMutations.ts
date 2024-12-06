@@ -4,7 +4,7 @@ import * as argon2 from "argon2";
 import { dataSource } from "../datasource";
 import { Skill } from "../entities/Skill";
 import { User } from "../entities/User";
-import uploadFileToServices from "../services/uploadFilesToService";
+import uploadFile from "../utils/uploadFile";
 
 @Resolver(User)
 export class UserMutations {
@@ -205,24 +205,24 @@ export class UserMutations {
     }
 
     try {
-      const uploadedFileName = await uploadFileToServices(picture, "user", id);
-      user.picture = uploadedFileName;
+      const savedFileName = uploadFile({
+        base64String: picture,
+        targetType: "user",
+        id,
+        oldFileName: user.picture, 
+      });
+  
+      user.picture = savedFileName;
       await dataSource.manager.save(user);
+  
       return user;
     } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message ===
-          "Un ou plusieurs fichiers sont trop volumineux. Taille maximale : 1 Mo."
-      ) {
+      if (error instanceof Error) {
         throw new Error(
-          "Le fichier est trop volumineux. Taille maximale : 1 Mo."
-        );
-      } else {
-        throw new Error(
-          "Erreur lors de la mise à jour de la photo de profil. Veuillez réessayer."
+          `Erreur lors de l'upload : ${error.message}`
         );
       }
+      throw new Error("Une erreur inconnue est survenue.");
     }
   }
 }

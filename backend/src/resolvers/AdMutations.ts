@@ -5,7 +5,7 @@ import { User } from "../entities/User";
 import { Skill } from "../entities/Skill";
 import { dataSource } from "../datasource";
 import { Transaction } from "../entities/Transaction";
-import uploadFilesToService from "../services/uploadFilesToService";
+import uploadFile from "../utils/uploadFile";
 
 @InputType()
 export class AdInput {
@@ -167,12 +167,11 @@ export class AdMutations {
 
       if (adData.picture1) {
         try {
-          const uploadResponse = await uploadFilesToService(
-            adData.picture1,
-            "ad",
-            ad.id?.toString()!,
-            "picture1"
-          );
+          const uploadResponse = uploadFile({
+            base64String: adData.picture1,
+            targetType: "ad",
+            id: ad.id?.toString()!,
+          });
           ad.picture1 = uploadResponse;
         } catch (error) {
           throw new Error(
@@ -185,12 +184,11 @@ export class AdMutations {
 
       if (adData.picture2) {
         try {
-          const uploadResponse = await uploadFilesToService(
-            adData.picture2,
-            "ad",
-            ad.id?.toString()!,
-            "picture2"
-          );
+          const uploadResponse = uploadFile({
+            base64String: adData.picture2,
+            targetType: "ad",
+            id: ad.id?.toString()!,
+          });
           ad.picture2 = uploadResponse;
         } catch (error) {
           throw new Error(
@@ -203,12 +201,11 @@ export class AdMutations {
 
       if (adData.picture3) {
         try {
-          const uploadResponse = await uploadFilesToService(
-            adData.picture3,
-            "ad",
-            ad.id?.toString()!,
-            "picture3"
-          );
+          const uploadResponse = uploadFile({
+            base64String: adData.picture3,
+            targetType: "ad",
+            id: ad.id?.toString()!,
+          });
           ad.picture3 = uploadResponse;
         } catch (error) {
           throw new Error(
@@ -223,17 +220,10 @@ export class AdMutations {
 
       return ad;
     } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message ===
-          "Échec de l'upload pour les fichiers: Un ou plusieurs fichiers sont trop volumineux. Taille maximale : 1 Mo."
-      ) {
-        throw error;
-      } else {
-        throw new Error(
-          "Erreur lors de la création de l'annonce. Veuillez réessayer."
-        );
+      if (error instanceof Error) {
+        throw new Error(`Erreur lors de l'upload : ${error.message}`);
       }
+      throw new Error("Une erreur inconnue est survenue.");
     }
   }
 
@@ -277,12 +267,12 @@ export class AdMutations {
 
         if (adData.picture1) {
           try {
-            const uploadResponse = await uploadFilesToService(
-              adData.picture1,
-              "ad",
-              ad.id?.toString()!,
-              "picture1"
-            );
+            const uploadResponse = uploadFile({
+              base64String: adData.picture1,
+              targetType: "ad",
+              id: ad.id?.toString()!,
+              oldFileName: adData.picture1, 
+            });
             ad.picture1 = uploadResponse || "";
           } catch (error) {
             throw new Error(
@@ -295,12 +285,12 @@ export class AdMutations {
 
         if (adData.picture2) {
           try {
-            const uploadResponse = await uploadFilesToService(
-              adData.picture2,
-              "ad",
-              ad.id?.toString()!,
-              "picture2"
-            );
+            const uploadResponse = uploadFile({
+              base64String: adData.picture2,
+              targetType: "ad",
+              id: ad.id?.toString()!,
+              oldFileName: adData.picture2, 
+            });
             ad.picture2 = uploadResponse;
           } catch (error) {
             throw new Error(
@@ -313,12 +303,12 @@ export class AdMutations {
 
         if (adData.picture3) {
           try {
-            const uploadResponse = await uploadFilesToService(
-              adData.picture3,
-              "ad",
-              ad.id?.toString()!,
-              "picture3"
-            );
+            const uploadResponse = uploadFile({
+              base64String: adData.picture3,
+              targetType: "ad",
+              id: ad.id?.toString()!,
+              oldFileName: adData.picture3, 
+            });
             ad.picture3 = uploadResponse;
           } catch (error) {
             throw new Error(
@@ -336,17 +326,10 @@ export class AdMutations {
       await ad.save();
       return ad;
     } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message ===
-          "Un ou plusieurs fichiers sont trop volumineux. Taille maximale : 1 Mo."
-      ) {
-        throw error;
-      } else {
-        throw new Error(
-          "Erreur lors de la modification de l'annonce. Veuillez réessayer."
-        );
+      if (error instanceof Error) {
+        throw new Error(`Erreur lors de l'upload : ${error.message}`);
       }
+      throw new Error("Une erreur inconnue est survenue.");
     }
   }
 
