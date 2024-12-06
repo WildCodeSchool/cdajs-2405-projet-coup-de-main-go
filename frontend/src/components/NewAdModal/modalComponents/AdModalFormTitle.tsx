@@ -16,7 +16,6 @@ export default function AdModalFormTitle() {
     <TextField
       type="text"
       label="Titre"
-      variant="standard"
       {...register("title", {
         required: "Champ obligatoire",
         maxLength: {
@@ -31,9 +30,6 @@ export default function AdModalFormTitle() {
       placeholder="Titre de l'annonce"
       error={!!errors.title || title?.length > 50}
       helperText={errors.title?.message}
-      sx={{
-        backgroundColor: "var(--white)",
-      }}
     />
   );
 }

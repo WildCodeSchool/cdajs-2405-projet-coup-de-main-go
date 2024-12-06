@@ -120,7 +120,7 @@ export default function AdModalForm({ closeModal }: AdModalFormProps) {
         >
           {/* Left column */}
           <Stack
-            spacing={4}
+            spacing={3}
             sx={{
               width: {
                 xs: "100%",
@@ -146,7 +146,7 @@ export default function AdModalForm({ closeModal }: AdModalFormProps) {
             <Divider
               orientation="vertical"
               flexItem
-              sx={{ margin: "0 4rem" }}
+              sx={{ padding: "0.5rem" }}
             />
           )}
 
@@ -244,7 +244,7 @@ export default function AdModalForm({ closeModal }: AdModalFormProps) {
         <Stack
           sx={{
             alignItems: "flex-end",
-            margin: "2.5rem",
+            margin: "1.5rem 2.5rem",
           }}
         >
           <Button type="submit">Envoyer</Button>

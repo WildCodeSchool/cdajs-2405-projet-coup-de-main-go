@@ -15,7 +15,6 @@ export default function AdModalFormDescription() {
     <TextField
       type="text"
       label="Description"
-      variant="standard"
       multiline
       maxRows={3}
       {...register("description", {
@@ -32,7 +31,6 @@ export default function AdModalFormDescription() {
       placeholder="Description"
       error={!!errors.description || description?.length > 255}
       helperText={errors.description?.message}
-      sx={{ backgroundColor: "var(--white)" }}
     />
   );
 }

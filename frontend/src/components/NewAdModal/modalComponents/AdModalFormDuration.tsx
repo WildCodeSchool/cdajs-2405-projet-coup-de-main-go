@@ -9,7 +9,8 @@ export default function AdModalFormDuration() {
   } = useFormContext<AdInput>();
 
   return (
-    <>
+    <FormControl>
+      <FormLabel sx={{ textAlign: "center" }}>DUREE</FormLabel>
       <Controller
         name="duration"
         control={control}
@@ -18,8 +19,7 @@ export default function AdModalFormDuration() {
           validate: (value) => value > 0 || "Veuillez sélectionner une durée.",
         }}
         render={({ field }) => (
-          <FormControl>
-            <FormLabel sx={{ textAlign: "center" }}>DUREE</FormLabel>
+          <>
             <Slider
               {...field}
               size="small"
@@ -41,10 +41,15 @@ export default function AdModalFormDuration() {
                 }
               }}
             />
-          </FormControl>
+            <FormHelperText
+              error={!!errors.duration}
+              sx={{ textAlign: "center" }}
+            >
+              {errors.duration?.message}
+            </FormHelperText>
+          </>
         )}
       />
-      <FormHelperText>{errors.duration?.message}</FormHelperText>
-    </>
+    </FormControl>
   );
 }

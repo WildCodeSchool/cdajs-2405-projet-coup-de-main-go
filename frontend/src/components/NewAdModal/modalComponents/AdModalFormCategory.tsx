@@ -5,7 +5,7 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import {
   AdInput,
   useGetAllSkillsQuery,
@@ -14,7 +14,7 @@ import { Skill } from "../../../types";
 
 export default function AdModalFormCategory() {
   const {
-    register,
+    control,
     formState: { errors },
   } = useFormContext<AdInput>();
 
@@ -29,21 +29,34 @@ export default function AdModalFormCategory() {
   return (
     <FormControl
       error={!!errors.skillId}
-      variant="standard"
-      sx={{ backgroundColor: "var(--white)" }}
+      sx={{
+        "& .MuiInputBase-root": {
+          backgroundColor: "var(--white)", // Input field background
+        },
+      }}
     >
       <InputLabel>Catégorie</InputLabel>
-      <Select
-        {...register("skillId", { required: "Champ obligatoire" })}
-        defaultValue=""
-        disabled={skillsLoading || !!skillsError}
-      >
-        {skills.map((skill) => (
-          <MenuItem key={skill.id} value={skill.id}>
-            {skill.name}
-          </MenuItem>
-        ))}
-      </Select>
+      <Controller
+        name="skillId"
+        control={control}
+        rules={{ required: "Champ obligatoire" }}
+        render={({ field }) => (
+          <Select
+            {...field}
+            label="Catégorie"
+            disabled={skillsLoading || !!skillsError}
+            onChange={(e) => {
+              field.onChange(e.target.value);
+            }}
+          >
+            {skills.map((skill) => (
+              <MenuItem key={skill.id} value={skill.id}>
+                {skill.name}
+              </MenuItem>
+            ))}
+          </Select>
+        )}
+      />
       <FormHelperText>{errors.skillId?.message}</FormHelperText>
     </FormControl>
   );

@@ -71,14 +71,11 @@ export default function AdModalFormAddress({
             onChange={(_, value: AddressSuggestion | null) => {
               field.onChange(value);
               setSelectedSuggestion(value);
-              console.log("selectedSuggestion", value);
             }}
-            sx={{ backgroundColor: "white" }}
             renderInput={(params) => (
               <TextField
                 {...params}
                 label="Adresse"
-                variant="standard"
                 error={!!errors.address}
                 helperText={errors.address?.message}
               />
