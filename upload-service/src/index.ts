@@ -2,7 +2,6 @@ import express, { Request, Response } from "express";
 import { config } from "dotenv";
 import fs from "fs";
 import path from "path";
-import { v4 as uuidv4 } from "uuid";
 
 config();
 
@@ -76,7 +75,7 @@ const handleBase64Upload = (route: string, type: "user" | "ad") => {
       }
 
       const folderPath = path.join(uploadPaths[type], id);
-      const uniqueFileName = `${Date.now()}_${uuidv4()}`;
+      const uniqueFileName = `${Date.now()}`;
       const savedFileName = saveBase64File(
         base64File,
         folderPath,

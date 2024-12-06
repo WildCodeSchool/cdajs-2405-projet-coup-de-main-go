@@ -215,7 +215,9 @@ export class UserMutations {
         error.message ===
           "Un ou plusieurs fichiers sont trop volumineux. Taille maximale : 1 Mo."
       ) {
-        throw error;
+        throw new Error(
+          "Le fichier est trop volumineux. Taille maximale : 1 Mo."
+        );
       } else {
         throw new Error(
           "Erreur lors de la mise à jour de la photo de profil. Veuillez réessayer."
