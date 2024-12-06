@@ -95,8 +95,8 @@ export default function ChatPage() {
                   isMobile={isMobile}
                 />
               ) : (
-                <Box sx={{ display: "flex", justifyContent: "center", pt: 2  }}>
-                  <Typography variant="h6" color="var(--secondary)">
+                <Box sx={{ display: "flex", justifyContent: "center", pt: 2 }}>
+                  <Typography variant="h6" color="primary">
                     Aucune conversation disponible
                   </Typography>
                 </Box>
@@ -134,7 +134,7 @@ export default function ChatPage() {
         <>
           {chats.length > 0 ? (
             <>
-              <Box sx={{ flex: 0.25, minWidth: 0 }}>
+              <Box sx={{ flex: 0.25, minWidth: 0, borderRadius: "50px" }}>
                 <ChatList
                   chats={chats}
                   userId={userId}
@@ -157,7 +157,7 @@ export default function ChatPage() {
             </>
           ) : (
             <Box sx={{ pt: 2 }}>
-              <Typography variant="h6" color="var(--secondary)">
+              <Typography variant="h6" color="primary">
                 Aucune conversation disponible
               </Typography>
             </Box>

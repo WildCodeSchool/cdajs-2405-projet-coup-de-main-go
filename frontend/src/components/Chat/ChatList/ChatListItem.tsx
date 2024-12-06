@@ -11,6 +11,7 @@ import {
 import { Chat } from "../../../types";
 import ChatListLastMessage from "./ChatListLastMessage";
 import { formatFullName } from "../../../utils/formatName";
+import { useTheme } from "@mui/material/styles";
 
 type ChatListItemProps = {
   chat: Chat;
@@ -27,6 +28,8 @@ export default function ChatListItem({
   selectedChatId,
   unreadMessages,
 }: ChatListItemProps) {
+  const theme = useTheme();
+
   const otherUser =
     chat.userHelper.id === userId ? chat.userRequester : chat.userHelper;
   const lastMessage = chat.messages.slice(-1)[0];
@@ -38,11 +41,11 @@ export default function ChatListItem({
         sx={{
           position: "relative",
           backgroundColor:
-            chat.id === selectedChatId ? "var(--primary)" : "inherit",
+            chat.id === selectedChatId ? theme.palette.secondary.light : "inherit",
           "&:hover": {
             backgroundColor:
               chat.id === selectedChatId
-                ? "var(--primary-hover)"
+                ? theme.palette.secondary.main
                 : "action.hover",
           },
         }}
@@ -56,7 +59,7 @@ export default function ChatListItem({
         <ListItemText
           primary={
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: unreadMessages > 0 ? 600 : 500 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
                 {formatFullName(otherUser.firstName, otherUser.lastName)}
               </Typography>
               <Badge

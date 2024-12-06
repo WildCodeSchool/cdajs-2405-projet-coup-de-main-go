@@ -12,7 +12,9 @@ type ChatDetailProps = {
 };
 
 export default function ChatDetail({ chats, chatId }: ChatDetailProps) {
-  const [userRequester, setUserRequester] = useState<User | undefined>(undefined);
+  const [userRequester, setUserRequester] = useState<User | undefined>(
+    undefined
+  );
   const [ad, setAd] = useState<Ad | undefined>(undefined);
 
   const currentChat = chats.find((chat: Chat) => chat.id === chatId);
@@ -29,7 +31,13 @@ export default function ChatDetail({ chats, chatId }: ChatDetailProps) {
   return (
     <Paper
       elevation={3}
-      sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        border: 0,
+        borderRadius: "12px",
+      }}
     >
       <ChatDetailProfile userRequester={userRequester} />
       <ChatDetailPicture ad={ad} />

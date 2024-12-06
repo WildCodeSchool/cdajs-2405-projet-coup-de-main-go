@@ -69,7 +69,15 @@ export default function ChatList({
   };
 
   return (
-    <Paper sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+    <Paper
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        border: 0,
+        borderRadius: "12px",
+      }}
+    >
       <ChatListHeader title="Discussions" />
       <ChatListContainer
         chats={sortedChats}

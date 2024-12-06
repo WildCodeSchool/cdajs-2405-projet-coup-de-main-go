@@ -235,7 +235,13 @@ export default function ChatConversation({
   return (
     <Paper
       elevation={3}
-      sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        border: 0,
+        borderRadius: "12px",
+      }}
     >
       {isMobile && otherUser && (
         <ChatConversationMobileBanner
