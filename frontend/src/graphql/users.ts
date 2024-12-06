@@ -48,6 +48,7 @@ export const USER_UPDATE_MUTATION = gql`
         $address: String
         $zipCode: String
         $city: String
+        $skillsId: [String!]
         $biography: String
         $gender: String
         $dateOfBirth: DateTimeISO
@@ -61,6 +62,7 @@ export const USER_UPDATE_MUTATION = gql`
             address: $address
             zipCode: $zipCode
             city: $city
+            skillsId: $skillsId
             biography: $biography
             gender: $gender
             dateOfBirth: $dateOfBirth
@@ -124,5 +126,19 @@ export const GET_USER_BY_EMAIL_QUERY = gql`
 export const GET_MANGO_BALANCE_QUERY = gql`
     query GetMangoBalanceByUserId($id: String!) {
         getMangoBalanceByUserId(id: $id)
+    }
+`;
+
+export const CREDENTIALS_VERIFICATION = gql`
+    query credentialsVerification(
+        $email: String!
+        $password: String!
+        $passwordConfirmation: String!
+    ) {
+        credentialsVerification(
+            email: $email
+            password: $password
+            passwordConfirmation: $passwordConfirmation
+        )
     }
 `;

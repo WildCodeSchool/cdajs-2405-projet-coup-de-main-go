@@ -48,12 +48,12 @@ describe("userMutations", () => {
     });
 
     describe("register", () => {
-        it("should return an 'email is already in use' error", async () => {
+        it("should return 'L'adresse mail est déjà utilisée' error", async () => {
             mockTypeOrm().onMock(User).toReturn(mockUsers[0], "findOne");
             await expect(
                 userMutations.register(
                     "john.doe@gmail.com",
-                    "password",
+                    "P@ssword123",
                     "john",
                     "doe",
                     "address",
@@ -61,7 +61,7 @@ describe("userMutations", () => {
                     "paris",
                     []
                 )
-            ).rejects.toThrow("email is already in use");
+            ).rejects.toThrow("L'adresse mail est déjà utilisée");
         });
 
         it("should return an user", async () => {
@@ -72,7 +72,7 @@ describe("userMutations", () => {
                 .toReturn(mockUsers[0], "save");
             const user: User = await userMutations.register(
                 "john.dur@gmail.com",
-                "password",
+                "P@ssword123",
                 "john",
                 "dur",
                 "address",
@@ -85,10 +85,10 @@ describe("userMutations", () => {
     });
 
     describe("deleteAccount", () => {
-        it("should return an 'user not found' error", async () => {
+        it("should return 'L'utilisateur n'existe pas' error", async () => {
             mockTypeOrm().onMock(User).toReturn(null, "findOne");
             await expect(userMutations.deleteAccount("badId")).rejects.toThrow(
-                "user not found"
+                "L'utilisateur n'existe pas"
             );
         });
 
@@ -105,11 +105,11 @@ describe("userMutations", () => {
     });
 
     describe("changePassword", () => {
-        it("should return an 'user not found' error", async () => {
+        it("should return 'L'utilisateur n'existe pas' error", async () => {
             mockTypeOrm().onMock(User).toReturn(null, "findOne");
             await expect(
-                userMutations.changePassword("badId", "password")
-            ).rejects.toThrow("user not found");
+                userMutations.changePassword("badId", "P@ssword123")
+            ).rejects.toThrow("L'utilisateur n'existe pas");
         });
 
         it("should return true", async () => {
@@ -118,42 +118,40 @@ describe("userMutations", () => {
                 .toReturn(mockUsers[0], "findOne")
                 .toReturn(mockUsers[0], "save");
             const passwordIsChanged: Boolean =
-                await userMutations.changePassword("goodId", "password");
+                await userMutations.changePassword("goodId", "P@ssword123");
             expect(passwordIsChanged).toBeTruthy();
         });
     });
 
     describe("updateUser", () => {
-        it("should return an 'user not found' error", async () => {
+        it("should return 'L'utilisateur n'existe pas' error", async () => {
             mockTypeOrm().onMock(User).toReturn(null, "findOne");
             await expect(
                 userMutations.updateUser(
                     "badId",
                     "john.dur@gmail.com",
-                    "password",
                     "john",
                     "dur",
                     "address",
                     "75000",
                     "paris"
                 )
-            ).rejects.toThrow("user not found");
+            ).rejects.toThrow("L'utilisateur n'existe pas");
         });
 
-        it("should return an 'email is already un use' error", async () => {
+        it("should return 'email is already un use' error", async () => {
             mockTypeOrm().onMock(User).toReturn(mockUsers[0], "findOne");
             await expect(
                 userMutations.updateUser(
                     "goodId",
                     "john.doe@gmail.com",
-                    "password",
                     "john",
                     "doe",
                     "address",
                     "75000",
                     "paris"
                 )
-            ).rejects.toThrow("email is already in use");
+            ).rejects.toThrow("L'adresse mail est déjà utilisée");
         });
 
         it("should return a user", async () => {
@@ -177,7 +175,6 @@ describe("userMutations", () => {
             const user: User = await userMutations.updateUser(
                 "goodId",
                 "john.dur@gmail.com",
-                "password",
                 "john",
                 "dur",
                 "address",
@@ -189,11 +186,11 @@ describe("userMutations", () => {
     });
 
     describe("transferMango", () => {
-        it("shoud return an 'user not found' error", async () => {
+        it("shoud return 'L'utilisateur n'existe pas' error", async () => {
             mockTypeOrm().onMock(User).toReturn(null, "findOne");
             await expect(
                 userMutations.transferMango("badId", 5)
-            ).rejects.toThrow("user not found");
+            ).rejects.toThrow("L'utilisateur n'existe pas");
         });
 
         it("shoud return user mango balance's", async () => {

@@ -38,11 +38,11 @@ const theme = createTheme(
     },
     palette: {
       primary: {
-        main: "#ef930e", // couleur orange
-        light: "FFBF38",
+        main: "#EF930E", // couleur orange
+        light: "#FFBF38",
       },
       secondary: {
-        main: "#949e80", // couleur vert
+        main: "#949E80", // couleur vert
       },
       tertiary: {
         main: "#EDEAE4", // couleur blanc cassé
@@ -61,15 +61,6 @@ const theme = createTheme(
         },
         defaultProps: {
           variant: "contained",
-        },
-      },
-      MuiTextField: {
-        styleOverrides: {
-          root: {
-            "& .MuiInputBase-root": {
-              backgroundColor: "var(--white)", // Input field background
-            },
-          },
         },
       },
       MuiStack: {
@@ -91,6 +82,16 @@ const theme = createTheme(
         defaultProps: {
           variant: "outlined",
           square: true,
+        },
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            "& .MuiInputBase-root": {
+              backgroundColor: "var(--white)", // Input field background
+              borderRadius: "20px",
+            },
+          },
         },
       },
     },
