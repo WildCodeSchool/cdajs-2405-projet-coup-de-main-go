@@ -200,21 +200,27 @@ export class UserMutations {
       throw new Error("User not found");
     }
 
-    if(!picture) {
+    if (!picture) {
       throw new Error("No file path provided");
     }
 
-    const uploadedFileName = await uploadFileToServices(picture, "user", id);
-
-    user.picture = uploadedFileName;
-
     try {
+      const uploadedFileName = await uploadFileToServices(picture, "user", id);
+      user.picture = uploadedFileName;
       await dataSource.manager.save(user);
+      return user;
     } catch (error) {
-      console.error(error);
-      throw new Error("Erreur lors de la mise à jour de la photo de profil");
+      if (
+        error instanceof Error &&
+        error.message ===
+          "Un ou plusieurs fichiers sont trop volumineux. Taille maximale : 1 Mo."
+      ) {
+        throw error;
+      } else {
+        throw new Error(
+          "Erreur lors de la mise à jour de la photo de profil. Veuillez réessayer."
+        );
+      }
     }
-
-    return user;
   }
 }

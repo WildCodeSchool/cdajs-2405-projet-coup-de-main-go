@@ -1,5 +1,4 @@
 import axios from "axios";
-import FormData from "form-data";
 import fs from "fs";
 import path from "path";
 import { Ad } from "../entities/Ad";
@@ -13,13 +12,11 @@ const deleteFileFromPath = (filePath: string) => {
 };
 
 export default async function uploadFilesToService(
-  filePath: string,
+  base64Data: string,
   targetType: "user" | "ad",
   id: string,
   pictureKey?: "picture1" | "picture2" | "picture3"
 ): Promise<string> {
-  const formData = new FormData();
-
   const targetFolder = path.resolve(
     process.cwd(),
     "..",
@@ -48,19 +45,8 @@ export default async function uploadFilesToService(
     }
   }
 
-  // Remove the old file
   if (oldFilePath) {
     deleteFileFromPath(oldFilePath);
-  }
-
-  if (targetType === "user") {
-    formData.append("userId", id);
-    const fileName = path.basename(filePath);
-    formData.append("file", fs.createReadStream(filePath), fileName);
-  } else {
-    formData.append("adId", id);
-    const fileName = path.basename(filePath);
-    formData.append("file", fs.createReadStream(filePath), fileName);
   }
 
   const targetUrl =
@@ -69,15 +55,24 @@ export default async function uploadFilesToService(
       : `${process.env.UPLOAD_SERVICE_URL}/upload-ad-picture`;
 
   try {
-    const response = await axios.post(targetUrl, formData, {
+    const payload = {
+      base64File: base64Data,
+      userId: targetType === "user" ? id : undefined,
+      adId: targetType === "ad" ? id : undefined,
+    };
+
+    const response = await axios.post(targetUrl, payload, {
       headers: {
-        ...formData.getHeaders(),
+        "Content-Type": "application/json",
       },
     });
 
     return response.data.filename;
   } catch (error) {
-    console.error("Erreur lors de l'upload :", error);
-    throw new Error("Upload service failed");
+    if (axios.isAxiosError(error) && error.response?.status === 413) {
+      throw new Error("Un ou plusieurs fichiers sont trop volumineux. Taille maximale : 1 Mo.");
+    } else {
+      throw new Error("Upload service failed");
+    }
   }
 }

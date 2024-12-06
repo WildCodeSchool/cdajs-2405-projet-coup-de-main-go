@@ -223,8 +223,17 @@ export class AdMutations {
 
       return ad;
     } catch (error) {
-      console.error(error);
-      throw new Error("Failed to create Ad");
+      if (
+        error instanceof Error &&
+        error.message ===
+          "Échec de l'upload pour les fichiers: Un ou plusieurs fichiers sont trop volumineux. Taille maximale : 1 Mo."
+      ) {
+        throw error;
+      } else {
+        throw new Error(
+          "Erreur lors de la création de l'annonce. Veuillez réessayer."
+        );
+      }
     }
   }
 
@@ -327,8 +336,17 @@ export class AdMutations {
       await ad.save();
       return ad;
     } catch (error) {
-      console.error(error);
-      throw new Error("Failed to update Ad");
+      if (
+        error instanceof Error &&
+        error.message ===
+          "Un ou plusieurs fichiers sont trop volumineux. Taille maximale : 1 Mo."
+      ) {
+        throw error;
+      } else {
+        throw new Error(
+          "Erreur lors de la modification de l'annonce. Veuillez réessayer."
+        );
+      }
     }
   }
 
