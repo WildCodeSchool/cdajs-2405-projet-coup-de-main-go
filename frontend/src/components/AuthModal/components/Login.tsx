@@ -56,12 +56,14 @@ function Login({
             <TextField
                 type="email"
                 placeholder="E-mail"
+                label="E-mail"
                 {...register("email", { required: true })}
                 required
             />
             <TextField
                 type="password"
                 placeholder="Mot de passe"
+                label="Mot de passe"
                 {...register("password", { required: true })}
                 required
             />

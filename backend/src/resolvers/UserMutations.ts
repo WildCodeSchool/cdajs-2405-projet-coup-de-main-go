@@ -1,6 +1,7 @@
 import * as argon2 from "argon2";
 import { validateOrReject } from "class-validator";
 import { Resolver, Mutation, Arg } from "type-graphql";
+import { In } from "typeorm";
 
 import { dataSource } from "../datasource";
 import { Skill } from "../entities/Skill";
@@ -37,15 +38,9 @@ export class UserMutations {
         const passwordHashed: string = await argon2.hash(password);
 
         // Charger les skills en fonction de leur id
-        const skills = (
-            await Promise.all(
-                skillsId.map(async (skillId) => {
-                    return await dataSource.manager.findOne(Skill, {
-                        where: { id: skillId },
-                    });
-                })
-            )
-        ).filter((skill): skill is Skill => skill !== null); // Filtrer les null
+        const skills = await dataSource.manager.find(Skill, {
+            where: { id: In(skillsId) },
+        });
 
         let user: User;
         try {
@@ -175,20 +170,14 @@ export class UserMutations {
         if (address) user.address = address;
         if (zipCode) user.zipCode = zipCode;
         if (city) user.city = city;
-        if (skillsId) {
+        if (skillsId && skillsId.length > 0) {
             // Charger les skills en fonction de leur id
-            const skills = (
-                await Promise.all(
-                    skillsId.map(async (skillId) => {
-                        return await dataSource.manager.findOne(Skill, {
-                            where: { id: skillId },
-                        });
-                    })
-                )
-            ).filter((skill): skill is Skill => skill !== null); // Filtrer les null
-
+            const skills = await dataSource.manager.find(Skill, {
+                where: { id: In(skillsId) },
+            });
             user.skills = skills;
         }
+
         if (biography) user.biography = biography;
         if (gender) user.gender = gender;
         if (dateOfBirth) user.dateOfBirth = dateOfBirth;

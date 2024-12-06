@@ -96,6 +96,7 @@ function Step3({ errors, register, setStep, setValue }: Step2Props) {
                                 handleChangeZipCode(e.target.value)
                             ) // Si nécessaire
                     }
+                    required
                 />
 
                 <TextField
