@@ -19,12 +19,14 @@ import AdModalFormDescription from "./AdModalFormDescription";
 import AdModalFormCategory from "./AdModalFormCategory";
 import AdModalFormDuration from "./AdModalFormDuration";
 import { AddressSuggestion } from "../../../types";
+import Cookies from "js-cookie";
 
 interface AdModalFormProps {
   closeModal: () => void;
 }
 
 export default function AdModalForm({ closeModal }: AdModalFormProps) {
+  const userId = Cookies.get("cdmg-userId");
   const isResponsiveLayout = useMediaQuery(theme.breakpoints.down("md"));
   const methods = useForm<AdInput>({
     defaultValues: { title: "", description: "", duration: 0 },
@@ -77,6 +79,11 @@ export default function AdModalForm({ closeModal }: AdModalFormProps) {
       return;
     }
 
+    if (!userId) {
+      console.error("L'utilisateur n'est pas connecté");
+      return;
+    }
+
     try {
       await createAdMutation({
         variables: {
@@ -94,7 +101,7 @@ export default function AdModalForm({ closeModal }: AdModalFormProps) {
             // picture2: files[1] || null,
             // picture3: files[2] || null,
             skillId: formData.skillId,
-            userRequesterId: "1", // TODO: get the user id from the context
+            userRequesterId: userId,
           },
         },
       });
