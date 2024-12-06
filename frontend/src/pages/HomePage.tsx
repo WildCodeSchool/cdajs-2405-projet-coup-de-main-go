@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Navigate } from "react-router-dom";
 
 import AuthModal from "../components/AuthModal/AuthModal";
+import GenericModal from "../components/Modal/GenericModal";
 import { useAuth } from "../contexts/AuthContext";
 
 function HomePage() {
@@ -18,9 +19,13 @@ function HomePage() {
             <button onClick={() => setAuthModalIsOpen(true)}>
                 S’inscrire / Se connecter
             </button>
-            {authModalIsOpen && (
-                <AuthModal closeModal={() => setAuthModalIsOpen(false)} />
-            )}
+            <GenericModal
+                open={authModalIsOpen}
+                onClose={() => setAuthModalIsOpen(false)}
+                maxWidth="800px"
+            >
+                <AuthModal />
+            </GenericModal>
         </>
     );
 }

@@ -1,4 +1,12 @@
-import { ApolloError } from "@apollo/client";
+import {
+    Alert,
+    Box,
+    Button,
+    CircularProgress,
+    Stack,
+    TextField,
+    Typography,
+} from "@mui/material";
 import { useForm } from "react-hook-form";
 
 import {
@@ -14,25 +22,29 @@ export interface LoginFormData {
 }
 
 interface LoginProps {
+    justRegistered: Boolean;
+    setJustRegistered: (justRegistered: Boolean) => void;
     goToRegister: () => void;
 }
 
-function Login({ goToRegister }: LoginProps) {
+function Login({
+    justRegistered,
+    setJustRegistered,
+    goToRegister,
+}: LoginProps) {
     const { login } = useAuth();
 
-    const [sendLoginQuery] = useLoginUserLazyQuery({
+    const [sendLoginQuery, { loading, error }] = useLoginUserLazyQuery({
         onCompleted: (data: LoginUserQuery) => {
             const { token, userId } = data.login;
             login(token, userId);
-        },
-        onError: (error: ApolloError) => {
-            console.error("login failed", error);
         },
     });
 
     const { handleSubmit, register } = useForm<LoginFormData>();
 
     const onLoginFormSubmitted = (formData: LoginFormData) => {
+        setJustRegistered(false);
         sendLoginQuery({
             variables: formData,
         });
@@ -40,29 +52,48 @@ function Login({ goToRegister }: LoginProps) {
 
     return (
         <form id="login" onSubmit={handleSubmit(onLoginFormSubmitted)}>
-            <strong id="auth-title">CONNEXION</strong>
-            <input
+            <Typography variant="h2">CONNEXION</Typography>
+            <TextField
                 type="email"
                 placeholder="E-mail"
+                label="E-mail"
                 {...register("email", { required: true })}
+                required
             />
-            <input
+            <TextField
                 type="password"
                 placeholder="Mot de passe"
+                label="Mot de passe"
                 {...register("password", { required: true })}
+                required
             />
-            <p>
+            <Typography>
                 Envie de nous rejoindre ?{" "}
-                <strong
-                    className="clickable underline"
+                <Box
+                    component="span"
                     onClick={() => goToRegister()}
+                    sx={{
+                        cursor: "pointer",
+                        fontWeight: "bold",
+                        textDecoration: "underline",
+                    }}
                 >
                     Créer un compte
-                </strong>
-            </p>
-            <button type="submit" className="clickable">
-                Se connecter
-            </button>
+                </Box>
+            </Typography>
+            <Stack
+                direction={"row"}
+                sx={{
+                    justifyContent: "flex-end",
+                }}
+            >
+                <Button type="submit">Se connecter</Button>
+            </Stack>
+            {error && <Alert severity="error">{error.message}</Alert>}
+            {loading && <CircularProgress />}
+            {justRegistered && (
+                <Alert severity="success">Inscription réussi !</Alert>
+            )}
         </form>
     );
 }
