@@ -1,11 +1,13 @@
-import { Stack } from "@mui/material";
+import { Stack, useMediaQuery } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useGetAdByIdQuery } from "../generated/graphql-types";
 import DetailAd from "../components/AdDetail/DetailAd";
 import DetailUser from "../components/AdDetail/DetailUser";
+import theme from "../mui";
 
 export default function Ad() {
   const { adId } = useParams<{ adId: string }>();
+  const isResponsiveLayout = useMediaQuery(theme.breakpoints.down("md"));
 
   const {
     loading: adLoading,
@@ -22,19 +24,20 @@ export default function Ad() {
   return (
     <>
       <Stack
-        direction="row"
+        direction={isResponsiveLayout ? "column-reverse" : "row"}
         spacing={4}
         sx={{
-          width: "63rem",
+          maxWidth: "63rem",
           margin: "2rem auto",
+          alignItems: isResponsiveLayout ? "center" : "flex-start",
         }}
       >
         <Stack
           sx={{
-            backgroundColor: "var(--white)",
             borderRadius: "1rem",
-            width: "34%",
+            width: isResponsiveLayout ? "90%" : "33%",
           }}
+          spacing={0}
         >
           <DetailUser ad={ad} />
         </Stack>
@@ -42,7 +45,7 @@ export default function Ad() {
           sx={{
             backgroundColor: "var(--white)",
             borderRadius: "1rem",
-            width: "64%",
+            width: isResponsiveLayout ? "90%" : "63%",
           }}
         >
           <DetailAd ad={ad} />

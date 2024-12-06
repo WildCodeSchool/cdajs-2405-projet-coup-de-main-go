@@ -17,7 +17,7 @@ export default function DetailAdSlider() {
   return (
     <Box
       sx={{
-        width: "40rem",
+        width: "100%",
         height: "14rem",
         borderRadius: "1rem 1rem 0 0",
       }}

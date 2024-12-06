@@ -24,7 +24,7 @@ export default function DetailAd({ ad }: DetailAdProps) {
     } else if (minutes === 0) {
       return `${hours}h`;
     } else {
-      return `${hours}h ${minutes}min`;
+      return `${hours}h${minutes}`;
     }
   };
 
