@@ -1,4 +1,4 @@
-import { Stack, useMediaQuery } from "@mui/material";
+import { Stack, Typography, useMediaQuery } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useGetAdByIdQuery } from "../generated/graphql-types";
 import DetailAd from "../components/AdDetail/DetailAd";
@@ -15,9 +15,9 @@ export default function Ad() {
     data: adData,
   } = useGetAdByIdQuery({ variables: { id: adId || "" }, skip: !adId });
 
-  if (adLoading) return <p>Loading...</p>;
-  if (adError) return <p>Error: {adError.message}</p>;
-  if (!adData) return <p>No data found</p>;
+  if (adLoading) return <Typography>Loading...</Typography>;
+  if (adError) return <Typography>Error: {adError.message}</Typography>;
+  if (!adData) return <Typography>No data found</Typography>;
 
   const ad = adData!.getAdById;
 
@@ -39,7 +39,7 @@ export default function Ad() {
           }}
           spacing={0}
         >
-          <DetailUser ad={ad} />
+          <DetailUser userId={ad.userRequester.id} />
         </Stack>
         <Stack
           sx={{

@@ -1,14 +1,30 @@
 import { Avatar, Box, Divider, Stack, Typography } from "@mui/material";
-import { GetAdByIdQuery } from "../../generated/graphql-types";
 import theme from "../../mui";
 import ReviewsIcon from "@mui/icons-material/Reviews";
 import StarRateIcon from "@mui/icons-material/StarRate";
+import { useGetUserOverviewByIdQuery } from "../../generated/graphql-types";
 
 interface DetailUserProps {
-  ad: GetAdByIdQuery["getAdById"];
+  userId: string;
 }
 
-export default function DetailUser({ ad }: DetailUserProps) {
+export default function DetailUser({ userId }: DetailUserProps) {
+  const {
+    loading: userOverviewLoading,
+    error: userOverviewError,
+    data: userOverviewData,
+  } = useGetUserOverviewByIdQuery({
+    variables: { id: userId || "" },
+    skip: !userId,
+  });
+
+  if (userOverviewLoading) return <Typography>Loading...</Typography>;
+  if (userOverviewError)
+    return <Typography>Error: {userOverviewError.message}</Typography>;
+  if (!userOverviewData) return <Typography>No data found</Typography>;
+
+  const userOverview = userOverviewData!.getUserOverviewById;
+
   return (
     <>
       <Box
@@ -21,7 +37,7 @@ export default function DetailUser({ ad }: DetailUserProps) {
       >
         <Avatar
           src="https://plus.unsplash.com/premium_photo-1705018501151-4045c97658a3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt={ad.userRequester.firstName}
+          alt={userOverview.user.firstName}
           sx={{
             width: "5rem",
             height: "5rem",
@@ -49,10 +65,11 @@ export default function DetailUser({ ad }: DetailUserProps) {
           }}
         >
           <Typography variant="h6">
-            {ad.userRequester.firstName} {ad.userRequester.lastName.charAt(0)}.
+            {userOverview.user.firstName} {userOverview.user.lastName.charAt(0)}
+            .
           </Typography>
           <Typography sx={{ textAlign: "center" }}>
-            {ad.userRequester.biography}
+            {userOverview.user.biography}
           </Typography>
         </Stack>
 
@@ -61,13 +78,22 @@ export default function DetailUser({ ad }: DetailUserProps) {
           <Stack spacing={1} sx={{ width: "100%", alignItems: "center" }}>
             <StarRateIcon sx={{ color: theme.palette.primary.main }} />
             {/* TODO: Replace with actual rating */}
-            <Typography>4/5</Typography>
+            <Typography>
+              {userOverview.averageRating
+                ? `${userOverview.averageRating}/5`
+                : "Aucune note"}
+            </Typography>
           </Stack>
           <Divider orientation="vertical" flexItem />
           <Stack spacing={1} sx={{ width: "100%", alignItems: "center" }}>
             <ReviewsIcon sx={{ color: theme.palette.primary.main }} />
             {/* TODO: Replace with actual number of comments */}
-            <Typography>50 avis</Typography>
+            <Typography>
+              {userOverview.reviewsAsHelperCount
+                ? userOverview.reviewsAsHelperCount
+                : "Aucun"}{" "}
+              avis
+            </Typography>
           </Stack>
         </Stack>
       </Stack>

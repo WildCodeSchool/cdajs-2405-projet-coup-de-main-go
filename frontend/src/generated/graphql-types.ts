@@ -209,6 +209,7 @@ export type Query = {
   getReviewsByUserHelperId?: Maybe<Array<Review>>;
   getTransactionsHistoryByUser?: Maybe<Array<Transaction>>;
   getUserByEmail: User;
+  getUserOverviewById: UserOverview;
   login: LoginResponse;
 };
 
@@ -266,6 +267,11 @@ export type QueryGetTransactionsHistoryByUserArgs = {
 
 export type QueryGetUserByEmailArgs = {
   email: Scalars['String']['input'];
+};
+
+
+export type QueryGetUserOverviewByIdArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -348,6 +354,13 @@ export type User = {
   transactionsAsHelper: Array<Transaction>;
   transactionsAsRequester: Array<Transaction>;
   zipCode: Scalars['String']['output'];
+};
+
+export type UserOverview = {
+  __typename?: 'UserOverview';
+  averageRating?: Maybe<Scalars['Float']['output']>;
+  reviewsAsHelperCount: Scalars['Float']['output'];
+  user: User;
 };
 
 export type CreateAdMutationVariables = Exact<{
@@ -464,6 +477,13 @@ export type CredentialsVerificationQueryVariables = Exact<{
 
 
 export type CredentialsVerificationQuery = { __typename?: 'Query', credentialsVerification: boolean };
+
+export type GetUserOverviewByIdQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type GetUserOverviewByIdQuery = { __typename?: 'Query', getUserOverviewById: { __typename?: 'UserOverview', reviewsAsHelperCount: number, averageRating?: number | null, user: { __typename?: 'User', firstName: string, lastName: string, picture?: string | null, biography?: string | null } } };
 
 
 export const CreateAdDocument = gql`
@@ -1082,3 +1102,50 @@ export type CredentialsVerificationQueryHookResult = ReturnType<typeof useCreden
 export type CredentialsVerificationLazyQueryHookResult = ReturnType<typeof useCredentialsVerificationLazyQuery>;
 export type CredentialsVerificationSuspenseQueryHookResult = ReturnType<typeof useCredentialsVerificationSuspenseQuery>;
 export type CredentialsVerificationQueryResult = Apollo.QueryResult<CredentialsVerificationQuery, CredentialsVerificationQueryVariables>;
+export const GetUserOverviewByIdDocument = gql`
+    query GetUserOverviewById($id: String!) {
+  getUserOverviewById(id: $id) {
+    user {
+      firstName
+      lastName
+      picture
+      biography
+    }
+    reviewsAsHelperCount
+    averageRating
+  }
+}
+    `;
+
+/**
+ * __useGetUserOverviewByIdQuery__
+ *
+ * To run a query within a React component, call `useGetUserOverviewByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserOverviewByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserOverviewByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetUserOverviewByIdQuery(baseOptions: Apollo.QueryHookOptions<GetUserOverviewByIdQuery, GetUserOverviewByIdQueryVariables> & ({ variables: GetUserOverviewByIdQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserOverviewByIdQuery, GetUserOverviewByIdQueryVariables>(GetUserOverviewByIdDocument, options);
+      }
+export function useGetUserOverviewByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserOverviewByIdQuery, GetUserOverviewByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserOverviewByIdQuery, GetUserOverviewByIdQueryVariables>(GetUserOverviewByIdDocument, options);
+        }
+export function useGetUserOverviewByIdSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUserOverviewByIdQuery, GetUserOverviewByIdQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserOverviewByIdQuery, GetUserOverviewByIdQueryVariables>(GetUserOverviewByIdDocument, options);
+        }
+export type GetUserOverviewByIdQueryHookResult = ReturnType<typeof useGetUserOverviewByIdQuery>;
+export type GetUserOverviewByIdLazyQueryHookResult = ReturnType<typeof useGetUserOverviewByIdLazyQuery>;
+export type GetUserOverviewByIdSuspenseQueryHookResult = ReturnType<typeof useGetUserOverviewByIdSuspenseQuery>;
+export type GetUserOverviewByIdQueryResult = Apollo.QueryResult<GetUserOverviewByIdQuery, GetUserOverviewByIdQueryVariables>;
