@@ -39,13 +39,24 @@ const theme = createTheme({
   palette: {
     primary: {
       main: "#ef930e", // couleur orange
-      light: "FFBF38",
+      light: "#FFBF38",
+      dark: "#cc8b3d" // couleur orange foncé (hover)
     },
     secondary: {
-      main: "#949e80" // couleur vert
+      main: "#949e80", // couleur vert
+      dark: "#7f8a6f" // couleur vert foncé (hover)
     },
     tertiary: {
-      main: "#EDEAE4" // couleur blanc cassé
+      main: "#EDEAE4", // couleur blanc cassé
+      dark: "#e8eae3" // couleur blanc cassé foncé
+    },
+    text: {
+      primary: "#333333", // couleur noir
+      secondary: "#666666", // couleur gris
+    },
+    common: {
+      white: "#ffffff",
+      black: "#000000",
     },
   },
 
@@ -83,7 +94,15 @@ const theme = createTheme({
         variant: "outlined",
         square: true
       }
-    }
+    },
+    MuiBadge: {
+      styleOverrides: {
+        badge: {
+          backgroundColor: "#ffbf38",
+          fontWeight: 700,
+        }
+      }
+    },
   },
 },
 

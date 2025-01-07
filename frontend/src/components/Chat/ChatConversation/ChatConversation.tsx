@@ -246,6 +246,7 @@ export default function ChatConversation({
       {isMobile && otherUser && (
         <ChatConversationMobileBanner
           otherUser={{
+            id: parseInt(otherUser.id),
             picture: otherUser.picture || "",
             firstName: otherUser.firstName,
             lastName: otherUser.lastName,

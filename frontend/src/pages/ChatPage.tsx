@@ -43,7 +43,7 @@ export default function ChatPage() {
   if (loading)
     return (
       <Box sx={{ p: 4 }}>
-        <CircularProgress size={36} sx={{ color: "var(--secondary)" }} />
+        <CircularProgress size={36} sx={{ color: theme.palette.primary.main }} />
       </Box>
     );
 

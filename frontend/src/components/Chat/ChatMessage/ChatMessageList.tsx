@@ -1,6 +1,8 @@
 import { Box, CircularProgress } from "@mui/material";
 import ChatMessage from "./ChatMessage";
 import { Message } from "../../../types";
+import React from "react";
+import { useTheme } from "@mui/material/styles";
 
 type ChatMessageListProps = {
   messages: Message[];
@@ -17,6 +19,8 @@ export function ChatMessageList({
   messagesEndRef,
   onScroll,
 }: ChatMessageListProps) {
+  const theme = useTheme();
+
   return (
     <Box
       sx={{
@@ -30,7 +34,10 @@ export function ChatMessageList({
     >
       {isLoading && (
         <Box sx={{ textAlign: "center", py: 2 }}>
-          <CircularProgress size={24} sx={{ color: "var(--secondary)" }} />
+          <CircularProgress
+            size={24}
+            sx={{ color: theme.palette.primary.main }}
+          />
         </Box>
       )}
       {messages.map((message: Message) => (
@@ -38,8 +45,8 @@ export function ChatMessageList({
           key={message.id}
           message={message.message}
           date={message.date}
-          isCurrentUser={message.author.id === currentUserId}
-          author={message.author}
+          isCurrentUser={message?.author?.id === currentUserId}
+          author={message?.author}
         />
       ))}
       <div ref={messagesEndRef} />

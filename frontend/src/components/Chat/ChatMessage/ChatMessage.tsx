@@ -2,17 +2,20 @@ import { Avatar, Box, Typography } from "@mui/material";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useEffect, useState } from "react";
+import { useTheme } from "@mui/material/styles";
 
 interface MessageProps {
   message: string;
   date: string;
   isCurrentUser: boolean;
-  author: {
-    id: number;
-    firstName: string;
-    lastName: string;
-    picture: string;
-  };
+  author:
+    | {
+        id: string;
+        firstName: string;
+        lastName: string;
+        picture: string | null;
+      }
+    | undefined;
 }
 
 export default function ChatMessage({
@@ -21,6 +24,8 @@ export default function ChatMessage({
   isCurrentUser,
   author,
 }: MessageProps) {
+  const theme = useTheme();
+
   const [formattedDate, setFormattedDate] = useState<string>("");
 
   useEffect(() => {
@@ -30,7 +35,9 @@ export default function ChatMessage({
         locale: fr,
       });
 
-      return distance.includes("environ 24 heures") ? "Il y a 1 jour" : distance;
+      return distance.includes("environ 24 heures")
+        ? "Il y a 1 jour"
+        : distance;
     };
 
     setFormattedDate(calculateDistance());
@@ -59,17 +66,19 @@ export default function ChatMessage({
         }}
       >
         <Avatar
-          src={`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/users/${author.id}/${author.picture}`}
-          alt={`${author.firstName} ${author.lastName}`}
+          src={`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/users/${
+            author?.id
+          }/${author?.picture}`}
+          alt={`${author?.firstName} ${author?.lastName}`}
           sx={{ width: 32, height: 32, mx: 1 }}
         />
         <Box>
           <Box
             sx={{
               bgcolor: isCurrentUser
-                ? "var(--secondary)"
-                : "var(--background-darker)",
-              color: isCurrentUser ? "var(--white)" : "var(--text-primary)",
+                ? theme.palette.primary.main
+                : theme.palette.tertiary.dark,
+              color: isCurrentUser ? theme.palette.common.white : theme.palette.text.primary,
               p: 1,
               borderRadius: 2,
               maxWidth: "100%",
@@ -85,7 +94,7 @@ export default function ChatMessage({
               mt: 0.5,
               display: "block",
               textAlign: isCurrentUser ? "right" : "left",
-              color: "var(--text-secondary)",
+              color: theme.palette.text.secondary,
             }}
           >
             {formattedDate}

@@ -83,7 +83,6 @@ export default function Header({ isAuthenticated }: HeaderProps) {
                   />
                   <Badge
                     badgeContent={4}
-                    color="warning"
                     sx={{
                       position: "absolute",
                       bottom: 20,
@@ -112,8 +111,8 @@ export default function Header({ isAuthenticated }: HeaderProps) {
                   <Button
                     variant="contained"
                     sx={{
-                      bgcolor: "var(--secondary)",
-                      "&:hover": { bgcolor: "var(--secondary-hover)" },
+                      bgcolor: theme.palette.primary.main,
+                      "&:hover": { bgcolor: theme.palette.primary.dark },
                     }}
                     onClick={() => setAuthModalIsOpen(true)}
                   >

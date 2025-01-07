@@ -1,5 +1,6 @@
 import { Box, TextField, IconButton } from "@mui/material";
 import { Send } from "@mui/icons-material";
+import { useTheme } from "@mui/material/styles";
 
 type ChatInputProps = {
   value: string;
@@ -8,7 +9,14 @@ type ChatInputProps = {
   onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void;
 };
 
-export function ChatInput({ value, onChange, onSubmit, onKeyDown }: ChatInputProps) {
+export function ChatInput({
+  value,
+  onChange,
+  onSubmit,
+  onKeyDown,
+}: ChatInputProps) {
+  const theme = useTheme();
+
   return (
     <Box
       component="form"
@@ -31,7 +39,7 @@ export function ChatInput({ value, onChange, onSubmit, onKeyDown }: ChatInputPro
         sx={{
           "& .MuiOutlinedInput-root": {
             "&.Mui-focused fieldset": {
-              borderColor: "var(--secondary)",
+              borderColor: theme.palette.primary.main,
             },
           },
         }}
@@ -39,11 +47,11 @@ export function ChatInput({ value, onChange, onSubmit, onKeyDown }: ChatInputPro
       <IconButton
         type="submit"
         sx={{
-          color: "var(--secondary)",
+          color: theme.palette.primary.main,
           borderRadius: "20%",
           "&:hover": {
-            bgcolor: "var(--secondary)",
-            color: "var(--white)",
+            bgcolor: theme.palette.primary.main,
+            color: theme.palette.common.white,
           },
         }}
       >

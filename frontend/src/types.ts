@@ -14,7 +14,7 @@ export type User = {
   id: string;
   firstName: string;
   lastName: string;
-  picture?: string | null;
+  picture: string | null;
   skills?: Skill[];
   createdAt?: Date;
 };

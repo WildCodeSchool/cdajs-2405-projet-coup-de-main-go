@@ -1,9 +1,15 @@
 import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { formatFullName } from "../../../utils/formatName";
+import { useTheme } from "@mui/material/styles";
 
 type ChatConversationMobileBannerProps = {
-  otherUser: { id: number, picture: string; firstName: string; lastName: string };
+  otherUser: {
+    id: number;
+    picture: string;
+    firstName: string;
+    lastName: string;
+  };
   onBack?: () => void;
   onOpenModal?: () => void;
 };
@@ -13,6 +19,8 @@ export default function ChatConversationMobileBanner({
   onBack,
   onOpenModal,
 }: ChatConversationMobileBannerProps) {
+  const theme = useTheme();
+
   return (
     <Box
       sx={{
@@ -33,7 +41,9 @@ export default function ChatConversationMobileBanner({
           <ArrowBackIosIcon />
         </IconButton>
         <Avatar
-          src={`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/users/${otherUser.id}/${otherUser.picture}`}
+          src={`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/users/${
+            otherUser.id
+          }/${otherUser.picture}`}
           alt={formatFullName(
             otherUser?.firstName ?? "Inconnu",
             otherUser?.lastName ?? ""
@@ -51,9 +61,9 @@ export default function ChatConversationMobileBanner({
         variant="contained"
         onClick={onOpenModal}
         sx={{
-          bgcolor: "var(--tertiary)",
+          bgcolor: theme.palette.secondary.main,
           "&:hover": {
-            bgcolor: "var(--tertiary-hover)",
+            bgcolor: theme.palette.secondary.dark,
           },
         }}
       >
