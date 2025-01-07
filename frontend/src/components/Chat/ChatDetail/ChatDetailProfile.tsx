@@ -21,7 +21,7 @@ export default function ChatDetailProfile({
       }}
     >
       <Avatar
-        src={`person/${userRequester?.picture}`}
+        src={`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/users/${userRequester?.id}/${userRequester?.picture}`}
         alt={formatFullName(
           userRequester?.firstName ?? "Inconnu",
           userRequester?.lastName ?? ""

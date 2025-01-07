@@ -3,7 +3,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { formatFullName } from "../../../utils/formatName";
 
 type ChatConversationMobileBannerProps = {
-  otherUser: { picture: string; firstName: string; lastName: string };
+  otherUser: { id: number, picture: string; firstName: string; lastName: string };
   onBack?: () => void;
   onOpenModal?: () => void;
 };
@@ -33,7 +33,7 @@ export default function ChatConversationMobileBanner({
           <ArrowBackIosIcon />
         </IconButton>
         <Avatar
-          src={`person/${otherUser?.picture}`}
+          src={`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/users/${otherUser.id}/${otherUser.picture}`}
           alt={formatFullName(
             otherUser?.firstName ?? "Inconnu",
             otherUser?.lastName ?? ""

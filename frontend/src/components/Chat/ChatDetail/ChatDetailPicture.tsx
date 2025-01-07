@@ -2,14 +2,25 @@ import { Box, Typography } from "@mui/material";
 
 type ChatDetailPictureProps = {
   ad?: {
+    id: number;
     title: string;
+    picture1: string | null;
     mangoAmount: number;
+    skillId: number;
+    skill?: {
+      name: string;
+      picture: string;
+    };
   };
 };
 
-export default function ChatDetailPicture({
-  ad,
-}: ChatDetailPictureProps){
+export default function ChatDetailPicture({ ad }: ChatDetailPictureProps) {
+  const imageUrl = ad?.picture1
+    ? `${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/ads/${ad?.id}/${
+        ad?.picture1
+      }`
+    : `/skills/${ad?.skill?.picture}`;
+
   return (
     <Box
       sx={{
@@ -21,7 +32,7 @@ export default function ChatDetailPicture({
       }}
     >
       <img
-        src="https://plus.unsplash.com/premium_photo-1680286739871-01142bc609df?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        src={imageUrl}
         alt={ad?.title}
         style={{
           width: 60,

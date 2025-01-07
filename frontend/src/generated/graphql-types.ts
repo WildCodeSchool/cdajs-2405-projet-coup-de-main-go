@@ -55,6 +55,21 @@ export type AdInput = {
   zipCode: Scalars['String']['input'];
 };
 
+export type AdUpdateInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  duration?: InputMaybe<Scalars['Int']['input']>;
+  mangoAmount?: InputMaybe<Scalars['Int']['input']>;
+  picture1?: InputMaybe<Scalars['String']['input']>;
+  picture2?: InputMaybe<Scalars['String']['input']>;
+  picture3?: InputMaybe<Scalars['String']['input']>;
+  skillId?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  userRequesterId?: InputMaybe<Scalars['String']['input']>;
+  zipCode?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Chat = {
   __typename?: 'Chat';
   ad: Ad;
@@ -113,6 +128,7 @@ export type Mutation = {
   updateAd: Ad;
   updateAdStatus: Ad;
   updateChatHelpProposal: Chat;
+  updateProfilePicture: User;
   updateUser: User;
 };
 
@@ -184,7 +200,7 @@ export type MutationTransferMangoArgs = {
 
 
 export type MutationUpdateAdArgs = {
-  adData: AdInput;
+  adData?: InputMaybe<AdUpdateInput>;
   id: Scalars['String']['input'];
 };
 
@@ -198,6 +214,12 @@ export type MutationUpdateAdStatusArgs = {
 export type MutationUpdateChatHelpProposalArgs = {
   chatId: Scalars['String']['input'];
   isHelpProposed: Scalars['Boolean']['input'];
+};
+
+
+export type MutationUpdateProfilePictureArgs = {
+  id: Scalars['String']['input'];
+  picture: Scalars['String']['input'];
 };
 
 
@@ -370,6 +392,13 @@ export type UpdateAdStatusMutationVariables = Exact<{
 
 export type UpdateAdStatusMutation = { __typename?: 'Mutation', updateAdStatus: { __typename?: 'Ad', id: string, status: Status } };
 
+export type CreateAdMutationVariables = Exact<{
+  adData: AdInput;
+}>;
+
+
+export type CreateAdMutation = { __typename?: 'Mutation', createAd: { __typename?: 'Ad', id: string, title: string, description: string, picture1?: string | null, picture2?: string | null, picture3?: string | null } };
+
 export type CreateChatMutationVariables = Exact<{
   chatData: ChatInput;
 }>;
@@ -390,7 +419,7 @@ export type GetChatsByUserIdQueryVariables = Exact<{
 }>;
 
 
-export type GetChatsByUserIdQuery = { __typename?: 'Query', getChatsByUserId?: Array<{ __typename?: 'Chat', id: string, date: any, isHelpProposed: boolean, messages: Array<{ __typename?: 'Message', id: string, date: any, isViewedByRequester: boolean, isViewedByHelper: boolean, message: string, author: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null } }>, ad: { __typename?: 'Ad', id: string, title: string, description: string, mangoAmount: number, duration: number, status: Status }, userHelper: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null, createdAt: any }, userRequester: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null, createdAt: any } }> | null };
+export type GetChatsByUserIdQuery = { __typename?: 'Query', getChatsByUserId?: Array<{ __typename?: 'Chat', id: string, date: any, isHelpProposed: boolean, messages: Array<{ __typename?: 'Message', id: string, date: any, isViewedByRequester: boolean, isViewedByHelper: boolean, message: string, author: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null } }>, ad: { __typename?: 'Ad', id: string, title: string, description: string, mangoAmount: number, duration: number, status: Status, picture1?: string | null, picture2?: string | null, picture3?: string | null, skill: { __typename?: 'Skill', id: string, name: string, picture: string } }, userHelper: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null, createdAt: any }, userRequester: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null, createdAt: any } }> | null };
 
 export type SendMessageMutationVariables = Exact<{
   messageData: MessageInput;
@@ -494,6 +523,14 @@ export type GetMangoBalanceByUserIdQueryVariables = Exact<{
 
 export type GetMangoBalanceByUserIdQuery = { __typename?: 'Query', getMangoBalanceByUserId: number };
 
+export type UpdateProfilePictureMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+  picture: Scalars['String']['input'];
+}>;
+
+
+export type UpdateProfilePictureMutation = { __typename?: 'Mutation', updateProfilePicture: { __typename?: 'User', id: string, picture?: string | null } };
+
 
 export const UpdateAdStatusDocument = gql`
     mutation UpdateAdStatus($id: String!, $status: String!) {
@@ -530,6 +567,44 @@ export function useUpdateAdStatusMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateAdStatusMutationHookResult = ReturnType<typeof useUpdateAdStatusMutation>;
 export type UpdateAdStatusMutationResult = Apollo.MutationResult<UpdateAdStatusMutation>;
 export type UpdateAdStatusMutationOptions = Apollo.BaseMutationOptions<UpdateAdStatusMutation, UpdateAdStatusMutationVariables>;
+export const CreateAdDocument = gql`
+    mutation CreateAd($adData: AdInput!) {
+  createAd(adData: $adData) {
+    id
+    title
+    description
+    picture1
+    picture2
+    picture3
+  }
+}
+    `;
+export type CreateAdMutationFn = Apollo.MutationFunction<CreateAdMutation, CreateAdMutationVariables>;
+
+/**
+ * __useCreateAdMutation__
+ *
+ * To run a mutation, you first call `useCreateAdMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateAdMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createAdMutation, { data, loading, error }] = useCreateAdMutation({
+ *   variables: {
+ *      adData: // value for 'adData'
+ *   },
+ * });
+ */
+export function useCreateAdMutation(baseOptions?: Apollo.MutationHookOptions<CreateAdMutation, CreateAdMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateAdMutation, CreateAdMutationVariables>(CreateAdDocument, options);
+      }
+export type CreateAdMutationHookResult = ReturnType<typeof useCreateAdMutation>;
+export type CreateAdMutationResult = Apollo.MutationResult<CreateAdMutation>;
+export type CreateAdMutationOptions = Apollo.BaseMutationOptions<CreateAdMutation, CreateAdMutationVariables>;
 export const CreateChatDocument = gql`
     mutation CreateChat($chatData: ChatInput!) {
   createChat(chatData: $chatData) {
@@ -625,6 +700,14 @@ export const GetChatsByUserIdDocument = gql`
       mangoAmount
       duration
       status
+      picture1
+      picture2
+      picture3
+      skill {
+        id
+        name
+        picture
+      }
     }
     userHelper {
       id
@@ -1171,3 +1254,38 @@ export type GetMangoBalanceByUserIdQueryHookResult = ReturnType<typeof useGetMan
 export type GetMangoBalanceByUserIdLazyQueryHookResult = ReturnType<typeof useGetMangoBalanceByUserIdLazyQuery>;
 export type GetMangoBalanceByUserIdSuspenseQueryHookResult = ReturnType<typeof useGetMangoBalanceByUserIdSuspenseQuery>;
 export type GetMangoBalanceByUserIdQueryResult = Apollo.QueryResult<GetMangoBalanceByUserIdQuery, GetMangoBalanceByUserIdQueryVariables>;
+export const UpdateProfilePictureDocument = gql`
+    mutation UpdateProfilePicture($id: String!, $picture: String!) {
+  updateProfilePicture(id: $id, picture: $picture) {
+    id
+    picture
+  }
+}
+    `;
+export type UpdateProfilePictureMutationFn = Apollo.MutationFunction<UpdateProfilePictureMutation, UpdateProfilePictureMutationVariables>;
+
+/**
+ * __useUpdateProfilePictureMutation__
+ *
+ * To run a mutation, you first call `useUpdateProfilePictureMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProfilePictureMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProfilePictureMutation, { data, loading, error }] = useUpdateProfilePictureMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      picture: // value for 'picture'
+ *   },
+ * });
+ */
+export function useUpdateProfilePictureMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProfilePictureMutation, UpdateProfilePictureMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateProfilePictureMutation, UpdateProfilePictureMutationVariables>(UpdateProfilePictureDocument, options);
+      }
+export type UpdateProfilePictureMutationHookResult = ReturnType<typeof useUpdateProfilePictureMutation>;
+export type UpdateProfilePictureMutationResult = Apollo.MutationResult<UpdateProfilePictureMutation>;
+export type UpdateProfilePictureMutationOptions = Apollo.BaseMutationOptions<UpdateProfilePictureMutation, UpdateProfilePictureMutationVariables>;

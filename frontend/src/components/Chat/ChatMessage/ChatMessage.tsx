@@ -59,7 +59,7 @@ export default function ChatMessage({
         }}
       >
         <Avatar
-          src={`/uploads/users/${author.id}/${author.picture}`}
+          src={`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/users/${author.id}/${author.picture}`}
           alt={`${author.firstName} ${author.lastName}`}
           sx={{ width: 32, height: 32, mx: 1 }}
         />

@@ -26,6 +26,14 @@ export const GET_USER_CHATS = gql`
         mangoAmount
         duration
         status
+        picture1
+        picture2
+        picture3
+        skill {
+          id
+          name
+          picture
+        }
       }
       userHelper {
         id

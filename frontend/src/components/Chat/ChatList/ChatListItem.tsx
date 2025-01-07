@@ -52,7 +52,7 @@ export default function ChatListItem({
       >
         <ListItemAvatar>
           <Avatar
-            src={`person/${otherUser.picture}`}
+            src={`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/users/${otherUser.id}/${otherUser.picture}`}
             alt={formatFullName(otherUser.firstName, otherUser.lastName)}
           />
         </ListItemAvatar>

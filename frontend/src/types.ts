@@ -23,11 +23,13 @@ export type Ad = {
   id: string;
   title: string;
   description: string;
-  picture?: string | null;
+  picture1?: string | null;
+  picture2?: string | null;
+  picture3?: string | null;
   mangoAmount: number;
   duration: number;
   userRequester?: User;
-  skills?: Skill[];
+  skill: Skill;
   status: Status
 };
 
