@@ -24,6 +24,8 @@ function Step1({ goToLogin, register }: Step1Props) {
                 placeholder="Mot de passe"
                 {...register("password", { required: true })}
                 label="Mot de passe"
+                helperText="Le mot de passe doit inclure au moins une majuscule, une
+                minuscule, un chiffre et un caractère spécial et contenir au moins 8 caractères."
                 required
             />
             <TextField

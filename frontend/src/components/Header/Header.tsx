@@ -1,6 +1,5 @@
 import { Button, Stack } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
-import { Navigate } from "react-router-dom";
 
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -13,22 +12,20 @@ interface HeaderProps {
 export default function Header({ setAuthModalIsOpen }: HeaderProps) {
     const { isAuthenticated } = useAuth();
 
-    if (isAuthenticated) {
-        return <Navigate to="/dashboard" replace />;
-    }
-
-    return (
-        <Stack spacing={0} sx={{ px: 2 }} component="header">
-            <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-            >
-                <img src={logo as string} alt="Logo Coup de main-go" />
-                <Button onClick={() => setAuthModalIsOpen(true)}>
-                    S'inscrire / Se connecter
-                </Button>
+    if (!isAuthenticated) {
+        return (
+            <Stack spacing={0} sx={{ px: 2 }} component="header">
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                >
+                    <img src={logo as string} alt="Logo Coup de main-go" />
+                    <Button onClick={() => setAuthModalIsOpen(true)}>
+                        S'inscrire / Se connecter
+                    </Button>
+                </Stack>
             </Stack>
-        </Stack>
-    );
+        );
+    }
 }

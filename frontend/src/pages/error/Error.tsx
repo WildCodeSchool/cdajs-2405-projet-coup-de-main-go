@@ -14,8 +14,8 @@ export default function Error() {
     const { isAuthenticated } = useAuth();
     const [authModalIsOpen, setAuthModalIsOpen] = useState<boolean>(false);
 
-    if (isAuthenticated) {
-        setAuthModalIsOpen(false);
+    // Si l'utilisateur vient de se connecter (c à d : si l'utilisateur est authentifié mais que la modal est encore ouverte)
+    if (isAuthenticated && authModalIsOpen) {
         return <Navigate to="/dashboard" replace />;
     }
 
@@ -31,13 +31,24 @@ export default function Error() {
             </GenericModal>
             <Stack alignItems="center" justifyContent="center" component="main">
                 <img src={error} alt="Not_found" />
-                <Typography>
-                    Cette page n'existe plus, elle a peut-être été supprimée,
-                    vous pouvez retourner à l'accueil juste{" "}
-                    <Link href="/" underline="hover">
-                        ici
-                    </Link>
-                </Typography>
+                {isAuthenticated ? (
+                    <Typography>
+                        Cette page n'existe plus, elle a peut-être été
+                        supprimée, vous pouvez retourner voir les annonces
+                        récentes juste{" "}
+                        <Link href="/dashboard" underline="hover">
+                            ici
+                        </Link>
+                    </Typography>
+                ) : (
+                    <Typography>
+                        Cette page n'existe plus, elle a peut-être été
+                        supprimée, vous pouvez retourner à l'accueil juste{" "}
+                        <Link href="/" underline="hover">
+                            ici
+                        </Link>
+                    </Typography>
+                )}
             </Stack>
             <Footer />
         </Box>

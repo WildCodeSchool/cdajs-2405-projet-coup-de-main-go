@@ -1,5 +1,5 @@
 import { Box, Typography, Stack } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { Navigate, useOutletContext } from "react-router-dom";
 
 import { useAuth } from "../../contexts/AuthContext";
@@ -14,8 +14,11 @@ export default function Home() {
     const setAuthModalIsOpen: Dispatch<SetStateAction<boolean>> =
         useOutletContext();
 
-    if (isAuthenticated) {
+    useEffect(() => {
         setAuthModalIsOpen(false);
+    }, [isAuthenticated]);
+
+    if (isAuthenticated) {
         return <Navigate to="/dashboard" replace />;
     }
 
