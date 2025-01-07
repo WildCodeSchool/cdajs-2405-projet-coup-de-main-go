@@ -8,6 +8,7 @@ interface MessageProps {
   date: string;
   isCurrentUser: boolean;
   author: {
+    id: number;
     firstName: string;
     lastName: string;
     picture: string;
@@ -58,7 +59,7 @@ export default function ChatMessage({
         }}
       >
         <Avatar
-          src={`person/${author.picture}`}
+          src={`/uploads/users/${author.id}/${author.picture}`}
           alt={`${author.firstName} ${author.lastName}`}
           sx={{ width: 32, height: 32, mx: 1 }}
         />
