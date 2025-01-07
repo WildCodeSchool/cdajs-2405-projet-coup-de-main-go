@@ -126,3 +126,12 @@ export const GET_MANGO_BALANCE_QUERY = gql`
         getMangoBalanceByUserId(id: $id)
     }
 `;
+
+export const UPDATE_PROFILE_PICTURE = gql`
+  mutation UpdateProfilePicture($id: String!, $picture: String!) {
+    updateProfilePicture(id: $id, picture: $picture) {
+      id
+      picture
+    }
+  }
+`;
