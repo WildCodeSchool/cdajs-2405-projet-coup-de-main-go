@@ -18,10 +18,10 @@ export default function ChatDetailDescription({
         borderColor: "divider",
       }}
     >
-      <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
+      <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
         Description
       </Typography>
-      <Typography variant="body2" color="text.secondary">
+      <Typography variant="body2">
         {ad?.description}
       </Typography>
     </Box>

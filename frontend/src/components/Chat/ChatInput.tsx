@@ -47,11 +47,11 @@ export function ChatInput({
       <IconButton
         type="submit"
         sx={{
-          color: theme.palette.primary.main,
+          color: theme.palette.common.white,
+          bgcolor: theme.palette.primary.main,
           borderRadius: "20%",
           "&:hover": {
-            bgcolor: theme.palette.primary.main,
-            color: theme.palette.common.white,
+            bgcolor: theme.palette.primary.dark,
           },
         }}
       >
