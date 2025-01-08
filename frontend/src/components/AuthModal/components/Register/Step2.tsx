@@ -69,7 +69,6 @@ function Step3({ errors, register, setStep, setValue }: Step2Props) {
                 required
             />
             <Stack direction={"row"}>
-                {/* TO DO : Autoriser uniquement les chiffres */}
                 <TextField
                     type="text"
                     placeholder="Code Postal"
