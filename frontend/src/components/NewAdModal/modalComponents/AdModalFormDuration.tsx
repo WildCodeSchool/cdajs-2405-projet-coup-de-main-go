@@ -10,7 +10,9 @@ export default function AdModalFormDuration() {
 
   return (
     <FormControl>
-      <FormLabel sx={{ textAlign: "center" }}>DUREE</FormLabel>
+      <FormLabel sx={{ fontSize: "1.25rem", textAlign: "center" }}>
+        Durée
+      </FormLabel>
       <Controller
         name="duration"
         control={control}

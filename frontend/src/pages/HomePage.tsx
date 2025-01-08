@@ -1,16 +1,13 @@
 import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-
 import AuthModal from "../components/AuthModal/AuthModal";
 import GenericModal from "../components/Modal/GenericModal";
 import { useAuth } from "../contexts/AuthContext";
-import NewAdModal from "../components/NewAdModal/NewAdModal";
 import { Button } from "@mui/material";
 
 function HomePage() {
   const { isAuthenticated } = useAuth();
   const [authModalIsOpen, setAuthModalIsOpen] = useState<boolean>(false);
-  const [newAdModalIsOpen, setNewAdModalIsOpen] = useState<boolean>(false);
 
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
@@ -29,15 +26,6 @@ function HomePage() {
       >
         <AuthModal />
       </GenericModal>
-      <Button onClick={() => setNewAdModalIsOpen(true)}>
-        Créer une annonce
-      </Button>
-      {newAdModalIsOpen && (
-        <NewAdModal
-          isModalOpen={newAdModalIsOpen}
-          closeModal={() => setNewAdModalIsOpen(false)}
-        />
-      )}
       <Button component={Link} to={`/ads`}>
         Explorer
       </Button>

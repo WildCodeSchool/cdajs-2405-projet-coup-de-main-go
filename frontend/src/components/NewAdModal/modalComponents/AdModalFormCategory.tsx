@@ -31,11 +31,12 @@ export default function AdModalFormCategory() {
       error={!!errors.skillId}
       sx={{
         "& .MuiInputBase-root": {
-          backgroundColor: "var(--white)", // Input field background
+          backgroundColor: "var(--white)",
+          borderRadius: "20px",
         },
       }}
     >
-      <InputLabel>Catégorie</InputLabel>
+      <InputLabel sx={{ borderRadius: "20px" }}>Catégorie</InputLabel>
       <Controller
         name="skillId"
         control={control}

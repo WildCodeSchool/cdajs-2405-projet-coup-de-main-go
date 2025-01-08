@@ -1,8 +1,9 @@
 import { useState } from "react";
-import NewAdModal from "../components/NewAdModal/NewAdModal";
 import { useAuth } from "../contexts/AuthContext";
 import { useGetAllUsersQuery } from "../generated/graphql-types";
 import { Button } from "@mui/material";
+import GenericModal from "../components/Modal/GenericModal";
+import AdModalForm from "../components/NewAdModal/AdModalForm";
 
 interface UserProps {
   id: string;
@@ -16,6 +17,9 @@ interface UserProps {
 function Dashboard() {
   const { logout } = useAuth();
   const [newAdModalIsOpen, setNewAdModalIsOpen] = useState<boolean>(false);
+  const closeNewAdModal = () => {
+    setNewAdModalIsOpen(false);
+  };
   // Requête Apollo : GetAllUsers
   const { data, error, loading } = useGetAllUsersQuery();
 
@@ -38,10 +42,13 @@ function Dashboard() {
         Créer une annonce
       </Button>
       {newAdModalIsOpen && (
-        <NewAdModal
-          isModalOpen={newAdModalIsOpen}
-          closeModal={() => setNewAdModalIsOpen(false)}
-        />
+        <GenericModal
+          open={newAdModalIsOpen}
+          onClose={closeNewAdModal}
+          maxWidth="md"
+        >
+          <AdModalForm onClose={closeNewAdModal} />
+        </GenericModal>
       )}
       <ul>
         {users.map((user) => (
