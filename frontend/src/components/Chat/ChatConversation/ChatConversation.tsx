@@ -44,7 +44,12 @@ export default function ChatConversation({
 
   useEffect(() => {
     if (displayedMessages.length > 0) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+      setTimeout(() => {
+        const chatContainer = messagesEndRef.current?.parentElement;
+        if (chatContainer) {
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+      }, 100);
     }
   }, [displayedMessages]);
 
