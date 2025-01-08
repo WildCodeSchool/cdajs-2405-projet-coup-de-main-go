@@ -8,7 +8,7 @@ import Header from "../../components/Header/Header";
 import GenericModal from "../../components/Modal/GenericModal";
 import { useAuth } from "../../contexts/AuthContext";
 
-import error from "@public/images/undraw_not_found_re_bh2e.svg";
+import error from "/images/undraw_not_found_re_bh2e.svg";
 
 export default function Error() {
     const { isAuthenticated } = useAuth();

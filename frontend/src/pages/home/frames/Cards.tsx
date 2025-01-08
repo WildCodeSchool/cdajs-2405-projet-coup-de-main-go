@@ -1,9 +1,9 @@
 import { Box, Stack, Grid2, Typography } from "@mui/material";
 
-import Clique from "@public/images/undraw_undraw_favoritepost_r6a0_-2-_oohm.svg";
-import Discute from "@public/images/undraw_mobile_message.svg";
-import Recevoir from "@public/images/undraw_verified_re_4io7.svg";
-import Train from "@public/images/undraw_personal_trainer_re_cnua.svg";
+import Clique from "/images/undraw_undraw_favoritepost_r6a0_-2-_oohm.svg";
+import Discute from "/images/undraw_mobile_message.svg";
+import Recevoir from "/images/undraw_verified_re_4io7.svg";
+import Train from "/images/undraw_personal_trainer_re_cnua.svg";
 
 import "../home.css";
 

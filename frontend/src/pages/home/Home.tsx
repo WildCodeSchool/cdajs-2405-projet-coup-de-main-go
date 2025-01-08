@@ -5,7 +5,7 @@ import { Navigate, useOutletContext } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import Cards from "./frames/Cards";
 
-import home from "@public/images/picture.png";
+import home from "/images/picture.png";
 
 import "./home.css";
 

@@ -22,8 +22,8 @@ export interface LoginFormData {
 }
 
 interface LoginProps {
-    justRegistered: Boolean;
-    setJustRegistered: (justRegistered: Boolean) => void;
+    justRegistered: boolean;
+    setJustRegistered: (justRegistered: boolean) => void;
     goToRegister: () => void;
 }
 
@@ -52,7 +52,7 @@ function Login({
 
     return (
         <form id="login" onSubmit={handleSubmit(onLoginFormSubmitted)}>
-            <Typography variant="h2">CONNEXION</Typography>
+            <Typography variant="h3">CONNEXION</Typography>
             <TextField
                 type="email"
                 placeholder="E-mail"

@@ -11,7 +11,7 @@ interface Step1Props {
 function Step1({ goToLogin, register }: Step1Props) {
     return (
         <>
-            <Typography variant="h2">S’INSCRIRE</Typography>
+            <Typography variant="h3">S’INSCRIRE</Typography>
             <TextField
                 type="email"
                 placeholder="E-mail"

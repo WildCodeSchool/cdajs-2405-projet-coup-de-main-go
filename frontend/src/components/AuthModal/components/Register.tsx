@@ -27,7 +27,7 @@ export interface RegisterFormData {
 }
 
 interface RegisterProps {
-    setJustRegistered: (justRegistered: Boolean) => void;
+    setJustRegistered: (justRegistered: boolean) => void;
     goToLogin: () => void;
 }
 

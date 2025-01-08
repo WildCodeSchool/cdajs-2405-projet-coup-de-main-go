@@ -1,5 +1,5 @@
 import { Stack, Typography, Link, IconButton, Grid2 } from '@mui/material';
-import logo from "../../../public/images/coup_de_main_go.png"
+import logo from "/images/coup_de_main_go.png"
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import InstagramIcon from '@mui/icons-material/Instagram';
