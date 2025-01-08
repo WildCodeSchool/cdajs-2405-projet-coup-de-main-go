@@ -1,48 +1,57 @@
+import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { UseFormRegister } from "react-hook-form";
 
 import { RegisterFormData } from "../Register";
 
 interface Step1Props {
     goToLogin: () => void;
-    setStep: (step: number) => void;
     register: UseFormRegister<RegisterFormData>;
 }
 
-function Step1({ goToLogin, setStep, register }: Step1Props) {
+function Step1({ goToLogin, register }: Step1Props) {
     return (
         <>
-            <strong id="auth-title">S’INSCRIRE</strong>
-            <input
+            <Typography variant="h3">S’INSCRIRE</Typography>
+            <TextField
                 type="email"
                 placeholder="E-mail"
                 {...register("email", { required: true })}
+                label="E-mail"
+                required
             />
-            <input
+            <TextField
                 type="password"
                 placeholder="Mot de passe"
                 {...register("password", { required: true })}
+                label="Mot de passe"
+                helperText="Le mot de passe doit inclure au moins une majuscule, une
+                minuscule, un chiffre et un caractère spécial et contenir au moins 8 caractères."
+                required
             />
-            <input
+            <TextField
                 type="password"
                 placeholder="Confirmer le mot de passe"
                 {...register("passwordConfirmation", { required: true })}
+                label="Confirmer le mot de passe"
+                required
             />
-            <p>
+            <Typography>
                 Vous avez déjà un compte ?{" "}
-                <strong
-                    className="clickable underline"
+                <Box
+                    component="span"
                     onClick={() => goToLogin()}
+                    sx={{
+                        cursor: "pointer",
+                        fontWeight: "bold",
+                        textDecoration: "underline",
+                    }}
                 >
                     Me connecter
-                </strong>
-            </p>
-            <button
-                type="button"
-                onClick={() => setStep(2)}
-                className="clickable"
-            >
-                Continuer
-            </button>
+                </Box>
+            </Typography>
+            <Stack direction={"row"} justifyContent={"flex-end"}>
+                <Button type="submit">Continuer</Button>
+            </Stack>
         </>
     );
 }

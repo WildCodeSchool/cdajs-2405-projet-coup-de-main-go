@@ -19,17 +19,18 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import Logo from "./Logo";
 import HeaderButton from "../Header/HeaderButton";
 import { useState } from "react";
-import { useAuthModal } from "../../contexts/AuthModalContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
+import { Dispatch, SetStateAction } from "react";
 
 interface HeaderProps {
-  isAuthenticated: boolean;
+  setAuthModalIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function Header({ isAuthenticated }: HeaderProps) {
+export default function Header({ setAuthModalIsOpen }: HeaderProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { authModalIsOpen, setAuthModalIsOpen } = useAuthModal();
+  const { isAuthenticated } = useAuth();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -57,7 +58,7 @@ export default function Header({ isAuthenticated }: HeaderProps) {
                 <HeaderButton
                   color="secondary"
                   text="Créer une annonce"
-                  icon="./mango.png"
+                  icon="/images/mango.png"
                 />
                 <HeaderButton color="primary" text="Explorer" paddingX={4} />
               </>
@@ -90,7 +91,7 @@ export default function Header({ isAuthenticated }: HeaderProps) {
                 >
                   <Box
                     component="img"
-                    src="/mango.png"
+                    src="/images/mango.png"
                     alt="Mango notification"
                     sx={{
                       width: 40,
@@ -124,7 +125,7 @@ export default function Header({ isAuthenticated }: HeaderProps) {
               </>
             ) : (
               <>
-                {!authModalIsOpen && !isMobile && (
+                {!isAuthenticated && !isMobile && (
                   <Button
                     variant="contained"
                     sx={{
@@ -161,7 +162,7 @@ export default function Header({ isAuthenticated }: HeaderProps) {
                 <HeaderButton
                   color="secondary"
                   text="Créer une annonce"
-                  icon="./mango.png"
+                  icon="/images/mango.png"
                 />
                 <HeaderButton color="primary" text="Explorer" paddingX={4} />
               </ListItemButton>

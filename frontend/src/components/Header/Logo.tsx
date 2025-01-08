@@ -8,7 +8,7 @@ export default function Logo() {
   return (
     <Link to="/dashboard" style={{ textDecoration: "none", color: "inherit" }}>
       <img
-        src="/logo.png"
+        src="/images/logo_main_go.png"
         alt="Coup de main-go"
         style={{
           height: isMobile ? "60px" : "40px",

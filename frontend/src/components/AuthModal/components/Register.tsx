@@ -1,9 +1,10 @@
-import { ApolloError } from "@apollo/client";
+import { Alert, CircularProgress } from "@mui/material";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import {
-    RegisterUserMutation,
+    CredentialsVerificationQuery,
+    useCredentialsVerificationLazyQuery,
     useGetAllSkillsQuery,
     useRegisterUserMutation,
 } from "../../../generated/graphql-types";
@@ -26,55 +27,96 @@ export interface RegisterFormData {
 }
 
 interface RegisterProps {
+    setJustRegistered: (justRegistered: boolean) => void;
     goToLogin: () => void;
 }
 
-function Register({ goToLogin }: RegisterProps) {
+function Register({ setJustRegistered, goToLogin }: RegisterProps) {
+    // Récupération des méthodes de RegisterFormData
+    const {
+        formState: { errors },
+        handleSubmit,
+        register,
+        setValue,
+    } = useForm<RegisterFormData>();
     // Trois étapes pour s'inscrire
     const [step, setStep] = useState<number>(1);
 
     // Requête Apollo : Enregistrement de l'utilisateur
-    const [sendRegisterQuery] = useRegisterUserMutation({
-        onCompleted: (data: RegisterUserMutation) => {
-            data.register;
+    const [
+        sendRegisterQuery,
+        { loading: registerLoading, error: registerError },
+    ] = useRegisterUserMutation({
+        onCompleted: () => {
+            setJustRegistered(true);
             goToLogin();
         },
-        onError: (error: ApolloError) => {
-            console.error("register failed", error);
+    });
+
+    // Requête Apollo : Vérifier les credentials
+    const [
+        sendCredentialsVerification,
+        { loading: verificationLoading, error: verificationError },
+    ] = useCredentialsVerificationLazyQuery({
+        onCompleted: (data: CredentialsVerificationQuery) => {
+            // Si la vérification est passée, passer à l'étape suivante
+            if (data.credentialsVerification) {
+                setStep(2);
+            }
         },
     });
-    // Récupération des méthodes de RegisterFormData
-    const { handleSubmit, register } = useForm<RegisterFormData>();
 
     // Requête Apollo : Récupération des Skills
-    const { data } = useGetAllSkillsQuery();
+    const { data: skillsData } = useGetAllSkillsQuery();
     // Initialisation de la variable skills
-    const skills: Skill[] = data?.getAllSkills || [];
+    const skills: Skill[] = skillsData?.getAllSkills || [];
+
     // Lors de la soumission du formulaire
     const onRegisterFormSubmitted = (formData: RegisterFormData) => {
-        // Si pas de Skills alors return un tableau vide
-        if (!formData.skillsId) {
-            formData.skillsId = [];
+        if (step === 1) {
+            // Vérifier les credentials
+            sendCredentialsVerification({
+                variables: formData,
+            });
         }
 
-        sendRegisterQuery({
-            variables: formData,
-        });
+        if (step === 2) {
+            setStep(3);
+        }
+
+        if (step === 3) {
+            // Si pas de Skills alors return un tableau vide
+            if (!formData.skillsId) {
+                formData.skillsId = [];
+            }
+
+            sendRegisterQuery({
+                variables: formData,
+            });
+        }
     };
 
     return (
         <form id="register" onSubmit={handleSubmit(onRegisterFormSubmitted)}>
-            {step === 1 && (
-                <Step1
-                    goToLogin={goToLogin}
-                    setStep={setStep}
+            {step === 1 && <Step1 goToLogin={goToLogin} register={register} />}
+            {step === 2 && (
+                <Step2
+                    errors={errors}
                     register={register}
+                    setStep={setStep}
+                    setValue={setValue}
                 />
             )}
-            {step === 2 && <Step2 setStep={setStep} register={register} />}
             {step === 3 && (
-                <Step3 skills={skills} setStep={setStep} register={register} />
+                <Step3 setStep={setStep} skills={skills} register={register} />
             )}
+            {registerError && (
+                <Alert severity="error">{registerError.message}</Alert>
+            )}
+            {verificationError && (
+                <Alert severity="error">{verificationError.message}</Alert>
+            )}
+            {(registerLoading || verificationLoading) && <CircularProgress />}
         </form>
     );
 }

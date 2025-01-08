@@ -3,19 +3,19 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "./App.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard.tsx";
-import HomePage from "./pages/HomePage.tsx";
+import Error from "./pages/error/Error.tsx";
+import Home from "./pages/home/Home.tsx";
 import ChatPage from "./pages/ChatPage.tsx";
-import UpdateProfilePicturePage from "./pages/UpdateProfilePicturePage.tsx";
-import CreateAdPage from "./pages/CreateAdPage.tsx";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <Error />,
     children: [
       {
         path: "/",
-        element: <HomePage />,
+        element: <Home />,
       },
       {
         path: "/dashboard",
@@ -33,22 +33,6 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      {
-        path: "/profile-upload",
-        element: (
-          <ProtectedRoute>
-            <UpdateProfilePicturePage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "/ad-upload",
-        element: (
-          <ProtectedRoute>
-            <CreateAdPage />
-          </ProtectedRoute>
-        ),
-      }
     ],
   },
 ]);

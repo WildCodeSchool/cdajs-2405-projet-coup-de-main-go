@@ -1,65 +1,122 @@
-import { UseFormRegister } from "react-hook-form";
+import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 import { RegisterFormData } from "../Register";
 
 interface Step2Props {
-    setStep: (step: number) => void;
+    errors: FieldErrors<RegisterFormData>;
     register: UseFormRegister<RegisterFormData>;
+    setStep: (step: number) => void;
+    setValue: UseFormSetValue<RegisterFormData>;
 }
 
-function Step3({ setStep, register }: Step2Props) {
+function Step3({ errors, register, setStep, setValue }: Step2Props) {
+    const handleChangeZipCode = (string: string): string => {
+        const re = /^[0-9]*$/;
+
+        if ((!string.includes(" ") && re.test(string)) || string === "") {
+            return string;
+        } else {
+            return string
+                .split("")
+                .splice(0, string.length - 1)
+                .join("");
+        }
+    };
+
     return (
         <>
-            <strong id="auth-title">Formulaire</strong>
-            <div id="auth-steps">
-                <div id="auth-current-step"></div>
-                <div id="auth-other-step"></div>
-            </div>
-            <div className="auth-inline">
-                <input
+            <Typography variant="h2">Formulaire</Typography>
+            <Stack direction={"row"} spacing={"20px"}>
+                <Box
+                    sx={{
+                        backgroundColor: "var(--tertiary)",
+                        borderRadius: "20px",
+                        height: "10px",
+                        width: "60px",
+                    }}
+                ></Box>
+                <Box
+                    sx={{
+                        backgroundColor: "var(--tertiary)",
+                        borderRadius: "20px",
+                        height: "10px",
+                        width: "20px",
+                    }}
+                ></Box>
+            </Stack>
+            <Stack direction={"row"}>
+                <TextField
                     type="text"
                     placeholder="Prénom"
                     {...register("firstName", { required: true })}
+                    label="Prénom"
+                    required
                 />
-                <input
+                <TextField
                     type="text"
                     placeholder="Nom"
                     {...register("lastName", { required: true })}
+                    label="Nom"
+                    required
                 />
-            </div>
-            <input
+            </Stack>
+            <TextField
                 type="text"
                 placeholder="Adresse"
                 {...register("address", { required: true })}
+                label="Adresse"
+                required
             />
-            <div className="auth-inline">
-                <input
+            <Stack direction={"row"}>
+                <TextField
                     type="text"
                     placeholder="Code Postal"
-                    {...register("zipCode", { required: true })}
+                    label="Code Postal"
+                    {...register("zipCode", {
+                        required: "Le code postal est requis",
+                        minLength: {
+                            value: 5,
+                            message:
+                                "Le code postal doit comporter 5 caractères",
+                        },
+                        maxLength: {
+                            value: 5,
+                            message:
+                                "Le code postal doit comporter 5 caractères",
+                        },
+                    })}
+                    error={!!errors.zipCode} // Si une erreur existe, active l'état d'erreur
+                    helperText={errors.zipCode?.message as string} // Affiche le message d'erreur
+                    onChange={
+                        (e) =>
+                            setValue(
+                                "zipCode",
+                                handleChangeZipCode(e.target.value)
+                            ) // Si nécessaire
+                    }
+                    required
                 />
-                <input
+
+                <TextField
                     type="text"
                     placeholder="Ville"
                     {...register("city", { required: true })}
+                    label="Ville"
+                    required
                 />
-            </div>
-            <div id="auth-buttons">
-                <button
+            </Stack>
+            <Stack direction={"row"} justifyContent={"flex-end"}>
+                <Button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="clickable"
+                    variant="outlined"
+                    sx={{ color: "black" }}
                 >
                     Annuler
-                </button>
-                <button
-                    type="button"
-                    onClick={() => setStep(3)}
-                    className="clickable"
-                >
-                    Suivant
-                </button>
-            </div>
+                </Button>
+                <Button type="submit">Suivant</Button>
+            </Stack>
         </>
     );
 }

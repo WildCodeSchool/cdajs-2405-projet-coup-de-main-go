@@ -19,7 +19,7 @@ export default function ChatDetailPicture({ ad }: ChatDetailPictureProps) {
     ? `${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/ads/${ad?.id}/${
         ad?.picture1
       }`
-    : `/skills/${ad?.skill?.picture}`;
+    : `/images/skills/${ad?.skill?.picture}`;
 
   return (
     <Box
@@ -49,7 +49,7 @@ export default function ChatDetailPicture({ ad }: ChatDetailPictureProps) {
           <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
             {ad?.mangoAmount}
           </Typography>
-          <img src="./mango.png" alt="mango" style={{ width: 16 }} />
+          <img src="/images/mango.png" alt="mango" style={{ width: 16 }} />
         </Box>
       </Box>
     </Box>
