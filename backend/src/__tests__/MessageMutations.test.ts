@@ -57,7 +57,7 @@ describe("sendMessage", () => {
             skill
         );
 
-        chat = new Chat(userRequester, userHelper, ad);
+        chat = new Chat(faker.datatype.boolean(), userRequester, userHelper, ad);
         chat.id = faker.string.uuid();
 
         messageData = {
@@ -74,7 +74,7 @@ describe("sendMessage", () => {
         mockTypeOrm().onMock(User).toReturn(userHelper, "findOne");
         mockTypeOrm().onMock(Message).toReturn(null, "save");
 
-        const message = await messageMutations.sendMessage(messageData);
+        const message = await messageMutations.sendMessage(messageData, userHelper.id!);
 
         expect(message).toBeInstanceOf(Message);
         expect(message.message).toBe(messageData.message);
@@ -85,8 +85,8 @@ describe("sendMessage", () => {
     it("should throw an error if the chat does not exist", async () => {
         mockTypeOrm().onMock(Chat).toReturn(null, "findOne");
 
-        await expect(messageMutations.sendMessage(messageData)).rejects.toThrow(
-            "Le chat spécifié n'existe pas."
+        await expect(messageMutations.sendMessage(messageData, userHelper.id!)).rejects.toThrow(
+            "Le chat spécifié n'existe pas.",
         );
     });
 
@@ -94,7 +94,7 @@ describe("sendMessage", () => {
         mockTypeOrm().onMock(Chat).toReturn(chat, "findOne");
         mockTypeOrm().onMock(User).toReturn(null, "findOne");
 
-        await expect(messageMutations.sendMessage(messageData)).rejects.toThrow(
+        await expect(messageMutations.sendMessage(messageData, userHelper.id!)).rejects.toThrow(
             "L'utilisateur spécifié n'existe pas."
         );
     });
@@ -114,7 +114,7 @@ describe("sendMessage", () => {
         mockTypeOrm().onMock(Chat).toReturn(chat, "findOne");
         mockTypeOrm().onMock(User).toReturn(wrongUser, "findOne");
 
-        await expect(messageMutations.sendMessage(messageData)).rejects.toThrow(
+        await expect(messageMutations.sendMessage(messageData, userHelper.id!)).rejects.toThrow(
             "L'utilisateur spécifié ne fait pas partie du chat spécifié."
         );
     });
@@ -169,7 +169,7 @@ describe("markMessagesAsReadForUser", () => {
             skill
         );
 
-        chat = new Chat(userRequester, userHelper, ad);
+        chat = new Chat(faker.datatype.boolean(), userRequester, userHelper, ad);
         chat.id = faker.string.uuid();
     });
 
