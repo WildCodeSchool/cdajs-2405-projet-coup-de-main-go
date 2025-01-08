@@ -41,7 +41,16 @@ export default function Header({ isAuthenticated }: HeaderProps) {
     <>
       <AppBar position="static" sx={{ bgcolor: "transparent", border: 0 }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent:
+                !isAuthenticated && isMobile ? "center" : "flex-start",
+              gap: !isAuthenticated || isMobile ? 0 : 2,
+              ...(isMobile && { width: "100%" }),
+            }}
+          >
             <Logo />
             {isAuthenticated && !isMobile && (
               <>
@@ -55,22 +64,30 @@ export default function Header({ isAuthenticated }: HeaderProps) {
             )}
           </Box>
 
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             {isAuthenticated ? (
               <>
                 <IconButton component={Link} to="/chat">
                   <ChatBubbleOutlineIcon
                     fontSize="large"
-                    style={{ color: "black" }}
+                    style={{
+                      color: theme.palette.common.black,
+                      marginRight: isMobile ? 0 : 2,
+                    }}
                   />
                 </IconButton>
                 <IconButton>
                   <HelpOutlineIcon
                     fontSize="large"
-                    style={{ color: "black" }}
+                    style={{
+                      color: theme.palette.common.black,
+                      marginRight: isMobile ? 0 : 2,
+                    }}
                   />
                 </IconButton>
-                <IconButton sx={{ position: "relative", pr: 2 }}>
+                <IconButton
+                  sx={{ position: "relative", marginRight: isMobile ? 0 : 2 }}
+                >
                   <Box
                     component="img"
                     src="/mango.png"
@@ -107,7 +124,7 @@ export default function Header({ isAuthenticated }: HeaderProps) {
               </>
             ) : (
               <>
-                {!authModalIsOpen && (
+                {!authModalIsOpen && !isMobile && (
                   <Button
                     variant="contained"
                     sx={{
@@ -140,11 +157,13 @@ export default function Header({ isAuthenticated }: HeaderProps) {
                   <ListItemText primary="Célia K." />
                 </Box>
               </ListItemButton>
-              <ListItemButton onClick={handleDrawerToggle}>
-                <ListItemText primary="Créer une annonce" />
-              </ListItemButton>
-              <ListItemButton onClick={handleDrawerToggle}>
-                <ListItemText primary="Explorer" />
+              <ListItemButton onClick={handleDrawerToggle} sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 2 }}>
+                <HeaderButton
+                  color="secondary"
+                  text="Créer une annonce"
+                  icon="./mango.png"
+                />
+                <HeaderButton color="primary" text="Explorer" paddingX={4} />
               </ListItemButton>
             </>
           )}
