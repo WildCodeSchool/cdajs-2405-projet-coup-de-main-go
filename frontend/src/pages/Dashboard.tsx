@@ -1,42 +1,21 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { useGetAllUsersQuery } from "../generated/graphql-types";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import GenericModal from "../components/Modal/GenericModal";
 import AdModalForm from "../components/NewAdModal/AdModalForm";
+import DashboardSection from "../components/Dashboard/DashboardSection";
 
-interface UserProps {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  city: string;
-  skills: { id: string; name: string }[];
-}
-
-function Dashboard() {
+export default function Dashboard() {
+  // To delete once header is available */
   const { logout } = useAuth();
   const [newAdModalIsOpen, setNewAdModalIsOpen] = useState<boolean>(false);
   const closeNewAdModal = () => {
     setNewAdModalIsOpen(false);
   };
-  // Requête Apollo : GetAllUsers
-  const { data, error, loading } = useGetAllUsersQuery();
-
-  if (error) {
-    return <p>Error : {error.message}</p>;
-  }
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  // Initialisation de la variable users
-  const users: UserProps[] = data?.getAllUsers || [];
 
   return (
     <>
-      <h1>JE SUIS LE DASHBOARD</h1>
+      {/* To delete once header is available */}
       <button onClick={() => logout()}>Se déconnecter</button>
       <Button onClick={() => setNewAdModalIsOpen(true)}>
         Créer une annonce
@@ -50,20 +29,28 @@ function Dashboard() {
           <AdModalForm onClose={closeNewAdModal} />
         </GenericModal>
       )}
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            {user.firstName} {user.lastName}
-            <ul>
-              {user.skills.map((skill) => (
-                <li key={skill.id}>{skill.name}</li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
+
+      {/* Real Dashboard */}
+      <img
+        src="/images/dashboard-poster.png"
+        alt="helping to walk"
+        style={{
+          width: "100%",
+          minHeight: "153px",
+        }}
+      />
+
+      <Box>
+        <Button sx={{ margin: "1.5rem 0" }}>
+          Afficher toutes les annonces
+        </Button>
+
+        <DashboardSection title="Les plus récentes" skillId="" />
+
+        <DashboardSection title="Bricolage" skillId="1" />
+
+        <DashboardSection title="Jardinage" skillId="2" />
+      </Box>
     </>
   );
 }
-
-export default Dashboard;

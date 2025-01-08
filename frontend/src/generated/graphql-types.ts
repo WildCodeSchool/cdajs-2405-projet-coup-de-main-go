@@ -235,6 +235,7 @@ export type QueryGetAllAdsArgs = {
   limit?: Scalars['Int']['input'];
   mangoAmountMax?: InputMaybe<Scalars['Int']['input']>;
   mangoAmountMin?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: Scalars['String']['input'];
   page?: Scalars['Int']['input'];
   skillId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -370,7 +371,14 @@ export type CreateAdMutationVariables = Exact<{
 
 export type CreateAdMutation = { __typename?: 'Mutation', createAd: { __typename?: 'Ad', id: string } };
 
-export type GetAllAdsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAllAdsQueryVariables = Exact<{
+  skillId?: InputMaybe<Scalars['String']['input']>;
+  mangoAmountMin?: InputMaybe<Scalars['Int']['input']>;
+  mangoAmountMax?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Scalars['String']['input']>;
+}>;
 
 
 export type GetAllAdsQuery = { __typename?: 'Query', getAllAds: Array<{ __typename?: 'Ad', id: string, title: string, description: string, updatedAt: any, mangoAmount: number, status: Status, skill: { __typename?: 'Skill', id: string, name: string, picture: string }, userRequester: { __typename?: 'User', id: string, picture?: string | null } }> };
@@ -520,8 +528,15 @@ export type CreateAdMutationHookResult = ReturnType<typeof useCreateAdMutation>;
 export type CreateAdMutationResult = Apollo.MutationResult<CreateAdMutation>;
 export type CreateAdMutationOptions = Apollo.BaseMutationOptions<CreateAdMutation, CreateAdMutationVariables>;
 export const GetAllAdsDocument = gql`
-    query GetAllAds {
-  getAllAds {
+    query GetAllAds($skillId: String, $mangoAmountMin: Int, $mangoAmountMax: Int, $page: Int, $limit: Int, $orderBy: String) {
+  getAllAds(
+    skillId: $skillId
+    mangoAmountMin: $mangoAmountMin
+    mangoAmountMax: $mangoAmountMax
+    page: $page
+    limit: $limit
+    orderBy: $orderBy
+  ) {
     id
     title
     description
@@ -553,6 +568,12 @@ export const GetAllAdsDocument = gql`
  * @example
  * const { data, loading, error } = useGetAllAdsQuery({
  *   variables: {
+ *      skillId: // value for 'skillId'
+ *      mangoAmountMin: // value for 'mangoAmountMin'
+ *      mangoAmountMax: // value for 'mangoAmountMax'
+ *      page: // value for 'page'
+ *      limit: // value for 'limit'
+ *      orderBy: // value for 'orderBy'
  *   },
  * });
  */

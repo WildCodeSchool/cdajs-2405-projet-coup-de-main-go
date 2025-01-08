@@ -1,5 +1,4 @@
 import { createBrowserRouter } from "react-router-dom";
-import AdCatalog from "./pages/AdCatalog.tsx";
 import App from "./App.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard.tsx";
@@ -22,10 +21,6 @@ export const router = createBrowserRouter([
             <Dashboard />
           </ProtectedRoute>
         ),
-      },
-      {
-        path: "/ads",
-        element: <AdCatalog />,
       },
       {
         path: "/ad/:adId",

@@ -12,7 +12,9 @@ export class AdQueries {
     @Arg("mangoAmountMax", () => Int, { nullable: true })
     mangoAmountMax?: number,
     @Arg("page", () => Int, { defaultValue: 1 }) page: number = 1,
-    @Arg("limit", () => Int, { defaultValue: 15 }) limit: number = 15
+    @Arg("limit", () => Int, { defaultValue: 15 }) limit: number = 15,
+    @Arg("orderBy", () => String, { defaultValue: "DESC" })
+    orderBy: "ASC" | "DESC" = "DESC"
   ): Promise<Ad[]> {
     const query = dataSource.getRepository(Ad).createQueryBuilder("ad");
     const offset = (page - 1) * limit;
@@ -37,6 +39,9 @@ export class AdQueries {
 
     // Apply pagination
     query.skip(offset).take(limit);
+
+    // Apply sorting by date (createdAt or similar field)
+    query.orderBy("ad.updatedAt", orderBy);
 
     // Execute request and return results
     return await query.getMany();

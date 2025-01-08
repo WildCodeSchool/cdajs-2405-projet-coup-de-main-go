@@ -1,4 +1,9 @@
-import { Stack, Typography, useMediaQuery } from "@mui/material";
+import {
+  CircularProgress,
+  Stack,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useGetAdByIdQuery } from "../generated/graphql-types";
 import DetailAd from "../components/AdDetail/DetailAd";
@@ -15,9 +20,9 @@ export default function Ad() {
     data: adData,
   } = useGetAdByIdQuery({ variables: { id: adId || "" }, skip: !adId });
 
-  if (adLoading) return <Typography>Loading...</Typography>;
-  if (adError) return <Typography>Error: {adError.message}</Typography>;
-  if (!adData) return <Typography>No data found</Typography>;
+  if (adLoading) return <CircularProgress />;
+  if (adError) return <Typography>Erreurr: {adError.message}</Typography>;
+  if (!adData) return <Typography>Aucune donnée trouvée</Typography>;
 
   const ad = adData!.getAdById;
 

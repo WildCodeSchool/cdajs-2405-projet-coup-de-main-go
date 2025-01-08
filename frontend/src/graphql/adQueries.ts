@@ -1,8 +1,22 @@
 import { gql } from "@apollo/client";
 
 export const GET_ALL_ADS_QUERY = gql`
-  query GetAllAds {
-    getAllAds {
+  query GetAllAds(
+    $skillId: String
+    $mangoAmountMin: Int
+    $mangoAmountMax: Int
+    $page: Int
+    $limit: Int
+    $orderBy: String
+  ) {
+    getAllAds(
+      skillId: $skillId
+      mangoAmountMin: $mangoAmountMin
+      mangoAmountMax: $mangoAmountMax
+      page: $page
+      limit: $limit
+      orderBy: $orderBy
+    ) {
       id
       title
       description
