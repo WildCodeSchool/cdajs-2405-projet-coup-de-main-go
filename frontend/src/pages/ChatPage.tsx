@@ -126,6 +126,7 @@ export default function ChatPage() {
             open={modalOpen}
             onClose={() => setModalOpen(false)}
             maxWidth="80%"
+            bgColor="white"
           >
             <ChatDetail chats={chats} chatId={selectedChatId} />
           </GenericModal>
