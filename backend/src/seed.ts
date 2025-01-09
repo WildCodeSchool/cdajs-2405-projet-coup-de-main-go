@@ -63,7 +63,7 @@ async function seed() {
       biography: "Passionné par l'entraide et les travaux manuels.",
       gender: "Homme",
       dateOfBirth: new Date("1980-05-20"),
-      picture: "jean.png",
+      picture: "jean.jpg",
       address: "123 rue de Paris",
       zipCode: "75001",
       city: "Paris",
@@ -79,7 +79,7 @@ async function seed() {
       biography: "Aime cuisiner et partager ses recettes.",
       gender: "Femme",
       dateOfBirth: new Date("1990-08-15"),
-      picture: "marie.png",
+      picture: "marie.jpg",
       address: "456 avenue des Champs",
       zipCode: "75008",
       city: "Paris",
@@ -95,7 +95,6 @@ async function seed() {
       biography: "Expert en bricolage et jardinage.",
       gender: "Homme",
       dateOfBirth: new Date("1985-10-10"),
-      picture: "paul.png",
       address: "789 boulevard Saint-Germain",
       zipCode: "75006",
       city: "Paris",
@@ -120,9 +119,11 @@ async function seed() {
       duration: 90,
       mangoAmount: 3,
       status: Status.POSTED,
-      picture1: "garden.jpg",
+      picture1: "garden1.jpg",
+      picture2: "garden2.jpg",
+      picture3: "garden3.jpg",
       userRequester: user1,
-      skill: skill1,
+      skill: skill2,
     });
 
     const ad2 = dataSource.manager.create(Ad, {
@@ -135,10 +136,10 @@ async function seed() {
       longitude: 3.062636,
       duration: 60,
       mangoAmount: 2,
-      status: Status.BOOKED,
+      status: Status.POSTED,
       picture1: "furniture.jpg",
       userRequester: user2,
-      skill: skill2,
+      skill: skill1,
     });
 
     const ad3 = dataSource.manager.create(Ad, {
@@ -151,8 +152,7 @@ async function seed() {
       longitude: -0.612387,
       duration: 120,
       mangoAmount: 4,
-      status: Status.POSTED,
-      picture1: "cooking.jpg",
+      status: Status.BOOKED,
       userRequester: user3,
       skill: skill3,
     });
@@ -169,7 +169,6 @@ async function seed() {
       duration: 1,
       mangoAmount: 120,
       status: Status.BOOKED,
-      picture1: "cooking.jpg",
       userRequester: user3,
       skill: skill3,
     });
