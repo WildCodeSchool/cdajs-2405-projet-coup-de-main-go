@@ -22,6 +22,7 @@ export enum Status {
   POSTED = "posted",
   BOOKED = "booked",
   FINALISED = "finalised",
+  ISREVIEWED = "isReviewed",
 }
 
 registerEnumType(Status, {

@@ -348,6 +348,7 @@ export type Skill = {
 export enum Status {
   Booked = 'BOOKED',
   Finalised = 'FINALISED',
+  Isreviewed = 'ISREVIEWED',
   Posted = 'POSTED'
 }
 
