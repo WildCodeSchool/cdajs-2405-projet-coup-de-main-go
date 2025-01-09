@@ -1,10 +1,11 @@
-import { Button, Chip, Divider, Stack, Typography } from "@mui/material";
+import { Box, Button, Chip, Divider, Stack, Typography } from "@mui/material";
 import { GetAdByIdQuery } from "../../generated/graphql-types";
 import { Link } from "react-router-dom";
 import DetailAdSlider from "./DetailAdSlider";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import MapWithLocation from "./MapWithLocation";
+import Hands from "/images/picture.png";
 
 interface DetailAdProps {
   ad: GetAdByIdQuery["getAdById"];
@@ -28,11 +29,35 @@ export default function DetailAd({ ad }: DetailAdProps) {
     }
   };
 
+  const adWithPictures = Boolean(ad.picture1 || ad.picture2 || ad.picture3);
+
   return (
     <>
-      <DetailAdSlider />
+      <Box
+        sx={{
+          width: "100%",
+          height: "14rem",
+          borderRadius: "1rem 1rem 0 0",
+        }}
+      >
+        {adWithPictures ? (
+          <DetailAdSlider ad={ad} />
+        ) : (
+          <img
+            src={Hands}
+            alt="shaking hands"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center",
+              borderRadius: "1rem 1rem 0 0",
+            }}
+          />
+        )}
+      </Box>
 
-      <Stack sx={{ padding: "0 1.5rem 1rem 1.5rem" }}>
+      <Stack sx={{ py: 1, px: 3 }}>
         <Stack direction="row" sx={{ justifyContent: "space-between" }}>
           <Typography variant="h5" component="h1">
             {ad.title}
@@ -62,37 +87,30 @@ export default function DetailAd({ ad }: DetailAdProps) {
         <Typography variant="h6" component="h2" sx={{ fontWeight: 600 }}>
           Compétence
         </Typography>
-        <Chip
-          label={ad.skill.name}
-          variant="outlined"
-          sx={{ maxWidth: "6rem" }}
-        />
+        <Chip label={ad.skill.name} variant="outlined" sx={{ maxWidth: 128 }} />
 
         <Stack
           direction="row"
           justifyContent="space-between"
           alignItems="center"
-          sx={{ padding: "0.75rem 1.5rem" }}
+          sx={{ py: 1.5, px: 3 }}
         >
           <Stack direction="row" alignItems="center" spacing={0.5}>
             <Typography sx={{ fontWeight: "bold" }}>
               {ad.mangoAmount}
             </Typography>
             <img
-              src="/images/Mango.png"
+              src="/images/mango.png"
               alt="mango"
-              style={{ width: "1.25rem", height: "1.25rem" }}
+              style={{ width: 20, height: 20 }}
             />
           </Stack>
           <Button
             component={Link}
-            color={"primary"}
             // TODO: A remplacer par le lien vers la page de chat
-            to={"/ads"}
+            to={"/dashboard"}
             sx={{
-              textAlign: "center",
-              lineHeight: "1rem",
-              padding: "0.5rem 1.25rem",
+              px: 4,
             }}
           >
             Je propose mon aide

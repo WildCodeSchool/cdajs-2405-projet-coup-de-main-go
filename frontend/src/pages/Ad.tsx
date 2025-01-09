@@ -32,27 +32,30 @@ export default function Ad() {
         direction={isResponsiveLayout ? "column-reverse" : "row"}
         spacing={4}
         sx={{
-          maxWidth: "63rem",
-          margin: "2rem auto",
+          maxWidth: 1200,
+          padding: 2,
+          mx: "auto",
           alignItems: isResponsiveLayout ? "center" : "flex-start",
         }}
       >
         <Stack
           sx={{
-            borderRadius: "1rem",
+            borderRadius: 32,
             width: isResponsiveLayout ? "90%" : "33%",
           }}
           spacing={0}
         >
+          {/* Encart utilisateur */}
           <DetailUser userId={ad.userRequester.id} />
         </Stack>
         <Stack
           sx={{
-            backgroundColor: "var(--white)",
+            backgroundColor: theme.palette.common.white,
             borderRadius: "1rem",
             width: isResponsiveLayout ? "90%" : "63%",
           }}
         >
+          {/* Encart annonce */}
           <DetailAd ad={ad} />
         </Stack>
       </Stack>
