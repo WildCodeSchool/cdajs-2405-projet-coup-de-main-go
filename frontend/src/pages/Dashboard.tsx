@@ -1,10 +1,12 @@
 import { useAuth } from "../contexts/AuthContext";
-import { Box, Button } from "@mui/material";
+import { Box, Button, useMediaQuery } from "@mui/material";
 import DashboardSection from "../components/Dashboard/DashboardSection";
+import theme from "../mui";
 
 export default function Dashboard() {
   // To delete once header is finalised
   const { logout } = useAuth();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
     <>
@@ -17,12 +19,12 @@ export default function Dashboard() {
         alt="helping to walk"
         style={{
           width: "100%",
-          minHeight: "153px",
+          minHeight: 153,
         }}
       />
 
-      <Box>
-        <Button sx={{ margin: "1.5rem 0" }}>
+      <Box marginX={isMobile ? 2 : 6} marginY={3}>
+        <Button sx={{ marginY: "1.5rem", paddingX: 4 }}>
           Afficher toutes les annonces
         </Button>
 
