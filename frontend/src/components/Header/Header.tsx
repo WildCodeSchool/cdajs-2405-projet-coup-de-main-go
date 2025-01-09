@@ -22,6 +22,8 @@ import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { Dispatch, SetStateAction } from "react";
+import GenericModal from "../Modal/GenericModal";
+import AdModalForm from "../NewAdModal/AdModalForm";
 
 interface HeaderProps {
   setAuthModalIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -36,6 +38,11 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
 
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
+  };
+
+  const [newAdModalIsOpen, setNewAdModalIsOpen] = useState<boolean>(false);
+  const closeNewAdModal = () => {
+    setNewAdModalIsOpen(false);
   };
 
   return (
@@ -59,6 +66,7 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
                   color="secondary"
                   text="Créer une annonce"
                   icon="/images/mango.png"
+                  onClick={() => setNewAdModalIsOpen(true)}
                 />
                 <HeaderButton color="primary" text="Explorer" paddingX={4} />
               </>
@@ -158,11 +166,20 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
                   <ListItemText primary="Célia K." />
                 </Box>
               </ListItemButton>
-              <ListItemButton onClick={handleDrawerToggle} sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 2 }}>
+              <ListItemButton
+                onClick={handleDrawerToggle}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  gap: 2,
+                }}
+              >
                 <HeaderButton
                   color="secondary"
                   text="Créer une annonce"
                   icon="/images/mango.png"
+                  onClick={() => setNewAdModalIsOpen(true)}
                 />
                 <HeaderButton color="primary" text="Explorer" paddingX={4} />
               </ListItemButton>
@@ -170,6 +187,16 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
           )}
         </List>
       </Drawer>
+
+      {newAdModalIsOpen && (
+        <GenericModal
+          open={newAdModalIsOpen}
+          onClose={closeNewAdModal}
+          maxWidth="md"
+        >
+          <AdModalForm onClose={closeNewAdModal} />
+        </GenericModal>
+      )}
     </>
   );
 }
