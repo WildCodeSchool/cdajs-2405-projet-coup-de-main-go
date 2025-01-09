@@ -11,9 +11,11 @@ import {
   Drawer,
   List,
   ListItemButton,
-  ListItemText,
+  Menu,
+  MenuItem,
+  ListItemIcon,
 } from "@mui/material";
-import { Menu as MenuIcon } from "@mui/icons-material";
+import { Logout, Menu as MenuIcon } from "@mui/icons-material";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import Logo from "./Logo";
@@ -30,12 +32,26 @@ interface HeaderProps {
 export default function Header({ setAuthModalIsOpen }: HeaderProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
+  };
+
+  const handleProfileClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setAnchorEl(null);
   };
 
   return (
@@ -118,9 +134,52 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
                   <Button
                     color="primary"
                     startIcon={<Avatar sx={{ width: 24, height: 24 }} />}
+                    onClick={handleProfileClick}
                   >
                     Célia K.
                   </Button>
+                  <Menu
+                    id="account-menu"
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleMenuClose}
+                    slotProps={{
+                      paper: {
+                        elevation: 0,
+                        sx: {
+                          overflow: "visible",
+                          mt: 1.5,
+                          "& .MuiAvatar-root": {
+                            width: 32,
+                            height: 32,
+                            ml: -0.5,
+                            mr: 1,
+                          },
+                          "&::before": {
+                            content: '""',
+                            display: "block",
+                            position: "absolute",
+                            top: 0,
+                            right: 14,
+                            width: 10,
+                            height: 10,
+                            bgcolor: "background.paper",
+                            transform: "translateY(-50%) rotate(45deg)",
+                            zIndex: 0,
+                          },
+                        },
+                      },
+                    }}
+                    transformOrigin={{ horizontal: "right", vertical: "top" }}
+                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                  >
+                    <MenuItem onClick={handleLogout}>
+                      <ListItemIcon>
+                        <Logout fontSize="small" />
+                      </ListItemIcon>
+                      Déconnexion
+                    </MenuItem>
+                  </Menu>
                 </Box>
               </>
             ) : (
@@ -152,19 +211,27 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
         <List sx={{ width: 250 }}>
           {isAuthenticated && (
             <>
-              <ListItemButton onClick={handleDrawerToggle}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <Avatar sx={{ width: 24, height: 24 }} />
-                  <ListItemText primary="Célia K." />
-                </Box>
-              </ListItemButton>
-              <ListItemButton onClick={handleDrawerToggle} sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 2 }}>
+              <ListItemButton
+                onClick={handleDrawerToggle}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  gap: 2,
+                }}
+              >
                 <HeaderButton
                   color="secondary"
                   text="Créer une annonce"
                   icon="/images/mango.png"
                 />
                 <HeaderButton color="primary" text="Explorer" paddingX={4} />
+                <HeaderButton
+                  color="error"
+                  text="Déconnexion"
+                  paddingX={4}
+                  onClick={handleLogout}
+                />
               </ListItemButton>
             </>
           )}
