@@ -129,6 +129,15 @@ export const GET_MANGO_BALANCE_QUERY = gql`
   }
 `;
 
+export const UPDATE_PROFILE_PICTURE = gql`
+  mutation UpdateProfilePicture($id: String!, $picture: String!) {
+    updateProfilePicture(id: $id, picture: $picture) {
+      id
+      picture
+    }
+  }
+`;
+
 export const CREDENTIALS_VERIFICATION = gql`
   query credentialsVerification(
     $email: String!

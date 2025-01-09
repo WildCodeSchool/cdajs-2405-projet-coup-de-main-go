@@ -9,9 +9,8 @@ import "./AuthModal.css";
 function AuthModal() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-    const [alreadyHasAnAccount, setAlreadyHasAnAccount] =
-        useState<Boolean>(false);
-    const [justRegistered, setJustRegistered] = useState<Boolean>(false);
+    const [alreadyHasAnAccount, setAlreadyHasAnAccount] = useState<boolean>(true);
+    const [justRegistered, setJustRegistered] = useState<boolean>(false);
 
     return (
         <Stack direction={"row"} height={"600px"}>

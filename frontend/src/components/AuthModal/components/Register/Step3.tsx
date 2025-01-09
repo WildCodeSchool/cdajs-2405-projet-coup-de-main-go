@@ -24,7 +24,7 @@ function Step3({ skills, setStep, register }: Step2Props) {
 
     return (
         <>
-            <Typography variant="h2">Compétences</Typography>
+            <Typography variant="h3">Compétences</Typography>
             <Stack direction={"row"} spacing={"20px"}>
                 <Box
                     sx={{

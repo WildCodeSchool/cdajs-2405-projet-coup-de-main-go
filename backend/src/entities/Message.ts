@@ -25,9 +25,13 @@ export class Message extends BaseEntity {
     @Field()
     message: string = "";
 
-    @Column()
+    @Column({ default: false })
     @Field()
-    isView: boolean = false;
+    isViewedByRequester!: boolean;
+  
+    @Column({ default: false })
+    @Field()
+    isViewedByHelper!: boolean;
 
     @IsDate()
     @Column()
@@ -42,10 +46,11 @@ export class Message extends BaseEntity {
     @Field(() => User)
     author: User;
 
-    constructor(message: string, isView: boolean, chat: Chat, author: User) {
+    constructor(message: string, isViewedByRequester: boolean, isViewedByHelper: boolean, chat: Chat, author: User) {
         super();
         this.message = message;
-        this.isView = isView;
+        this.isViewedByRequester = isViewedByRequester;
+        this.isViewedByHelper = isViewedByHelper;
         this.chat = chat;
         this.author = author;
     }

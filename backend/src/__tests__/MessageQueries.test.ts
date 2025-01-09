@@ -56,7 +56,7 @@ describe("getMessagesByChatId", () => {
             skill
         );
 
-        chat = new Chat(userHelper, userRequester, ad);
+        chat = new Chat(true, userHelper, userRequester, ad);
         chat.id = faker.string.uuid();
     });
 
@@ -64,6 +64,7 @@ describe("getMessagesByChatId", () => {
         return Array.from({ length: count }, () => {
             const message = new Message(
                 faker.lorem.sentence(),
+                faker.datatype.boolean(),
                 faker.datatype.boolean(),
                 chat,
                 userHelper

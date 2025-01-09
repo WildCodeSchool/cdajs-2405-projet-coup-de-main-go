@@ -235,20 +235,23 @@ async function seed() {
 
     console.log("Création des chats...");
     const chat1 = dataSource.manager.create(Chat, {
+      isHelpProposed: false,
       userHelper: user2,
       userRequester: user1,
       ad: ad1,
     });
 
     const chat2 = dataSource.manager.create(Chat, {
+      isHelpProposed: false,
       userHelper: user1,
       userRequester: user2,
       ad: ad2,
     });
 
     const chat3 = dataSource.manager.create(Chat, {
-      userHelper: user3,
-      userRequester: user1,
+      isHelpProposed: false,
+      userHelper: user1,
+      userRequester: user3,
       ad: ad3,
     });
 
@@ -260,28 +263,44 @@ async function seed() {
     console.log("Création des messages...");
     const message1 = dataSource.manager.create(Message, {
       message: "Bonjour, je suis disponible pour vous aider.",
-      isView: true,
+      isViewedByRequester: true,
+      isViewedByHelper: true,
       chat: chat1,
       author: user2,
+      date: new Date("2024-10-01T10:00:00"),
     });
 
     const message2 = dataSource.manager.create(Message, {
       message: "Merci, ça serait super!",
-      isView: true,
+      isViewedByRequester: true,
+      isViewedByHelper: true,
       chat: chat1,
       author: user1,
+      date: new Date("2024-10-02T10:00:00"),
     });
 
     const message3 = dataSource.manager.create(Message, {
       message: "Je suis intéressé par votre cours.",
-      isView: true,
+      isViewedByRequester: true,
+      isViewedByHelper: true,
       chat: chat3,
       author: user1,
+      date: new Date("2024-11-25T10:00:00"),
+    });
+
+    const message4 = dataSource.manager.create(Message, {
+      message: "Je suis disponible demain.",
+      isViewedByRequester: true,
+      isViewedByHelper: true,
+      chat: chat2,
+      author: user1,
+      date: new Date("2024-11-23T10:00:00"),
     });
 
     await message1.save();
     await message2.save();
     await message3.save();
+    await message4.save();
     console.log("Messages créés avec succès.");
 
     console.log("Données fictives insérées avec succès !");
