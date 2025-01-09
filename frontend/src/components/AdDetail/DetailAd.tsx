@@ -1,4 +1,12 @@
-import { Box, Button, Chip, Divider, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  Divider,
+  Stack,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { GetAdByIdQuery } from "../../generated/graphql-types";
 import { Link } from "react-router-dom";
 import DetailAdSlider from "./DetailAdSlider";
@@ -6,12 +14,14 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import MapWithLocation from "./MapWithLocation";
 import Hands from "/images/picture.png";
+import theme from "../../mui";
 
 interface DetailAdProps {
   ad: GetAdByIdQuery["getAdById"];
 }
 
 export default function DetailAd({ ad }: DetailAdProps) {
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const timeAgo = formatDistanceToNow(new Date(ad.updatedAt), {
     locale: fr,
     addSuffix: true,
@@ -57,7 +67,7 @@ export default function DetailAd({ ad }: DetailAdProps) {
         )}
       </Box>
 
-      <Stack sx={{ py: 1, px: 3 }}>
+      <Stack sx={{ padding: "0 1.5rem 2rem 1.5rem" }}>
         <Stack direction="row" sx={{ justifyContent: "space-between" }}>
           <Typography variant="h5" component="h1">
             {ad.title}
@@ -90,12 +100,19 @@ export default function DetailAd({ ad }: DetailAdProps) {
         <Chip label={ad.skill.name} variant="outlined" sx={{ maxWidth: 128 }} />
 
         <Stack
-          direction="row"
+          direction={isMobile ? "column" : "row"}
           justifyContent="space-between"
           alignItems="center"
-          sx={{ py: 1.5, px: 3 }}
+          spacing={isMobile ? 5 : 0}
         >
-          <Stack direction="row" alignItems="center" spacing={0.5}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={0.5}
+            sx={{
+              alignSelf: isMobile ? "flex-start" : "center",
+            }}
+          >
             <Typography sx={{ fontWeight: "bold" }}>
               {ad.mangoAmount}
             </Typography>
@@ -111,6 +128,7 @@ export default function DetailAd({ ad }: DetailAdProps) {
             to={"/dashboard"}
             sx={{
               px: 4,
+              textAlign: "center",
             }}
           >
             Je propose mon aide
