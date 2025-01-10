@@ -1,5 +1,5 @@
 import { Query, Resolver, Arg, Int, Float } from "type-graphql";
-import { Ad } from "../entities/Ad";
+import { Ad, Status } from "../entities/Ad";
 import { dataSource } from "../datasource";
 
 @Resolver(Ad)
@@ -11,6 +11,7 @@ export class AdQueries {
     mangoAmountMin?: number,
     @Arg("mangoAmountMax", () => Int, { nullable: true })
     mangoAmountMax?: number,
+    @Arg("status", () => Status, { nullable: true }) status?: Status,
     @Arg("page", () => Int, { defaultValue: 1 }) page: number = 1,
     @Arg("limit", () => Int, { defaultValue: 15 }) limit: number = 15,
     @Arg("orderBy", () => String, { defaultValue: "DESC" })
@@ -35,6 +36,10 @@ export class AdQueries {
 
     if (mangoAmountMax !== undefined) {
       query.andWhere("ad.mangoAmount <= :mangoAmountMax", { mangoAmountMax });
+    }
+
+    if (status) {
+      query.andWhere("ad.status = :status", { status });
     }
 
     // Apply pagination

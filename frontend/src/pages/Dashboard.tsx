@@ -1,5 +1,5 @@
 import { useAuth } from "../contexts/AuthContext";
-import { Box, Button, useMediaQuery } from "@mui/material";
+import { Box, Button, Stack, useMediaQuery } from "@mui/material";
 import DashboardSection from "../components/Dashboard/DashboardSection";
 import theme from "../mui";
 
@@ -24,9 +24,14 @@ export default function Dashboard() {
       />
 
       <Box marginX={isMobile ? 2 : 6} marginY={3}>
-        <Button sx={{ marginY: "1.5rem", paddingX: 4 }}>
-          Afficher toutes les annonces
-        </Button>
+        <Stack
+          sx={{
+            marginY: 3,
+            alignItems: isMobile ? "center" : "flex-start",
+          }}
+        >
+          <Button sx={{ paddingX: 4 }}>Afficher toutes les annonces</Button>
+        </Stack>
 
         <DashboardSection title="Les plus récentes" skillId="" />
 

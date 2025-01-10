@@ -7,16 +7,24 @@ export type AdCardType = {
   status: Status;
   skill: Skill;
   userRequester: UserRequester;
+  picture1?: string | null;
 };
 
 export type UserRequester = {
   id: string;
   picture?: string | null;
 };
+
+// export enum Status {
+//   POSTED = "posted",
+//   BOOKED = "booked",
+//   FINALISED = "finalised",
+// }
+
 export enum Status {
-  POSTED = "posted",
-  BOOKED = "booked",
-  FINALISED = "finalised",
+  Booked = "BOOKED",
+  Finalised = "FINALISED",
+  Posted = "POSTED",
 }
 
 export type Skill = {

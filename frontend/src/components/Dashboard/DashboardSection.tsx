@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
-import { useGetAllAdsQuery } from "../../generated/graphql-types";
+import { useGetAllAdsQuery, Status } from "../../generated/graphql-types";
 import { AdCardType } from "../../types";
 import theme from "../../mui";
 import AdCard from "./AdCard";
@@ -37,6 +37,7 @@ export default function DashboardSection({
     variables: {
       skillId: skillId,
       limit: 4,
+      status: Status.Posted,
     },
   });
 
@@ -46,8 +47,6 @@ export default function DashboardSection({
 
   const adCards: AdCardType[] = adsData?.getAllAds;
 
-  console.log("adCards", adCards);
-
   return (
     <>
       <Box sx={{ width: "100%" }}>
@@ -55,16 +54,16 @@ export default function DashboardSection({
           variant="h3"
           component="h2"
           sx={{
-            fontSize: isMobile ? "1.5rem" : "3rem",
+            fontSize: isMobile ? 32 : 48,
             fontWeight: "600",
+            textAlign: isMobile ? "center" : "start",
           }}
         >
           {title}
         </Typography>
 
         {isSwippable ? (
-          // Mode mobile avec Swiper
-
+          // Mobile display with Swiper
           <Swiper
             modules={[Navigation]}
             spaceBetween={10}
@@ -77,8 +76,8 @@ export default function DashboardSection({
               {
                 margin: "1rem 0",
                 width: "100%",
-                "--swiper-navigation-color": "#949E80",
-                "--swiper-navigation-size": "30px",
+                "--swiper-navigation-color": "var(--tertiary)",
+                "--swiper-navigation-size": "2rem",
               } as React.CSSProperties
             }
             navigation
@@ -97,14 +96,14 @@ export default function DashboardSection({
             ))}
           </Swiper>
         ) : (
-          // Mode desktop
+          // Screen above 1400px display without Swiper
           <Stack
             spacing={6}
             direction="row"
             sx={{
               justifyContent: "start",
               width: "100%",
-              margin: "2rem 0",
+              marginY: 4,
             }}
           >
             {adCards.map((ad: AdCardType) => (
@@ -113,9 +112,20 @@ export default function DashboardSection({
           </Stack>
         )}
 
-        <Button sx={{ marginBottom: "3rem", paddingX: 4 }}>
-          Afficher plus
-        </Button>
+        <Stack
+          sx={{
+            marginBottom: 6,
+            alignItems: isMobile ? "center" : "flex-start",
+          }}
+        >
+          <Button
+            sx={{
+              paddingX: 4,
+            }}
+          >
+            Afficher plus
+          </Button>
+        </Stack>
       </Box>
     </>
   );
