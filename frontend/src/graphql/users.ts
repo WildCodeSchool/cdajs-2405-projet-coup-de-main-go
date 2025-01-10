@@ -115,6 +115,8 @@ export const GET_USER_BY_EMAIL_QUERY = gql`
             firstName
             lastName
             city
+            picture
+            biography
             skills {
                 id
                 name
@@ -150,4 +152,27 @@ export const CREDENTIALS_VERIFICATION = gql`
             passwordConfirmation: $passwordConfirmation
         )
     }
+`;
+
+export const GET_USER_BY_ID = gql`
+  query GetUserById($id: String!) {
+    getUserById(id: $id) {
+      id
+      firstName
+      lastName
+      email
+      biography
+      gender
+      dateOfBirth
+      picture
+      address
+      zipCode
+      city
+      mangoBalance
+      skills {
+        id
+        name
+      }
+    }
+  }
 `;

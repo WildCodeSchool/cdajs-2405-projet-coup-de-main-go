@@ -6,6 +6,8 @@ import Dashboard from "./pages/Dashboard.tsx";
 import Error from "./pages/error/Error.tsx";
 import Home from "./pages/home/Home.tsx";
 import ChatPage from "./pages/ChatPage.tsx";
+import Profil from "./pages/profil/Profil.tsx";
+import EditProfil from "./pages/profil/EditProfil.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +32,22 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ChatPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/profil",
+        element: (
+          <ProtectedRoute>
+            <Profil />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/profil/modifier",
+        element: (
+          <ProtectedRoute>
+            <EditProfil />
           </ProtectedRoute>
         ),
       },
