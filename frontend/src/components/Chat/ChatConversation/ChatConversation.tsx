@@ -11,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { GET_USER_CHATS } from "../../../graphql/chatQueries";
 import { Chat } from "../../../types";
 import type { MessageForm, Message, User } from "../../../types";
-import { Status } from "../../../types";
+import { StatusType } from "../../../types";
 import ChatConversationHeader from "./ChatConversationHeader";
 import { ChatMessageList } from "../ChatMessage/ChatMessageList";
 import { ChatActionButton } from "../ChatActionButton";
@@ -75,7 +75,7 @@ export default function ChatConversation({
   const [messageCount, setMessageCount] = useState(200);
   const [isLoading, setIsLoading] = useState(false);
   const [otherUser, setOtherUser] = useState<User | null>(null);
-  const [status, setStatus] = useState<Status | null>(null);
+  const [status, setStatus] = useState<StatusType | null>(null);
   const [isReviewModalOpen, setReviewModalOpen] = useState(false);
   const [hover, setHover] = useState(-1);
   const [commentLength, setCommentLength] = useState(0);
@@ -107,7 +107,7 @@ export default function ChatConversation({
     ],
   });
 
-  const handleStatusChange = async (newStatus: Status) => {
+  const handleStatusChange = async (newStatus: StatusType) => {
     try {
       await updateAdStatus({
         variables: { id: currentChat!.ad.id, status: newStatus },
@@ -134,18 +134,18 @@ export default function ChatConversation({
   };
 
   const handleAcceptHelp = () => {
-    handleStatusChange(Status.BOOKED);
+    handleStatusChange(StatusType.BOOKED);
   };
 
   const handleCancelHelp = () => {
-    handleStatusChange(Status.POSTED);
+    handleStatusChange(StatusType.POSTED);
     updateChatHelpProposal({
       variables: { chatId: chatId!, isHelpProposed: false },
     });
   };
 
   const handleFinalisedlHelp = () => {
-    handleStatusChange(Status.FINALISED);
+    handleStatusChange(StatusType.FINALISED);
   };
 
   const handleFinalisedHelp = () => {
@@ -153,7 +153,7 @@ export default function ChatConversation({
   };
 
   const handleReviewSubmit = () => {
-    handleStatusChange(Status.ISREVIEWED);
+    handleStatusChange(StatusType.ISREVIEWED);
     setReviewModalOpen(false);
   };
 
@@ -167,7 +167,7 @@ export default function ChatConversation({
 
     // If the help has been proposed, the requester can accept or refuse the help
     switch (status) {
-      case Status.POSTED:
+      case StatusType.POSTED:
         return isRequester
           ? [
               {
@@ -184,7 +184,7 @@ export default function ChatConversation({
                 onClick: () => {},
               },
             ];
-      case Status.BOOKED:
+      case StatusType.BOOKED:
         return isRequester
           ? [
               {
@@ -198,7 +198,7 @@ export default function ChatConversation({
               },
             ]
           : [{ label: "Annuler l'aide", onClick: handleCancelHelp }];
-      case Status.FINALISED:
+      case StatusType.FINALISED:
         return isRequester
           ? [
               {
@@ -214,7 +214,7 @@ export default function ChatConversation({
                 type: "text",
               },
             ];
-      case Status.ISREVIEWED:
+      case StatusType.ISREVIEWED:
         return isRequester
           ? [
               {
@@ -251,7 +251,7 @@ export default function ChatConversation({
         lastName: otherUserId.lastName,
       });
 
-      const adStatus = currentChat.ad.status.toLowerCase() as Status;
+      const adStatus = currentChat.ad.status.toLowerCase() as StatusType;
       setStatus(adStatus);
 
       if (currentChat?.messages) {

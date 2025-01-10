@@ -23,7 +23,6 @@ export default function AdCard({ ad }: AdCardProps) {
   const timeAgo = formatDistanceToNow(new Date(ad.updatedAt), {
     locale: fr,
   });
-  console.log("adCards", ad);
   return (
     <Card
       key={ad.id}
