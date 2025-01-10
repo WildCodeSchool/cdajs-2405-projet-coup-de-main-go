@@ -48,7 +48,7 @@ export default function DetailUser({ userId }: DetailUserProps) {
               ? `${
                   import.meta.env.VITE_DOMAIN_BACKEND_URL
                 }/uploads/users/${userId}/${userOverview.user.picture}`
-              : "/images/mango-tree.jpg"
+              : undefined
           }
           alt={userOverview.user.firstName}
           sx={{
@@ -59,7 +59,9 @@ export default function DetailUser({ userId }: DetailUserProps) {
             left: "50%",
             transform: "translateX(-50%)",
           }}
-        />
+        >
+          {!userOverview.user.picture && userOverview.user.firstName.charAt(0)}
+        </Avatar>
       </Box>
       <Stack
         sx={{
