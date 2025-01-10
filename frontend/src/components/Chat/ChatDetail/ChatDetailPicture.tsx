@@ -2,16 +2,16 @@ import { Box, Typography } from "@mui/material";
 
 type ChatDetailPictureProps = {
   ad?: {
-    id: number;
+    id: string;
     title: string;
     picture1: string | null;
     mangoAmount: number;
-    skillId: number;
+    skillId?: string;
     skill?: {
       name: string;
       picture: string;
     };
-  };
+  }
 };
 
 export default function ChatDetailPicture({ ad }: ChatDetailPictureProps) {

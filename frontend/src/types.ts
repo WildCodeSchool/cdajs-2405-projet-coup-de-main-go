@@ -1,12 +1,50 @@
+export type AdCardType = {
+  id: string;
+  title: string;
+  description: string;
+  updatedAt: Date;
+  mangoAmount: number;
+  status: Status;
+  skill: Skill;
+  userRequester: UserRequester;
+  picture1?: string | null;
+};
+
+export type UserRequester = {
+  id: string;
+  picture?: string | null;
+};
+
+// export enum Status {
+//   POSTED = "posted",
+//   BOOKED = "booked",
+//   FINALISED = "finalised",
+//   ISREVIEWED = "isreviewed",
+// }
+
 export enum Status {
-  POSTED = "posted",
-  BOOKED = "booked",
-  FINALISED = "finalised",
+  Booked = "BOOKED",
+  Finalised = "FINALISED",
+  Posted = "POSTED",
+  isReviewed = "ISREVIEWED",
 }
 
 export type Skill = {
   id: string;
   name: string;
+  picture: string;
+};
+
+export type AddressSuggestion = {
+  properties: {
+    label: string;
+    name: string;
+    postcode: string;
+    city: string;
+  };
+  geometry: {
+    coordinates: [number, number];
+  };
   picture?: string | null;
 };
 
@@ -30,7 +68,7 @@ export type Ad = {
   duration: number;
   userRequester?: User;
   skill: Skill;
-  status: Status
+  status: Status;
 };
 
 export type Chat = {

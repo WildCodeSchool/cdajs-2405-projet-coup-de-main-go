@@ -9,6 +9,7 @@
   --badge-hover: #e6a82c;
   --text-primary: #333333;
   --text-secondary: #666666;
+  --text-tertiary: #959393;
   --white: #ffffff;
   --white-hover: #f2f2f2;
   --background: #edeae4;
@@ -18,6 +19,7 @@
 body {
   background-color: var(--background);
   color: var(--text-primary);
-  margin: 0;
-  padding: 0;
+  box-sizing: border-box;
+  padding: 0px;
+  margin: 0px;
 }

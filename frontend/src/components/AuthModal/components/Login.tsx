@@ -6,6 +6,8 @@ import {
     Stack,
     TextField,
     Typography,
+    useMediaQuery,
+    useTheme,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 
@@ -33,6 +35,19 @@ function Login({
     goToRegister,
 }: LoginProps) {
     const { login } = useAuth();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    let sharedFormStyles: React.CSSProperties = {
+        boxSizing: "border-box",
+        display: "flex",
+        flexDirection: "column",
+        gap: "20px",
+        padding: "20px",
+        overflow: "auto",
+    };
+    let formStyles = {};
+    let titleAlign = {};
+    let buttonStyles = {};
 
     const [sendLoginQuery, { loading, error }] = useLoginUserLazyQuery({
         onCompleted: (data: LoginUserQuery) => {
@@ -50,9 +65,37 @@ function Login({
         });
     };
 
+    if (isMobile) {
+        formStyles = {
+            width: "100%",
+        };
+        titleAlign = { textAlign: "center" };
+        buttonStyles = {
+            width: "100%",
+            textAlign: "center",
+            borderRadius: "10px",
+        };
+    } else {
+        formStyles = {
+            height: "100%",
+            margin: "auto",
+            width: "100%",
+        };
+        buttonStyles = {
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+        };
+    }
+
     return (
-        <form id="login" onSubmit={handleSubmit(onLoginFormSubmitted)}>
-            <Typography variant="h3">CONNEXION</Typography>
+        <form
+            style={{ ...sharedFormStyles, ...formStyles }}
+            onSubmit={handleSubmit(onLoginFormSubmitted)}
+        >
+            <Typography variant="h3" sx={titleAlign}>
+                CONNEXION
+            </Typography>
             <TextField
                 type="email"
                 placeholder="E-mail"
@@ -67,27 +110,39 @@ function Login({
                 {...register("password", { required: true })}
                 required
             />
-            <Typography>
-                Envie de nous rejoindre ?{" "}
-                <Box
-                    component="span"
-                    onClick={() => goToRegister()}
-                    sx={{
-                        cursor: "pointer",
-                        fontWeight: "bold",
-                        textDecoration: "underline",
-                    }}
-                >
-                    Créer un compte
-                </Box>
-            </Typography>
-            <Stack
-                direction={"row"}
-                sx={{
-                    justifyContent: "flex-end",
-                }}
-            >
-                <Button type="submit">Se connecter</Button>
+            {!isMobile && (
+                <Typography>
+                    Envie de nous rejoindre ?{" "}
+                    <Box
+                        component="span"
+                        onClick={() => goToRegister()}
+                        sx={{
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                            textDecoration: "underline",
+                        }}
+                    >
+                        Créer un compte
+                    </Box>
+                </Typography>
+            )}
+            <Stack sx={buttonStyles}>
+                <Button type="submit" sx={buttonStyles}>
+                    Se connecter
+                </Button>
+                {isMobile && (
+                    <>
+                        <Typography>Je n'ai pas de compte</Typography>
+                        <Button
+                            type="submit"
+                            onClick={() => goToRegister()}
+                            sx={[buttonStyles, { color: "black" }]}
+                            variant="outlined"
+                        >
+                            S'inscrire
+                        </Button>
+                    </>
+                )}
             </Stack>
             {error && <Alert severity="error">{error.message}</Alert>}
             {loading && <CircularProgress />}

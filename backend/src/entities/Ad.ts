@@ -22,6 +22,7 @@ export enum Status {
   POSTED = "posted",
   BOOKED = "booked",
   FINALISED = "finalised",
+  ISREVIEWED = "isreviewed",
 }
 
 registerEnumType(Status, {
@@ -70,6 +71,14 @@ export class Ad extends BaseEntity {
   @Column({ length: 100 })
   @Field()
   city: string = "";
+
+  @Column({ type: "double precision", nullable: true })
+  @Field({ nullable: true })
+  latitude?: number;
+
+  @Column({ type: "double precision", nullable: true })
+  @Field({ nullable: true })
+  longitude?: number;
 
   @Column()
   @Field()

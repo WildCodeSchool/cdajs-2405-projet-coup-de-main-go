@@ -1,5 +1,4 @@
 import { createBrowserRouter } from "react-router-dom";
-
 import App from "./App.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard.tsx";
@@ -8,6 +7,7 @@ import Home from "./pages/home/Home.tsx";
 import ChatPage from "./pages/ChatPage.tsx";
 import Profil from "./pages/profil/Profil.tsx";
 import EditProfil from "./pages/profil/EditProfil.tsx";
+import Ad from "./pages/Ad.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -36,7 +36,15 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "/profil",
+        path: "/ad/:adId",
+        element: (
+          <ProtectedRoute>
+            <Ad />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/profile",
         element: (
           <ProtectedRoute>
             <Profil />
@@ -44,7 +52,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "/profil/modifier",
+        path: "/profile/modifier",
         element: (
           <ProtectedRoute>
             <EditProfil />

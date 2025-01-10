@@ -1,0 +1,10 @@
+/* Style for pagination buttons */
+.swiper-pagination-bullet {
+  background-color: white;
+  opacity: 1;
+}
+
+/* Style for active pagination button */
+.swiper-pagination-bullet-active {
+  background-color: var(--secondary);
+}

@@ -1,4 +1,12 @@
-import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+import {
+    Box,
+    Button,
+    Stack,
+    TextField,
+    Typography,
+    useMediaQuery,
+    useTheme,
+} from "@mui/material";
 import { UseFormRegister } from "react-hook-form";
 
 import { RegisterFormData } from "../Register";
@@ -9,9 +17,31 @@ interface Step1Props {
 }
 
 function Step1({ goToLogin, register }: Step1Props) {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    let titleAlign = {};
+    let buttonStyles = {};
+
+    if (isMobile) {
+        titleAlign = { textAlign: "center" };
+        buttonStyles = {
+            width: "100%",
+            textAlign: "center",
+            borderRadius: "10px",
+        };
+    } else {
+        buttonStyles = {
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+        };
+    }
+
     return (
         <>
-            <Typography variant="h3">S’INSCRIRE</Typography>
+            <Typography variant="h3" sx={titleAlign}>
+                S’INSCRIRE
+            </Typography>
             <TextField
                 type="email"
                 placeholder="E-mail"
@@ -35,22 +65,39 @@ function Step1({ goToLogin, register }: Step1Props) {
                 label="Confirmer le mot de passe"
                 required
             />
-            <Typography>
-                Vous avez déjà un compte ?{" "}
-                <Box
-                    component="span"
-                    onClick={() => goToLogin()}
-                    sx={{
-                        cursor: "pointer",
-                        fontWeight: "bold",
-                        textDecoration: "underline",
-                    }}
-                >
-                    Me connecter
-                </Box>
-            </Typography>
-            <Stack direction={"row"} justifyContent={"flex-end"}>
-                <Button type="submit">Continuer</Button>
+            {!isMobile && (
+                <Typography>
+                    Vous avez déjà un compte ?{" "}
+                    <Box
+                        component="span"
+                        onClick={() => goToLogin()}
+                        sx={{
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                            textDecoration: "underline",
+                        }}
+                    >
+                        Me connecter
+                    </Box>
+                </Typography>
+            )}
+            <Stack sx={buttonStyles}>
+                <Button type="submit" sx={buttonStyles}>
+                    Continuer
+                </Button>
+                {isMobile && (
+                    <>
+                        <Typography>J'ai déjà un compte</Typography>
+                        <Button
+                            type="submit"
+                            onClick={() => goToLogin()}
+                            sx={[buttonStyles, { color: "black" }]}
+                            variant="outlined"
+                        >
+                            Se connecter
+                        </Button>
+                    </>
+                )}
             </Stack>
         </>
     );

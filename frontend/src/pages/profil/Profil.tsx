@@ -47,7 +47,7 @@ export default function Profil() {
   };
 
   const handleEditProfile = () => {
-    navigate("/profil/modifier");
+    navigate("/profile/modifier");
   };
 
   return (

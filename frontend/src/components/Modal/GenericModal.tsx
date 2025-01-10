@@ -1,4 +1,4 @@
-import { Box, Modal, IconButton } from "@mui/material";
+import { Box, Modal, IconButton, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
 
@@ -9,6 +9,7 @@ type GenericModalProps = {
     title?: string;
     maxWidth?: string;
     fullScreen?: boolean;
+    bgColor?: string;
 };
 
 export default function GenericModal({
@@ -18,6 +19,7 @@ export default function GenericModal({
     title,
     maxWidth = "sm",
     fullScreen = false,
+    bgColor = "tertiary.main",
 }: GenericModalProps) {
     return (
         <Modal
@@ -33,7 +35,7 @@ export default function GenericModal({
                 sx={{
                     position: "relative",
                     p: 3,
-                    bgcolor: "tertiary.main",
+                    bgcolor: bgColor,
                     borderRadius: 2,
                     maxWidth: maxWidth,
                     width: "100%",
@@ -43,7 +45,7 @@ export default function GenericModal({
             >
                 {title && (
                     <Box sx={{ mb: 2, fontSize: 20, fontWeight: 600 }}>
-                        {title}
+                        <Typography variant="h5">{title}</Typography>
                     </Box>
                 )}
                 <IconButton
