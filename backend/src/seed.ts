@@ -59,7 +59,8 @@ async function seed() {
       firstName: "Jean",
       lastName: "Dupont",
       email: "jean.dupont@example.com",
-      password: "P@assword123",
+      password:
+        "$argon2id$v=19$m=65536,t=3,p=4$jxsp+6AIQzVVLJKlcw/R7g$g77fYM/y/ItztTbPrwPQen5Y5ko1b7D5Si+H+htxF2U",
       biography: "Passionné par l'entraide et les travaux manuels.",
       gender: "Homme",
       dateOfBirth: new Date("1980-05-20"),
@@ -75,7 +76,8 @@ async function seed() {
       firstName: "Marie",
       lastName: "Dubois",
       email: "marie.dubois@example.com",
-      password: "P@assword123",
+      password:
+        "$argon2id$v=19$m=65536,t=3,p=4$jxsp+6AIQzVVLJKlcw/R7g$g77fYM/y/ItztTbPrwPQen5Y5ko1b7D5Si+H+htxF2U",
       biography: "Aime cuisiner et partager ses recettes.",
       gender: "Femme",
       dateOfBirth: new Date("1990-08-15"),
@@ -91,7 +93,8 @@ async function seed() {
       firstName: "Paul",
       lastName: "Martin",
       email: "paul.martin@example.com",
-      password: "P@assword123",
+      password:
+        "$argon2id$v=19$m=65536,t=3,p=4$jxsp+6AIQzVVLJKlcw/R7g$g77fYM/y/ItztTbPrwPQen5Y5ko1b7D5Si+H+htxF2U",
       biography: "Expert en bricolage et jardinage.",
       gender: "Homme",
       dateOfBirth: new Date("1985-10-10"),
