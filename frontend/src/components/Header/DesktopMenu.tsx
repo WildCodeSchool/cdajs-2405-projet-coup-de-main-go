@@ -1,6 +1,7 @@
 import { Button, Avatar } from "@mui/material";
 import ProfileMenu from "./ProfileMenu";
 import { useState } from "react";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 interface DesktopMenuProps {
   onLogout: () => void;
@@ -8,6 +9,8 @@ interface DesktopMenuProps {
 
 export default function DesktopMenu({ onLogout }: DesktopMenuProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const isMenuOpen = Boolean(anchorEl);
 
   const handleProfileClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -22,7 +25,9 @@ export default function DesktopMenu({ onLogout }: DesktopMenuProps) {
       <Button
         color="primary"
         startIcon={<Avatar sx={{ width: 24, height: 24 }} />}
+        endIcon={isMenuOpen ? <ExpandLess /> : <ExpandMore />}
         onClick={handleProfileClick}
+        sx={{ textTransform: "none" }}
       >
         Célia K.
       </Button>
