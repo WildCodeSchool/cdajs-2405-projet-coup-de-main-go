@@ -360,6 +360,7 @@ export type Skill = {
 export enum Status {
   Booked = 'BOOKED',
   Finalised = 'FINALISED',
+  Isreviewed = 'ISREVIEWED',
   Posted = 'POSTED'
 }
 
@@ -484,6 +485,13 @@ export type MarkMessagesAsReadForUserMutationVariables = Exact<{
 
 
 export type MarkMessagesAsReadForUserMutation = { __typename?: 'Mutation', markMessagesAsReadForUser: boolean };
+
+export type CreateReviewMutationVariables = Exact<{
+  reviewData: ReviewInput;
+}>;
+
+
+export type CreateReviewMutation = { __typename?: 'Mutation', createReview: { __typename?: 'Review', id: string, title: string, comment?: string | null, rating: number, date: any } };
 
 export type GetAllSkillsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1034,6 +1042,43 @@ export function useMarkMessagesAsReadForUserMutation(baseOptions?: Apollo.Mutati
 export type MarkMessagesAsReadForUserMutationHookResult = ReturnType<typeof useMarkMessagesAsReadForUserMutation>;
 export type MarkMessagesAsReadForUserMutationResult = Apollo.MutationResult<MarkMessagesAsReadForUserMutation>;
 export type MarkMessagesAsReadForUserMutationOptions = Apollo.BaseMutationOptions<MarkMessagesAsReadForUserMutation, MarkMessagesAsReadForUserMutationVariables>;
+export const CreateReviewDocument = gql`
+    mutation CreateReview($reviewData: ReviewInput!) {
+  createReview(reviewData: $reviewData) {
+    id
+    title
+    comment
+    rating
+    date
+  }
+}
+    `;
+export type CreateReviewMutationFn = Apollo.MutationFunction<CreateReviewMutation, CreateReviewMutationVariables>;
+
+/**
+ * __useCreateReviewMutation__
+ *
+ * To run a mutation, you first call `useCreateReviewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateReviewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createReviewMutation, { data, loading, error }] = useCreateReviewMutation({
+ *   variables: {
+ *      reviewData: // value for 'reviewData'
+ *   },
+ * });
+ */
+export function useCreateReviewMutation(baseOptions?: Apollo.MutationHookOptions<CreateReviewMutation, CreateReviewMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateReviewMutation, CreateReviewMutationVariables>(CreateReviewDocument, options);
+      }
+export type CreateReviewMutationHookResult = ReturnType<typeof useCreateReviewMutation>;
+export type CreateReviewMutationResult = Apollo.MutationResult<CreateReviewMutation>;
+export type CreateReviewMutationOptions = Apollo.BaseMutationOptions<CreateReviewMutation, CreateReviewMutationVariables>;
 export const GetAllSkillsDocument = gql`
     query GetAllSkills {
   getAllSkills {

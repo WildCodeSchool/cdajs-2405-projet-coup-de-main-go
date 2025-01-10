@@ -1,5 +1,5 @@
-import { Menu, MenuItem, ListItemIcon } from "@mui/material";
-import { Logout } from "@mui/icons-material";
+import { Menu, MenuItem } from "@mui/material";
+import { Link } from "react-router-dom";
 
 interface ProfileMenuProps {
   anchorEl: null | HTMLElement;
@@ -7,7 +7,11 @@ interface ProfileMenuProps {
   onLogout: () => void;
 }
 
-export default function ProfileMenu({ anchorEl, onClose, onLogout }: ProfileMenuProps) {
+export default function ProfileMenu({
+  anchorEl,
+  onClose,
+  onLogout,
+}: ProfileMenuProps) {
   const handleLogout = () => {
     onLogout();
     onClose();
@@ -24,36 +28,45 @@ export default function ProfileMenu({ anchorEl, onClose, onLogout }: ProfileMenu
           elevation: 0,
           sx: {
             overflow: "visible",
-            mt: 1.5,
-            "& .MuiAvatar-root": {
-              width: 32,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
-            },
-            "&::before": {
-              content: '""',
-              display: "block",
-              position: "absolute",
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: "background.paper",
-              transform: "translateY(-50%) rotate(45deg)",
-              zIndex: 0,
-            },
+            mt: 1,
+            backgroundColor: "primary.main",
+            color: "white",
+            border: "none",
+            borderRadius: "20px",
           },
         },
       }}
       transformOrigin={{ horizontal: "right", vertical: "top" }}
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
-      <MenuItem onClick={handleLogout}>
-        <ListItemIcon>
-          <Logout fontSize="small" />
-        </ListItemIcon>
-        Déconnexion
+      <MenuItem
+        component={Link}
+        to="/profile"
+        onClick={onClose}
+        sx={{
+          fontSize: "0.875rem",
+        }}
+      >
+        Profil
+      </MenuItem>
+
+      <MenuItem
+        component={Link}
+        to="/settings"
+        onClick={onClose}
+        sx={{
+          fontSize: "0.875rem",
+        }}
+      >
+        Paramètres
+      </MenuItem>
+      <MenuItem
+        onClick={handleLogout}
+        sx={{
+          fontSize: "0.875rem",
+        }}
+      >
+        Se déconnecter
       </MenuItem>
     </Menu>
   );

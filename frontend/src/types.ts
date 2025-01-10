@@ -19,12 +19,14 @@ export type UserRequester = {
 //   POSTED = "posted",
 //   BOOKED = "booked",
 //   FINALISED = "finalised",
+//   ISREVIEWED = "isreviewed",
 // }
 
 export enum Status {
   Booked = "BOOKED",
   Finalised = "FINALISED",
   Posted = "POSTED",
+  isReviewed = "ISREVIEWED",
 }
 
 export type Skill = {

@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 type ChatActionButtonProps = {
@@ -7,13 +7,14 @@ type ChatActionButtonProps = {
     onClick: () => void;
     disabled?: boolean;
     variant?: "contained" | "outlined";
+    type?: "button" | "text";
   }[];
 };
 
 export function ChatActionButton({ actions }: ChatActionButtonProps) {
   const theme = useTheme();
 
-  const hasMultipleButtons = actions.length > 1;
+  const hasMultipleItems = actions.length > 1;
 
   return (
     <Box
@@ -23,11 +24,27 @@ export function ChatActionButton({ actions }: ChatActionButtonProps) {
         justifyContent: "center",
         borderBottom: 1,
         borderColor: "divider",
-        gap: hasMultipleButtons ? 1 : 0,
+        gap: hasMultipleItems ? 1 : 0,
       }}
     >
       {actions.map((action, index) => {
-        const { variant = "contained", label, onClick, disabled } = action;
+        const { variant = "contained", label, onClick, disabled = false, type = "button" } = action;
+
+        if (type === "text") {
+          return (
+            <Typography
+              key={index}
+              variant="body2"
+              sx={{
+                color: theme.palette.text.secondary,
+                alignSelf: "center",
+                padding: "0 16px",
+              }}
+            >
+              {label}
+            </Typography>
+          );
+        }
 
         return (
           <Button

@@ -1,6 +1,13 @@
-import { Paper } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useState, useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { GET_USER_CHATS } from "../../../graphql/chatQueries";
 import { Chat } from "../../../types";
 import type { MessageForm, Message, User } from "../../../types";
@@ -10,11 +17,27 @@ import { ChatMessageList } from "../ChatMessage/ChatMessageList";
 import { ChatActionButton } from "../ChatActionButton";
 import { ChatInput } from "../ChatInput";
 import ChatConversationMobileBanner from "./ChatConversationMobileBanner";
+import GenericModal from "../../Modal/GenericModal";
 import {
   useSendMessageMutation,
   useUpdateAdStatusMutation,
   useUpdateChatHelpProposalMutation,
+  useCreateReviewMutation,
 } from "../../../generated/graphql-types";
+import Rating from "@mui/material/Rating";
+
+const labels: { [index: number]: string } = {
+  0.5: "Très décevant",
+  1: "Décevant",
+  1.5: "Médiocre",
+  2: "Pas terrible",
+  2.5: "Moyen",
+  3: "Satisfaisant",
+  3.5: "Bien",
+  4: "Très bien",
+  4.5: "Excellent",
+  5: "Parfait",
+};
 
 type ChatConversationProps = {
   chats: Chat[];
@@ -23,6 +46,20 @@ type ChatConversationProps = {
   isMobile: boolean;
   onBack?: () => void;
   onOpenModal?: () => void;
+};
+
+type ReviewForm = {
+  rating: number;
+  title: string;
+  comment?: string;
+};
+
+type ActionItem = {
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+  variant?: "contained" | "outlined";
+  type?: "button" | "text";
 };
 
 export default function ChatConversation({
@@ -35,10 +72,13 @@ export default function ChatConversation({
 }: ChatConversationProps) {
   const [messageInput, setMessageInput] = useState<string>("");
   const [displayedMessages, setDisplayedMessages] = useState<Message[]>([]);
-  const [messageCount, setMessageCount] = useState(10);
+  const [messageCount, setMessageCount] = useState(200);
   const [isLoading, setIsLoading] = useState(false);
   const [otherUser, setOtherUser] = useState<User | null>(null);
   const [status, setStatus] = useState<Status | null>(null);
+  const [isReviewModalOpen, setReviewModalOpen] = useState(false);
+  const [hover, setHover] = useState(-1);
+  const [commentLength, setCommentLength] = useState(0);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -108,7 +148,16 @@ export default function ChatConversation({
     handleStatusChange(Status.FINALISED);
   };
 
-  const getActionButtonProps = () => {
+  const handleFinalisedHelp = () => {
+    setReviewModalOpen(true);
+  };
+
+  const handleReviewSubmit = () => {
+    handleStatusChange(Status.ISREVIEWED);
+    setReviewModalOpen(false);
+  };
+
+  const getActionButtonProps = (): ActionItem[] => {
     // If the help has not been proposed yet, the requester can propose help
     if (!currentChat?.isHelpProposed) {
       return isRequester
@@ -124,15 +173,15 @@ export default function ChatConversation({
               {
                 label: "Refuser l'aide",
                 onClick: handleCancelHelp,
-                variant: "outlined" as const,
+                variant: "outlined",
               },
               { label: "Accepter l'aide", onClick: handleAcceptHelp },
             ]
           : [
               {
                 label: "En attente d'acceptation",
-                onClick: () => {},
                 disabled: true,
+                onClick: () => {},
               },
             ];
       case Status.BOOKED:
@@ -141,7 +190,7 @@ export default function ChatConversation({
               {
                 label: "Annuler ma demande d'aide",
                 onClick: handleCancelHelp,
-                variant: "outlined" as const,
+                variant: "outlined",
               },
               {
                 label: "Valider l'aide réalisée",
@@ -150,9 +199,40 @@ export default function ChatConversation({
             ]
           : [{ label: "Annuler l'aide", onClick: handleCancelHelp }];
       case Status.FINALISED:
-        return [{ label: "Terminé", onClick: () => {}, disabled: true }];
+        return isRequester
+          ? [
+              {
+                label: "Laissez une évaluation",
+                onClick: handleFinalisedHelp,
+              },
+            ]
+          : [
+              {
+                label:
+                  "Merci pour votre contribution. En attente d'évaluation.",
+                onClick: () => {},
+                type: "text",
+              },
+            ];
+      case Status.ISREVIEWED:
+        return isRequester
+          ? [
+              {
+                label: "Evaluation ajoutée. Merci pour votre contribution.",
+                onClick: () => {},
+                type: "text",
+              },
+            ]
+          : [
+              {
+                label:
+                  "Vous avez reçu une nouvelle évaluation. Merci pour votre contribution.",
+                onClick: () => {},
+                type: "text",
+              },
+            ];
       default:
-        return [{ label: "Indisponible", onClick: () => {}, disabled: true }];
+        return [];
     }
   };
 
@@ -229,12 +309,53 @@ export default function ChatConversation({
           currentUserId,
         },
       });
-
       setMessageInput("");
       reset();
     } catch (error) {
       console.error("Erreur lors de l'envoi du message:", error);
     }
+  };
+
+  const [createReview, { loading, error }] = useCreateReviewMutation({
+    refetchQueries: [
+      { query: GET_USER_CHATS, variables: { userId: currentUserId } },
+    ],
+  });
+
+  const {
+    handleSubmit: handleFormReviewSubmit,
+    control,
+    register,
+    reset: resetFormReviewSubmit,
+  } = useForm<ReviewForm>();
+
+  const onReviewFormSubmitted = async (data: {
+    rating: number;
+    title: string;
+    comment?: string;
+  }) => {
+    const result = await createReview({
+      variables: {
+        reviewData: {
+          rating: data.rating,
+          title: data.title,
+          comment: data.comment,
+          userHelperId: currentChat!.userHelper.id,
+          userRequesterId: currentChat!.userRequester.id,
+        },
+      },
+    });
+    if (result) handleReviewSubmit();
+  };
+
+  const handleCloseReviewModal = () => {
+    resetFormReviewSubmit();
+    setReviewModalOpen(false);
+  };
+
+  const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const length = event.target.value.length;
+    setCommentLength(length);
   };
 
   return (
@@ -244,6 +365,7 @@ export default function ChatConversation({
         display: "flex",
         flexDirection: "column",
         height: "100%",
+        width: "100%",
         border: 0,
         borderRadius: "12px",
       }}
@@ -278,6 +400,134 @@ export default function ChatConversation({
         onSubmit={handleSubmit(onSubmit)}
         onKeyDown={handleKeyDown}
       />
+      <GenericModal
+        open={isReviewModalOpen}
+        onClose={handleCloseReviewModal}
+        maxWidth={isMobile ? "80%" : "50%"}
+        bgColor="white"
+        title="Laissez une évaluation"
+      >
+        <Paper
+          elevation={3}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            border: 0,
+            borderRadius: "12px",
+          }}
+        >
+          <form onSubmit={handleFormReviewSubmit(onReviewFormSubmitted)}>
+            <Box
+              component="fieldset"
+              borderColor="transparent"
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Controller
+                name="rating"
+                control={control}
+                defaultValue={5}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    <Rating
+                      {...field}
+                      name="hover-feedback"
+                      precision={0.5}
+                      size="large"
+                      onChange={(_, newValue) => {
+                        field.onChange(Number(newValue));
+                      }}
+                      onChangeActive={(_, newHover) => {
+                        setHover(newHover);
+                      }}
+                    />
+                    <Typography sx={{ ml: 2 }}>
+                      {labels[hover !== -1 ? hover : field.value]}
+                    </Typography>
+                  </Box>
+                )}
+              />
+              <TextField
+                type="text"
+                placeholder="Titre"
+                label="Titre"
+                {...register("title", { required: true, maxLength: 50 })}
+                required
+                fullWidth
+                sx={{ marginBottom: "20px" }}
+                slotProps={{ htmlInput: { maxLength: 50 } }}
+              />
+              <TextField
+                placeholder="Partage ici ton expérience"
+                label="Commentaire (optionnel)"
+                multiline
+                rows={4}
+                {...register("comment", {
+                  onChange: handleCommentChange,
+                  maxLength: {
+                    value: 200,
+                    message:
+                      "Le commentaire ne peut pas dépasser 200 caractères",
+                  },
+                })}
+                error={commentLength > 200}
+                helperText={
+                  commentLength > 200
+                    ? "Le commentaire ne peut pas dépasser 200 caractères"
+                    : ""
+                }
+                fullWidth
+              />
+              <Box
+                sx={{
+                  textAlign: "right",
+                  marginBottom: "20px",
+                  marginTop: "10px",
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  color={commentLength > 200 ? "error" : "textSecondary"}
+                >
+                  {`${commentLength} / 200 caractères maximum`}
+                </Typography>
+              </Box>
+              <Button type="submit" disabled={loading}>
+                {loading ? "Envoi en cours..." : "Soumettre"}
+              </Button>
+            </Box>
+            {loading ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <CircularProgress />
+              </Box>
+            ) : error ? (
+              <Box sx={{ color: "error.main", textAlign: "center", p: 1 }}>
+                <Typography>
+                  Une erreur est survenue: Veuillez réessayer plus tard.
+                </Typography>
+              </Box>
+            ) : null}
+          </form>
+        </Paper>
+      </GenericModal>
     </Paper>
   );
 }
