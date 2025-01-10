@@ -72,12 +72,13 @@ export default function ChatConversation({
 }: ChatConversationProps) {
   const [messageInput, setMessageInput] = useState<string>("");
   const [displayedMessages, setDisplayedMessages] = useState<Message[]>([]);
-  const [messageCount, setMessageCount] = useState(10);
+  const [messageCount, setMessageCount] = useState(200);
   const [isLoading, setIsLoading] = useState(false);
   const [otherUser, setOtherUser] = useState<User | null>(null);
   const [status, setStatus] = useState<Status | null>(null);
   const [isReviewModalOpen, setReviewModalOpen] = useState(false);
   const [hover, setHover] = useState(-1);
+  const [commentLength, setCommentLength] = useState(0);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -325,9 +326,7 @@ export default function ChatConversation({
     handleSubmit: handleFormReviewSubmit,
     control,
     register,
-    watch,
     reset: resetFormReviewSubmit,
-    formState: { errors },
   } = useForm<ReviewForm>();
 
   const onReviewFormSubmitted = async (data: {
@@ -352,6 +351,11 @@ export default function ChatConversation({
   const handleCloseReviewModal = () => {
     resetFormReviewSubmit();
     setReviewModalOpen(false);
+  };
+
+  const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const length = event.target.value.length;
+    setCommentLength(length);
   };
 
   return (
@@ -458,10 +462,11 @@ export default function ChatConversation({
                 type="text"
                 placeholder="Titre"
                 label="Titre"
-                {...register("title", { required: true })}
+                {...register("title", { required: true, maxLength: 50 })}
                 required
                 fullWidth
                 sx={{ marginBottom: "20px" }}
+                slotProps={{ htmlInput: { maxLength: 50 } }}
               />
               <TextField
                 placeholder="Partage ici ton expérience"
@@ -469,14 +474,19 @@ export default function ChatConversation({
                 multiline
                 rows={4}
                 {...register("comment", {
+                  onChange: handleCommentChange,
                   maxLength: {
-                    value: 10,
+                    value: 200,
                     message:
-                      "Le commentaire ne peut pas dépasser 10 caractères",
+                      "Le commentaire ne peut pas dépasser 200 caractères",
                   },
                 })}
-                error={!!errors.comment}
-                helperText={errors.comment?.message}
+                error={commentLength > 200}
+                helperText={
+                  commentLength > 200
+                    ? "Le commentaire ne peut pas dépasser 200 caractères"
+                    : ""
+                }
                 fullWidth
               />
               <Box
@@ -486,8 +496,11 @@ export default function ChatConversation({
                   marginTop: "10px",
                 }}
               >
-                <Typography variant="caption">
-                  {`${watch("comment")?.length || 0} / 10 caractères maximum`}
+                <Typography
+                  variant="caption"
+                  color={commentLength > 200 ? "error" : "textSecondary"}
+                >
+                  {`${commentLength} / 200 caractères maximum`}
                 </Typography>
               </Box>
               <Button type="submit" disabled={loading}>
