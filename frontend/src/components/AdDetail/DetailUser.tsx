@@ -37,7 +37,7 @@ export default function DetailUser({ userId }: DetailUserProps) {
       <Box
         sx={{
           backgroundColor: theme.palette.primary.main,
-          height: 96,
+          height: "6rem",
           position: "relative",
           borderRadius: "1rem 1rem 0 0",
         }}
@@ -48,7 +48,7 @@ export default function DetailUser({ userId }: DetailUserProps) {
               ? `${
                   import.meta.env.VITE_DOMAIN_BACKEND_URL
                 }/uploads/users/${userId}/${userOverview.user.picture}`
-              : "/images/picture.png"
+              : "/images/mango-tree.jpg"
           }
           alt={userOverview.user.firstName}
           sx={{
