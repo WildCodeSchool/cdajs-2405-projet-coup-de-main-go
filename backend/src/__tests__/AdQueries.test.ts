@@ -166,6 +166,7 @@ describe("getAllAds", () => {
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(ads),
+        orderBy: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
       } as any);
     const retrievedAds: Ad[] = await adQueries.getAllAds();
@@ -181,6 +182,7 @@ describe("getAllAds", () => {
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(ads),
+        orderBy: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
       } as any);
     const retrievedAds: Ad[] = await adQueries.getAllAds();
@@ -201,6 +203,7 @@ describe("getAllAds", () => {
         skip: skipSpy,
         take: takeSpy,
         getMany: jest.fn().mockResolvedValue(ads.slice(0, 15)),
+        orderBy: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
       } as any);
     const retrievedAds: Ad[] = await adQueries.getAllAds();
@@ -224,6 +227,7 @@ describe("getAllAds", () => {
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(adsWithSkillId1),
+        orderBy: jest.fn().mockReturnThis(),
         andWhere: andWhereSpy,
       } as any);
 
@@ -251,6 +255,7 @@ describe("getAllAds", () => {
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(expensiveAds),
+        orderBy: jest.fn().mockReturnThis(),
         andWhere: andWhereSpy,
       } as any);
 
@@ -282,6 +287,7 @@ describe("getAllAds", () => {
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(cheapAds),
+        orderBy: jest.fn().mockReturnThis(),
         andWhere: andWhereSpy,
       } as any);
 
@@ -314,12 +320,14 @@ describe("getAllAds", () => {
         skip: skipSpy,
         take: takeSpy,
         getMany: jest.fn().mockResolvedValue(ads.slice(15, 30)),
+        orderBy: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
       } as any);
     const retrievedAds: Ad[] = await adQueries.getAllAds(
       undefined, //skillId
       undefined, //mangoAmountMin
       undefined, //mangoAmountMax
+      undefined, //status
       page //page
     );
     expect(retrievedAds.length).toBe(15);
@@ -342,12 +350,14 @@ describe("getAllAds", () => {
         skip: skipSpy,
         take: takeSpy,
         getMany: jest.fn().mockResolvedValue(ads.slice(0, 20)),
+        orderBy: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
       } as any);
     const retrievedAds: Ad[] = await adQueries.getAllAds(
       undefined, //skillId
       undefined, //mangoAmountMin
       undefined, //mangoAmountMax
+      undefined, //status
       undefined, //page
       limit //limit
     );
