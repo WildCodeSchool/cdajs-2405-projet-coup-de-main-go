@@ -21,10 +21,12 @@ declare module "@mui/material/Typography" {
 declare module "@mui/material/styles" {
   interface Palette {
     tertiary: Palette["primary"];
+    custom: Palette["primary"];
   }
 
   interface PaletteOptions {
     tertiary?: PaletteOptions["primary"];
+    custom?: PaletteOptions["primary"];
   }
 }
 
@@ -57,8 +59,10 @@ const theme = createTheme(
       common: {
         white: "#ffffff",
         black: "#000000",
-        lightGrey: "#E0E0E0",
-        darkGrey: "#AFACAC",
+      },
+      custom: {
+        main: "#E0E0E0", // couleur gris clair
+        dark: "#AFACAC", // couleur gris foncé
       },
     },
 
