@@ -1,19 +1,12 @@
-import { useAuth } from "../contexts/AuthContext";
 import { Box, Button, Stack, useMediaQuery } from "@mui/material";
 import DashboardSection from "../components/Dashboard/DashboardSection";
 import theme from "../mui";
 
 export default function Dashboard() {
-  // To delete once header is finalised
-  const { logout } = useAuth();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
     <>
-      {/* To delete once header is finalised */}
-      <button onClick={() => logout()}>Se déconnecter</button>
-
-      {/*  Dashboard */}
       <img
         src="/images/dashboard-poster.png"
         alt="helping to walk"
