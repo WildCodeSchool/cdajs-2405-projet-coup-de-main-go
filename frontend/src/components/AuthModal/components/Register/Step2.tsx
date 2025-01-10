@@ -1,4 +1,12 @@
-import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+import {
+    Box,
+    Button,
+    Stack,
+    TextField,
+    Typography,
+    useMediaQuery,
+    useTheme,
+} from "@mui/material";
 import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 import { RegisterFormData } from "../Register";
@@ -11,6 +19,12 @@ interface Step2Props {
 }
 
 function Step3({ errors, register, setStep, setValue }: Step2Props) {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    let titleAlign = {};
+    let buttonStyles = {};
+    let formSpace = "";
+
     const handleChangeZipCode = (string: string): string => {
         const re = /^[0-9]*$/;
 
@@ -24,9 +38,26 @@ function Step3({ errors, register, setStep, setValue }: Step2Props) {
         }
     };
 
+    if (isMobile) {
+        titleAlign = { textAlign: "center" };
+        buttonStyles = {
+            width: "100%",
+            textAlign: "center",
+            borderRadius: "10px",
+        };
+        formSpace = "space-between";
+    } else {
+        buttonStyles = {
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+        };
+    }
     return (
         <>
-            <Typography variant="h2">Formulaire</Typography>
+            <Typography variant="h3" sx={titleAlign}>
+                Formulaire
+            </Typography>
             <Stack direction={"row"} spacing={"20px"}>
                 <Box
                     sx={{
@@ -45,13 +76,14 @@ function Step3({ errors, register, setStep, setValue }: Step2Props) {
                     }}
                 ></Box>
             </Stack>
-            <Stack direction={"row"}>
+            <Stack direction={"row"} justifyContent={formSpace}>
                 <TextField
                     type="text"
                     placeholder="Prénom"
                     {...register("firstName", { required: true })}
                     label="Prénom"
                     required
+                    sx={{ width: "50%" }}
                 />
                 <TextField
                     type="text"
@@ -59,6 +91,7 @@ function Step3({ errors, register, setStep, setValue }: Step2Props) {
                     {...register("lastName", { required: true })}
                     label="Nom"
                     required
+                    sx={{ width: "50%" }}
                 />
             </Stack>
             <TextField
@@ -68,7 +101,7 @@ function Step3({ errors, register, setStep, setValue }: Step2Props) {
                 label="Adresse"
                 required
             />
-            <Stack direction={"row"}>
+            <Stack direction={"row"} justifyContent={formSpace}>
                 <TextField
                     type="text"
                     placeholder="Code Postal"
@@ -96,6 +129,7 @@ function Step3({ errors, register, setStep, setValue }: Step2Props) {
                             ) // Si nécessaire
                     }
                     required
+                    sx={{ width: "50%" }}
                 />
 
                 <TextField
@@ -104,18 +138,25 @@ function Step3({ errors, register, setStep, setValue }: Step2Props) {
                     {...register("city", { required: true })}
                     label="Ville"
                     required
+                    sx={{ width: "50%" }}
                 />
             </Stack>
-            <Stack direction={"row"} justifyContent={"flex-end"}>
-                <Button
-                    type="button"
-                    onClick={() => setStep(1)}
-                    variant="outlined"
-                    sx={{ color: "black" }}
-                >
-                    Annuler
+            <Stack sx={buttonStyles}>
+                {isMobile && (
+                    <>
+                        <Button
+                            type="submit"
+                            onClick={() => setStep(1)}
+                            sx={[buttonStyles, { color: "black" }]}
+                            variant="outlined"
+                        >
+                            Annuler
+                        </Button>
+                    </>
+                )}
+                <Button type="submit" sx={buttonStyles}>
+                    Suivant
                 </Button>
-                <Button type="submit">Suivant</Button>
             </Stack>
         </>
     );

@@ -21,10 +21,29 @@ interface Step2Props {
 function Step3({ skills, setStep, register }: Step2Props) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+    let titleAlign = {};
+    let buttonStyles = {};
+
+    if (isMobile) {
+        titleAlign = { textAlign: "center" };
+        buttonStyles = {
+            width: "100%",
+            textAlign: "center",
+            borderRadius: "10px",
+        };
+    } else {
+        buttonStyles = {
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+        };
+    }
 
     return (
         <>
-            <Typography variant="h3">Compétences</Typography>
+            <Typography variant="h3" sx={titleAlign}>
+                Compétences
+            </Typography>
             <Stack direction={"row"} spacing={"20px"}>
                 <Box
                     sx={{
@@ -103,20 +122,22 @@ function Step3({ skills, setStep, register }: Step2Props) {
                     </Stack>
                 ))}
             </Stack>
-            <Stack
-                direction={"row"}
-                justifyContent={"flex-end"}
-                marginRight={"20px"}
-            >
-                <Button
-                    type="button"
-                    onClick={() => setStep(2)}
-                    variant="outlined"
-                    sx={{ color: "black" }}
-                >
-                    Annuler
+            <Stack sx={buttonStyles}>
+                {isMobile && (
+                    <>
+                        <Button
+                            type="submit"
+                            onClick={() => setStep(2)}
+                            sx={[buttonStyles, { color: "black" }]}
+                            variant="outlined"
+                        >
+                            Annuler
+                        </Button>
+                    </>
+                )}
+                <Button type="submit" sx={buttonStyles}>
+                    S'inscrire
                 </Button>
-                <Button type="submit">S'inscrire</Button>
             </Stack>
         </>
     );
