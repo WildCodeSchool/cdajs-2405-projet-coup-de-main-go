@@ -38,16 +38,17 @@ export default function Ad() {
           alignItems: isResponsiveLayout ? "center" : "flex-start",
         }}
       >
+        {/* Encart utilisateur */}
         <Stack
           sx={{
-            borderRadius: 32,
             width: isResponsiveLayout ? "90%" : "33%",
           }}
           spacing={0}
         >
-          {/* Encart utilisateur */}
           <DetailUser userId={ad.userRequester.id} />
         </Stack>
+
+        {/* Encart annonce */}
         <Stack
           sx={{
             backgroundColor: theme.palette.common.white,
@@ -55,7 +56,6 @@ export default function Ad() {
             width: isResponsiveLayout ? "90%" : "63%",
           }}
         >
-          {/* Encart annonce */}
           <DetailAd ad={ad} />
         </Stack>
       </Stack>

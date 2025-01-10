@@ -8,6 +8,7 @@ export const GET_ALL_ADS_QUERY = gql`
     $page: Int
     $limit: Int
     $orderBy: String
+    $status: Status
   ) {
     getAllAds(
       skillId: $skillId
@@ -16,6 +17,7 @@ export const GET_ALL_ADS_QUERY = gql`
       page: $page
       limit: $limit
       orderBy: $orderBy
+      status: $status
     ) {
       id
       title
@@ -23,6 +25,7 @@ export const GET_ALL_ADS_QUERY = gql`
       updatedAt
       mangoAmount
       status
+      picture1
       skill {
         id
         name

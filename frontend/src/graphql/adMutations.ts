@@ -10,8 +10,8 @@ export const UPDATE_AD_STATUS = gql`
 `;
 
 export const CREATE_AD = gql`
-  mutation CreateAd($adData: AdInput!) {
-    createAd(adData: $adData) {
+  mutation CreateAd($formData: AdInput!) {
+    createAd(adData: $formData) {
       id
       title
       description

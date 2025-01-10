@@ -57,6 +57,8 @@ const theme = createTheme(
       common: {
         white: "#ffffff",
         black: "#000000",
+        lightGrey: "#E0E0E0",
+        darkGrey: "#AFACAC",
       },
     },
 

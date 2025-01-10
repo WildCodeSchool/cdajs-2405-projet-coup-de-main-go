@@ -285,6 +285,7 @@ export type QueryGetAllAdsArgs = {
   orderBy?: Scalars['String']['input'];
   page?: Scalars['Int']['input'];
   skillId?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Status>;
 };
 
 
@@ -420,7 +421,7 @@ export type UpdateAdStatusMutationVariables = Exact<{
 export type UpdateAdStatusMutation = { __typename?: 'Mutation', updateAdStatus: { __typename?: 'Ad', id: string, status: Status } };
 
 export type CreateAdMutationVariables = Exact<{
-  adData: AdInput;
+  formData: AdInput;
 }>;
 
 
@@ -433,10 +434,11 @@ export type GetAllAdsQueryVariables = Exact<{
   page?: InputMaybe<Scalars['Int']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Status>;
 }>;
 
 
-export type GetAllAdsQuery = { __typename?: 'Query', getAllAds: Array<{ __typename?: 'Ad', id: string, title: string, description: string, updatedAt: any, mangoAmount: number, status: Status, skill: { __typename?: 'Skill', id: string, name: string, picture: string }, userRequester: { __typename?: 'User', id: string, picture?: string | null } }> };
+export type GetAllAdsQuery = { __typename?: 'Query', getAllAds: Array<{ __typename?: 'Ad', id: string, title: string, description: string, updatedAt: any, mangoAmount: number, status: Status, picture1?: string | null, skill: { __typename?: 'Skill', id: string, name: string, picture: string }, userRequester: { __typename?: 'User', id: string, picture?: string | null } }> };
 
 export type GetAdByIdQueryVariables = Exact<{
   id: Scalars['String']['input'];
@@ -631,8 +633,8 @@ export type UpdateAdStatusMutationHookResult = ReturnType<typeof useUpdateAdStat
 export type UpdateAdStatusMutationResult = Apollo.MutationResult<UpdateAdStatusMutation>;
 export type UpdateAdStatusMutationOptions = Apollo.BaseMutationOptions<UpdateAdStatusMutation, UpdateAdStatusMutationVariables>;
 export const CreateAdDocument = gql`
-    mutation CreateAd($adData: AdInput!) {
-  createAd(adData: $adData) {
+    mutation CreateAd($formData: AdInput!) {
+  createAd(adData: $formData) {
     id
     title
     description
@@ -657,7 +659,7 @@ export type CreateAdMutationFn = Apollo.MutationFunction<CreateAdMutation, Creat
  * @example
  * const [createAdMutation, { data, loading, error }] = useCreateAdMutation({
  *   variables: {
- *      adData: // value for 'adData'
+ *      formData: // value for 'formData'
  *   },
  * });
  */
@@ -669,7 +671,7 @@ export type CreateAdMutationHookResult = ReturnType<typeof useCreateAdMutation>;
 export type CreateAdMutationResult = Apollo.MutationResult<CreateAdMutation>;
 export type CreateAdMutationOptions = Apollo.BaseMutationOptions<CreateAdMutation, CreateAdMutationVariables>;
 export const GetAllAdsDocument = gql`
-    query GetAllAds($skillId: String, $mangoAmountMin: Int, $mangoAmountMax: Int, $page: Int, $limit: Int, $orderBy: String) {
+    query GetAllAds($skillId: String, $mangoAmountMin: Int, $mangoAmountMax: Int, $page: Int, $limit: Int, $orderBy: String, $status: Status) {
   getAllAds(
     skillId: $skillId
     mangoAmountMin: $mangoAmountMin
@@ -677,6 +679,7 @@ export const GetAllAdsDocument = gql`
     page: $page
     limit: $limit
     orderBy: $orderBy
+    status: $status
   ) {
     id
     title
@@ -684,6 +687,7 @@ export const GetAllAdsDocument = gql`
     updatedAt
     mangoAmount
     status
+    picture1
     skill {
       id
       name
@@ -715,6 +719,7 @@ export const GetAllAdsDocument = gql`
  *      page: // value for 'page'
  *      limit: // value for 'limit'
  *      orderBy: // value for 'orderBy'
+ *      status: // value for 'status'
  *   },
  * });
  */

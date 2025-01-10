@@ -1,6 +1,7 @@
 import { FormControl, FormHelperText, FormLabel, Slider } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
 import { AdInput } from "../../../generated/graphql-types";
+import theme from "../../../mui";
 
 export default function AdModalFormDuration() {
   const {
@@ -10,7 +11,13 @@ export default function AdModalFormDuration() {
 
   return (
     <FormControl>
-      <FormLabel sx={{ fontSize: "1.25rem", textAlign: "center" }}>
+      <FormLabel
+        sx={{
+          fontSize: "1.25rem",
+          textAlign: "center",
+          color: theme.palette.text.secondary,
+        }}
+      >
         Durée
       </FormLabel>
       <Controller

@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Divider,
   IconButton,
   Stack,
@@ -20,6 +21,7 @@ import AdModalFormCategory from "./modalComponents/AdModalFormCategory";
 import AdModalFormDuration from "./modalComponents/AdModalFormDuration";
 import { AddressSuggestion } from "../../types";
 import Cookies from "js-cookie";
+import { convertFileToBase64 } from "../../utils/convertFileToBase64";
 
 export default function AdModalForm({ onClose }: { onClose: () => void }) {
   const userId = Cookies.get("cdmg-userId");
@@ -30,7 +32,8 @@ export default function AdModalForm({ onClose }: { onClose: () => void }) {
 
   const [createAdMutation, { loading, error }] = useCreateAdMutation();
 
-  // Gestion des images et de leur prévisualisation
+  // Pictures and preview management
+  const MAX_SIZE_MB = 1;
   const [files, setFiles] = useState<File[]>([]);
   const [fileUrls, setFileUrls] = useState<string[]>([]);
 
@@ -40,6 +43,12 @@ export default function AdModalForm({ onClose }: { onClose: () => void }) {
   ) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
+      // Check file size
+      if (selectedFile.size > MAX_SIZE_MB * 1024 * 1024) {
+        alert(`La taille du fichier doit être inférieure à ${MAX_SIZE_MB} Mo.`);
+        return;
+      }
+
       // Update file table
       const newFiles = [...files];
       newFiles[index] = selectedFile;
@@ -81,6 +90,10 @@ export default function AdModalForm({ onClose }: { onClose: () => void }) {
     }
 
     try {
+      const pictures = await Promise.all(
+        files.map((file) => (file ? convertFileToBase64(file) : null))
+      );
+
       await createAdMutation({
         variables: {
           formData: {
@@ -93,9 +106,9 @@ export default function AdModalForm({ onClose }: { onClose: () => void }) {
             longitude: selectedSuggestion.geometry.coordinates[0],
             duration: formData.duration,
             mangoAmount: formData.duration / 30,
-            // picture1: files[0] || null,
-            // picture2: files[1] || null,
-            // picture3: files[2] || null,
+            picture1: pictures[0] as string | null,
+            picture2: pictures[1] as string | null,
+            picture3: pictures[2] as string | null,
             skillId: formData.skillId,
             userRequesterId: userId,
           },
@@ -164,7 +177,7 @@ export default function AdModalForm({ onClose }: { onClose: () => void }) {
 
               {/* Pictures */}
               <Typography
-                color="rgba(0, 0, 0, 0.6)"
+                color={theme.palette.text.secondary}
                 sx={{ fontSize: "1.25rem", textAlign: "center" }}
               >
                 Photos
@@ -178,8 +191,9 @@ export default function AdModalForm({ onClose }: { onClose: () => void }) {
                       width: 92,
                       height: 86,
                       borderRadius: 2.5,
-                      backgroundColor: "#E0E0E0",
-                      border: "2px dotted #AFACAC",
+                      backgroundColor: theme.palette.common.lightGrey,
+                      border: "2px dotted",
+                      borderColor: theme.palette.common.darkGrey,
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
@@ -250,9 +264,11 @@ export default function AdModalForm({ onClose }: { onClose: () => void }) {
               margin: "1.5rem 2.5rem",
             }}
           >
-            <Button type="submit">Envoyer</Button>
+            <Button type="submit" sx={{ paddingX: 4 }}>
+              Envoyer
+            </Button>
           </Stack>
-          {loading && "Envoi en cours..."}
+          {loading && <CircularProgress />}
           {error && "Une erreur est survenue, merci de réessayer..."}
         </form>
       </FormProvider>
