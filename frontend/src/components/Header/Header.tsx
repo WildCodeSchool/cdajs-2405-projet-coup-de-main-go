@@ -6,6 +6,8 @@ import HeaderButton from "../Header/HeaderButton";
 import DesktopMenu from "./DesktopMenu";
 import MobileMenu from "./MobileMenu";
 import AuthenticatedIcons from "./AuthenticatedIcons";
+import GenericModal from "../Modal/GenericModal";
+import AdModalForm from "../NewAdModal/AdModalForm";
 
 interface HeaderProps {
   setAuthModalIsOpen: (isOpen: boolean) => void;
@@ -19,53 +21,76 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
 
   const handleDrawerToggle = () => setDrawerOpen(!drawerOpen);
 
-  return (
-    <AppBar position="static" sx={{ bgcolor: "transparent", border: 0 }}>
-      <Toolbar sx={{ justifyContent: "space-between" }}>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: !isAuthenticated && isMobile ? "center" : "flex-start",
-            gap: !isAuthenticated || isMobile ? 0 : 2,
-            ...(isMobile && { width: "100%" }),
-          }}
-        >
-          <Logo />
-          {isAuthenticated && !isMobile && (
-            <>
-              <HeaderButton color="secondary" text="Créer une annonce" icon="/images/mango.png" />
-              <HeaderButton color="primary" text="Explorer" paddingX={4} />
-            </>
-          )}
-        </Box>
+  const [newAdModalIsOpen, setNewAdModalIsOpen] = useState<boolean>(false);
+  const closeNewAdModal = () => {
+    setNewAdModalIsOpen(false);
+  };
 
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          {isAuthenticated ? (
-            <>
-              <AuthenticatedIcons isMobile={isMobile} />
-              {isMobile ? (
-                <MobileMenu
-                  isOpen={drawerOpen}
-                  onClose={handleDrawerToggle}
-                  onToggle={handleDrawerToggle}
-                  onLogout={logout}
+  return (
+    <>
+      <AppBar position="static" sx={{ bgcolor: "transparent", border: 0 }}>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent:
+                !isAuthenticated && isMobile ? "center" : "flex-start",
+              gap: !isAuthenticated || isMobile ? 0 : 2,
+              ...(isMobile && { width: "100%" }),
+            }}
+          >
+            <Logo />
+            {isAuthenticated && !isMobile && (
+              <>
+                <HeaderButton
+                  color="secondary"
+                  text="Créer une annonce"
+                  icon="/images/mango.png"
+                  onClick={() => setNewAdModalIsOpen(true)}
                 />
-              ) : (
-                <DesktopMenu onLogout={logout} />
-              )}
-            </>
-          ) : (
-            !isMobile && (
-              <HeaderButton
-                color="primary"
-                text="S'inscrire / Se connecter"
-                onClick={() => setAuthModalIsOpen(true)}
-              />
-            )
-          )}
-        </Box>
-      </Toolbar>
-    </AppBar>
+                <HeaderButton color="primary" text="Explorer" paddingX={4} />
+              </>
+            )}
+          </Box>
+
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            {isAuthenticated ? (
+              <>
+                <AuthenticatedIcons isMobile={isMobile} />
+                {isMobile ? (
+                  <MobileMenu
+                    isOpen={drawerOpen}
+                    onClose={handleDrawerToggle}
+                    onToggle={handleDrawerToggle}
+                    onLogout={logout}
+                  />
+                ) : (
+                  <DesktopMenu onLogout={logout} />
+                )}
+              </>
+            ) : (
+              !isMobile && (
+                <HeaderButton
+                  color="primary"
+                  text="S'inscrire / Se connecter"
+                  onClick={() => setAuthModalIsOpen(true)}
+                />
+              )
+            )}
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      {newAdModalIsOpen && (
+        <GenericModal
+          open={newAdModalIsOpen}
+          onClose={closeNewAdModal}
+          maxWidth="md"
+        >
+          <AdModalForm onClose={closeNewAdModal} />
+        </GenericModal>
+      )}
+    </>
   );
 }

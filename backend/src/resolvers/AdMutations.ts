@@ -39,6 +39,14 @@ export class AdInput {
   })
   city!: string;
 
+  @Field({ nullable: true })
+  @IsOptional()
+  latitude?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  longitude?: number;
+
   @Field(() => Int)
   @IsInt()
   duration!: number;

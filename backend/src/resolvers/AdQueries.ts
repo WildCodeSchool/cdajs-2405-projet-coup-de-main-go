@@ -1,5 +1,5 @@
 import { Query, Resolver, Arg, Int, Float } from "type-graphql";
-import { Ad } from "../entities/Ad";
+import { Ad, Status } from "../entities/Ad";
 import { dataSource } from "../datasource";
 
 @Resolver(Ad)
@@ -11,11 +11,19 @@ export class AdQueries {
     mangoAmountMin?: number,
     @Arg("mangoAmountMax", () => Int, { nullable: true })
     mangoAmountMax?: number,
+    @Arg("status", () => Status, { nullable: true }) status?: Status,
     @Arg("page", () => Int, { defaultValue: 1 }) page: number = 1,
-    @Arg("limit", () => Int, { defaultValue: 15 }) limit: number = 15
+    @Arg("limit", () => Int, { defaultValue: 15 }) limit: number = 15,
+    @Arg("orderBy", () => String, { defaultValue: "DESC" })
+    orderBy: "ASC" | "DESC" = "DESC"
   ): Promise<Ad[]> {
     const query = dataSource.getRepository(Ad).createQueryBuilder("ad");
     const offset = (page - 1) * limit;
+
+    // Join with Skill and User entities
+    query
+      .leftJoinAndSelect("ad.skill", "skill")
+      .leftJoinAndSelect("ad.userRequester", "userRequester");
 
     // Apply filters if provided
     if (skillId) {
@@ -30,8 +38,15 @@ export class AdQueries {
       query.andWhere("ad.mangoAmount <= :mangoAmountMax", { mangoAmountMax });
     }
 
+    if (status) {
+      query.andWhere("ad.status = :status", { status });
+    }
+
     // Apply pagination
     query.skip(offset).take(limit);
+
+    // Apply sorting by date (createdAt or similar field)
+    query.orderBy("ad.updatedAt", orderBy);
 
     // Execute request and return results
     return await query.getMany();

@@ -70,7 +70,7 @@ async function startApolloServer() {
   app.use(
     "/graphql",
     cors<cors.CorsRequest>(),
-    express.json({ limit: "2mb" }),
+    express.json({ limit: "3mb" }),
     expressMiddleware(server, {
       context: async ({ req }) => {
         const authHeader = req.headers.authorization;

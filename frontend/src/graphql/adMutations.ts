@@ -10,14 +10,14 @@ export const UPDATE_AD_STATUS = gql`
 `;
 
 export const CREATE_AD = gql`
-mutation CreateAd($adData: AdInput!) {
-  createAd(adData: $adData) {
-    id
-    title
-    description
-    picture1
-    picture2
-    picture3
+  mutation CreateAd($formData: AdInput!) {
+    createAd(adData: $formData) {
+      id
+      title
+      description
+      picture1
+      picture2
+      picture3
+    }
   }
-}
 `;

@@ -1,49 +1,37 @@
-import { useAuth } from "../contexts/AuthContext";
-import { useGetAllUsersQuery } from "../generated/graphql-types";
+import { Box, Button, Stack, useMediaQuery } from "@mui/material";
+import DashboardSection from "../components/Dashboard/DashboardSection";
+import theme from "../mui";
 
-interface UserProps {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    city: string;
-    skills: { id: string; name: string }[];
+export default function Dashboard() {
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  return (
+    <>
+      <img
+        src="/images/dashboard-poster.png"
+        alt="helping to walk"
+        style={{
+          width: "100%",
+          minHeight: 153,
+        }}
+      />
+
+      <Box marginX={isMobile ? 2 : 6} marginY={3}>
+        <Stack
+          sx={{
+            marginY: 3,
+            alignItems: isMobile ? "center" : "flex-start",
+          }}
+        >
+          <Button sx={{ paddingX: 4 }}>Afficher toutes les annonces</Button>
+        </Stack>
+
+        <DashboardSection title="Les plus récentes" skillId="" />
+
+        <DashboardSection title="Bricolage" skillId="1" />
+
+        <DashboardSection title="Jardinage" skillId="2" />
+      </Box>
+    </>
+  );
 }
-
-function Dashboard() {
-    const { logout } = useAuth();
-    // Requête Apollo : GetAllUsers
-    const { data, error, loading } = useGetAllUsersQuery();
-
-    if (error) {
-        return <p>Error : {error.message}</p>;
-    }
-
-    if (loading) {
-        return <p>Loading...</p>;
-    }
-
-    // Initialisation de la variable users
-    const users: UserProps[] = data?.getAllUsers || [];
-
-    return (
-        <>
-            <h1>JE SUIS LE DASHBOARD</h1>
-            <button onClick={() => logout()}>Se déconnecter</button>
-            <ul>
-                {users.map((user) => (
-                    <li key={user.id}>
-                        {user.firstName} {user.lastName}
-                        <ul>
-                            {user.skills.map((skill) => (
-                                <li key={skill.id}>{skill.name}</li>
-                            ))}
-                        </ul>
-                    </li>
-                ))}
-            </ul>
-        </>
-    );
-}
-
-export default Dashboard;
