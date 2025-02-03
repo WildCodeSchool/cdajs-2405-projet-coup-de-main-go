@@ -1,4 +1,10 @@
-import { AppBar, Toolbar, Box, useTheme, useMediaQuery } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import Logo from "./Logo";
@@ -8,6 +14,8 @@ import MobileMenu from "./MobileMenu";
 import AuthenticatedIcons from "./AuthenticatedIcons";
 import GenericModal from "../Modal/GenericModal";
 import AdModalForm from "../NewAdModal/AdModalForm";
+import { useGetUserOverviewByIdQuery } from "../../generated/graphql-types";
+import { formatFullName } from "../../utils/formatName";
 
 interface HeaderProps {
   setAuthModalIsOpen: (isOpen: boolean) => void;
@@ -16,7 +24,7 @@ interface HeaderProps {
 export default function Header({ setAuthModalIsOpen }: HeaderProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, userId } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleDrawerToggle = () => setDrawerOpen(!drawerOpen);
@@ -25,6 +33,16 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
   const closeNewAdModal = () => {
     setNewAdModalIsOpen(false);
   };
+
+  const { loading, error, data } = useGetUserOverviewByIdQuery({
+    variables: { id: userId || "" },
+    skip: !userId,
+  });
+
+  const user = data?.getUserOverviewById?.user;
+  const displayName = user
+    ? formatFullName(user.firstName, user.lastName)
+    : "Utilisateur inconnu";
 
   return (
     <>
@@ -66,7 +84,12 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
                     onLogout={logout}
                   />
                 ) : (
-                  <DesktopMenu onLogout={logout} />
+                  <DesktopMenu
+                    onLogout={logout}
+                    displayName={displayName}
+                    loading={loading}
+                    error={error}
+                  />
                 )}
               </>
             ) : (
