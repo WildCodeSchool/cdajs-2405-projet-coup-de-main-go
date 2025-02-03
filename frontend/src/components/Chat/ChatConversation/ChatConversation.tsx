@@ -127,12 +127,6 @@ export default function ChatConversation({
 
   const isRequester = currentUserId === currentChat?.userRequester.id;
 
-  const handleProposeHelp = () => {
-    updateChatHelpProposal({
-      variables: { chatId: chatId!, isHelpProposed: true },
-    });
-  };
-
   const handleAcceptHelp = () => {
     handleStatusChange(StatusType.BOOKED);
   };
@@ -162,7 +156,7 @@ export default function ChatConversation({
     if (!currentChat?.isHelpProposed) {
       return isRequester
         ? []
-        : [{ label: "Proposer mon aide", onClick: handleProposeHelp }];
+        : [{ label: "Aide refusée", disabled: true, onClick: () => {} }];
     }
 
     // If the help has been proposed, the requester can accept or refuse the help
@@ -358,6 +352,11 @@ export default function ChatConversation({
     setCommentLength(length);
   };
 
+  const isHelpRefused =
+    !currentChat?.isHelpProposed &&
+    status === StatusType.POSTED &&
+    !isRequester;
+
   return (
     <Paper
       elevation={3}
@@ -394,12 +393,37 @@ export default function ChatConversation({
         onScroll={handleScroll}
       />
       <ChatActionButton actions={getActionButtonProps()} />
-      <ChatInput
-        value={messageInput}
-        onChange={handleInputChange}
-        onSubmit={handleSubmit(onSubmit)}
-        onKeyDown={handleKeyDown}
-      />
+      {isHelpRefused ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 2,
+            backgroundColor: "tertiary.main",
+            borderRadius: "12px",
+            margin: 2,
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              color: "text.secondary",
+              alignSelf: "center",
+              padding: "0 16px",
+            }}
+          >
+            L'aide a été refusée. Vous ne pouvez plus envoyer de messages.
+          </Typography>
+        </Box>
+      ) : (
+        <ChatInput
+          value={messageInput}
+          onChange={handleInputChange}
+          onSubmit={handleSubmit(onSubmit)}
+          onKeyDown={handleKeyDown}
+        />
+      )}
       <GenericModal
         open={isReviewModalOpen}
         onClose={handleCloseReviewModal}
