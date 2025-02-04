@@ -250,6 +250,7 @@ export type Query = {
   getAllAds: Array<Ad>;
   getAllSkills?: Maybe<Array<Skill>>;
   getAllUsers: Array<User>;
+  getChatByUserAndAdId?: Maybe<Array<Chat>>;
   getChatsByUserId?: Maybe<Array<Chat>>;
   getMangoBalanceByUserId: Scalars['Float']['output'];
   getMessagesByChatId?: Maybe<Array<Message>>;
@@ -286,6 +287,12 @@ export type QueryGetAllAdsArgs = {
   page?: Scalars['Int']['input'];
   skillId?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Status>;
+};
+
+
+export type QueryGetChatByUserAndAdIdArgs = {
+  adId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 
@@ -469,6 +476,14 @@ export type GetChatsByUserIdQueryVariables = Exact<{
 
 
 export type GetChatsByUserIdQuery = { __typename?: 'Query', getChatsByUserId?: Array<{ __typename?: 'Chat', id: string, date: any, isHelpProposed: boolean, messages: Array<{ __typename?: 'Message', id: string, date: any, isViewedByRequester: boolean, isViewedByHelper: boolean, message: string, author: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null } }>, ad: { __typename?: 'Ad', id: string, title: string, description: string, mangoAmount: number, duration: number, status: Status, picture1?: string | null, picture2?: string | null, picture3?: string | null, skill: { __typename?: 'Skill', id: string, name: string, picture: string } }, userHelper: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null, createdAt: any }, userRequester: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null, createdAt: any } }> | null };
+
+export type GetChatByUserAndAdIdQueryVariables = Exact<{
+  userId: Scalars['String']['input'];
+  adId: Scalars['String']['input'];
+}>;
+
+
+export type GetChatByUserAndAdIdQuery = { __typename?: 'Query', getChatByUserAndAdId?: Array<{ __typename?: 'Chat', id: string, isHelpProposed: boolean, userHelper: { __typename?: 'User', id: string }, userRequester: { __typename?: 'User', id: string }, ad: { __typename?: 'Ad', id: string } }> | null };
 
 export type SendMessageMutationVariables = Exact<{
   messageData: MessageInput;
@@ -966,6 +981,57 @@ export type GetChatsByUserIdQueryHookResult = ReturnType<typeof useGetChatsByUse
 export type GetChatsByUserIdLazyQueryHookResult = ReturnType<typeof useGetChatsByUserIdLazyQuery>;
 export type GetChatsByUserIdSuspenseQueryHookResult = ReturnType<typeof useGetChatsByUserIdSuspenseQuery>;
 export type GetChatsByUserIdQueryResult = Apollo.QueryResult<GetChatsByUserIdQuery, GetChatsByUserIdQueryVariables>;
+export const GetChatByUserAndAdIdDocument = gql`
+    query GetChatByUserAndAdId($userId: String!, $adId: String!) {
+  getChatByUserAndAdId(userId: $userId, adId: $adId) {
+    id
+    userHelper {
+      id
+    }
+    userRequester {
+      id
+    }
+    ad {
+      id
+    }
+    isHelpProposed
+  }
+}
+    `;
+
+/**
+ * __useGetChatByUserAndAdIdQuery__
+ *
+ * To run a query within a React component, call `useGetChatByUserAndAdIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChatByUserAndAdIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetChatByUserAndAdIdQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      adId: // value for 'adId'
+ *   },
+ * });
+ */
+export function useGetChatByUserAndAdIdQuery(baseOptions: Apollo.QueryHookOptions<GetChatByUserAndAdIdQuery, GetChatByUserAndAdIdQueryVariables> & ({ variables: GetChatByUserAndAdIdQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetChatByUserAndAdIdQuery, GetChatByUserAndAdIdQueryVariables>(GetChatByUserAndAdIdDocument, options);
+      }
+export function useGetChatByUserAndAdIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatByUserAndAdIdQuery, GetChatByUserAndAdIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetChatByUserAndAdIdQuery, GetChatByUserAndAdIdQueryVariables>(GetChatByUserAndAdIdDocument, options);
+        }
+export function useGetChatByUserAndAdIdSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetChatByUserAndAdIdQuery, GetChatByUserAndAdIdQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetChatByUserAndAdIdQuery, GetChatByUserAndAdIdQueryVariables>(GetChatByUserAndAdIdDocument, options);
+        }
+export type GetChatByUserAndAdIdQueryHookResult = ReturnType<typeof useGetChatByUserAndAdIdQuery>;
+export type GetChatByUserAndAdIdLazyQueryHookResult = ReturnType<typeof useGetChatByUserAndAdIdLazyQuery>;
+export type GetChatByUserAndAdIdSuspenseQueryHookResult = ReturnType<typeof useGetChatByUserAndAdIdSuspenseQuery>;
+export type GetChatByUserAndAdIdQueryResult = Apollo.QueryResult<GetChatByUserAndAdIdQuery, GetChatByUserAndAdIdQueryVariables>;
 export const SendMessageDocument = gql`
     mutation SendMessage($messageData: MessageInput!, $currentUserId: String!) {
   sendMessage(messageData: $messageData, currentUserId: $currentUserId) {
