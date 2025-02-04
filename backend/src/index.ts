@@ -25,6 +25,8 @@ import { UserMutations } from "./resolvers/UserMutations";
 import { AdQueries } from "./resolvers/AdQueries";
 import { AdMutations } from "./resolvers/AdMutations";
 
+import "./jobs/cronJobs";
+
 const port: number = parseInt(process.env.APOLLO_PORT || "4000", 10);
 
 async function startApolloServer() {
