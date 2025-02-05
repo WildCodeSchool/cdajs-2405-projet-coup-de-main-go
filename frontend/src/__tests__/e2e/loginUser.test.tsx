@@ -38,7 +38,7 @@ test.describe("Login User", () => {
       path: "./screenshots/login-success.png",
     });
 
-    await page.waitForURL(frontendUrl + "/dashboard");
+    await page.waitForURL(frontendUrl + "/dashboard", { timeout: 10000 });
 
     const userName = await page.locator("header").locator("text=User T.");
     await expect(userName).toBeVisible({ timeout: 10000 });
