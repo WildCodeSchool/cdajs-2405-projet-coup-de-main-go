@@ -266,4 +266,26 @@ export class UserMutations {
       throw new Error("Une erreur inconnue est survenue.");
     }
   }
+
+  @Mutation(() => Boolean)
+  async creditWeeklyMango(): Promise<boolean> {
+    const users: User[] = await dataSource.manager.find(User);
+
+    if (users.length === 0) {
+      throw new Error("Aucun utilisateur trouvé");
+    }
+
+    for (const user of users) {
+      user.mangoBalance += 1;
+
+      try {
+        await dataSource.manager.save(user);
+      } catch (error) {
+        console.error(`Erreur lors de la mise à jour de l'utilisateur ${user.id}:`, error);
+        continue;
+      }
+    }
+
+    return true;
+  }
 }
