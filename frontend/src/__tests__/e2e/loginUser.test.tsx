@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import dotenv from "dotenv";
+import path from "path";
 
 dotenv.config();
 
@@ -8,6 +9,7 @@ test.describe("Login User", () => {
     page,
   }) => {
     const frontendUrl = process.env.VITE_FRONTEND_URL;
+    const screenshotDir = path.join(__dirname, "playwright-screenshots");
 
     if (!frontendUrl) {
       throw new Error("VITE_FRONTEND_URL is not defined in the .env file");
@@ -35,20 +37,25 @@ test.describe("Login User", () => {
     });
     await submitButton.click();
 
-    await page.screenshot({ path: 'screenshot-login-success.png' });
+    await page.screenshot({
+      path: path.join(screenshotDir, "login-success.png"),
+    });
 
     await page.waitForLoadState("networkidle");
 
     const userName = await page.locator("header").locator("text=User T.");
     await expect(userName).toBeVisible();
 
-    await page.screenshot({ path: 'screenshot-user-visible.png' });
+    await page.screenshot({
+      path: path.join(screenshotDir, "user-visible.png"),
+    });
   });
 
   test("should display an error message when the login fails", async ({
     page,
   }) => {
     const frontendUrl = process.env.VITE_FRONTEND_URL;
+    const screenshotDir = path.join(__dirname, "playwright-screenshots");
 
     if (!frontendUrl) {
       throw new Error("VITE_FRONTEND_URL is not defined in the .env file");
@@ -76,16 +83,18 @@ test.describe("Login User", () => {
     });
     await submitButton.click();
 
-    await page.screenshot({ path: 'screenshot-login-fail.png' });
+    await page.screenshot({
+      path: path.join(screenshotDir, "login-fail.png"),
+    });
 
     await page.waitForLoadState("networkidle");
 
-    const errorMessage = await page.locator(
-      "text=Identifiants incorrects"
-    );
+    const errorMessage = await page.locator("text=Identifiants incorrects");
 
     await expect(errorMessage).toBeVisible();
 
-    await page.screenshot({ path: 'screenshot-error-message.png' });
+    await page.screenshot({
+      path: path.join(screenshotDir, "error-message.png"),
+    });
   });
 });

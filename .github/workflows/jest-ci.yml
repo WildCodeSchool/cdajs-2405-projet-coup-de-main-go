@@ -61,6 +61,24 @@ jobs:
           DB_PORT: 5432
           DB_DATABASE: ${{ secrets.POSTGRES_DB }}
 
+      - name: Create screenshot directory
+        run: |
+          mkdir -p playwright-screenshots/screenshots
+          
+      - name: Check if screenshots exist
+        run: |
+          echo "Listing screenshots in playwright-screenshots/screenshots/"
+          ls -al playwright-screenshots/screenshots/
+
+      - name: Create playwright report directory
+        run: |
+          mkdir -p playwright-report
+
+      - name: Check if playwright report exists
+        run: |
+          echo "Listing files in playwright-report/"
+          ls -al playwright-report/
+
       - name: Run the tests
         run: npm run test
         env:
