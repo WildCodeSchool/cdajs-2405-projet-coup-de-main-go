@@ -31,6 +31,9 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+      - name: Install PostgreSQL client
+        run: apt-get update && apt-get install -y postgresql-client
+
       - name: Wait for PostgreSQL
         run: |
           echo "Waiting for PostgreSQL to be ready..."
