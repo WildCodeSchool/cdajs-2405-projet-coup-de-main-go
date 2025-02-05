@@ -18,11 +18,11 @@ export function formatDurationToNow(date: Date): string {
   if (days < 7) return `${days}j`;
 
   if (days < 30)
-    return `${Math.floor(days / 7)} semaine${days / 7 > 1 ? "s" : ""}`;
+    return `${Math.floor(days / 7)} semaine${Math.floor(days / 7) > 1 ? "s" : ""}`;
 
   const months = differenceInMonths(now, date);
-  if (months < 12) return `${months}mois`;
+  if (months < 12) return `${months} mois`;
 
   const years = differenceInYears(now, date);
-  return `${years}an${years > 1 ? "s" : ""}`;
+  return `${years} an${years > 1 ? "s" : ""}`;
 }
