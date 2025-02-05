@@ -54,6 +54,11 @@ jobs:
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           VITE_FRONTEND_URL: ${{ secrets.VITE_FRONTEND_URL }}
+          DB_HOST: postgres
+          DB_USER: ${{ secrets.POSTGRES_USER }}
+          DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          DB_PORT: 5432
+          DB_DATABASE: ${{ secrets.POSTGRES_DB }}
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
