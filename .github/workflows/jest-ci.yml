@@ -61,40 +61,21 @@ jobs:
           DB_PORT: 5432
           DB_DATABASE: ${{ secrets.POSTGRES_DB }}
 
-      - name: Create screenshot directory
-        run: |
-          mkdir -p playwright-screenshots/screenshots
-          
-      - name: Check if screenshots exist
-        run: |
-          echo "Listing screenshots in playwright-screenshots/screenshots/"
-          ls -al playwright-screenshots/screenshots/
-
-      - name: Create playwright report directory
-        run: |
-          mkdir -p playwright-report
-
-      - name: Check if playwright report exists
-        run: |
-          echo "Listing files in playwright-report/"
-          ls -al playwright-report/
-
       - name: Run the tests
         run: npm run test
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           VITE_FRONTEND_URL: ${{ secrets.VITE_FRONTEND_URL }}
 
-      - uses: actions/upload-artifact@v4
-        if: ${{ always() }}
-        with:
-          name: playwright-screenshots
-          path: playwright-screenshots/screenshots/*.png
-          retention-days: 7
+      - name: Debug current directory
+        run: pwd
+      
+      - name: Debug screenshot content
+        run: ls -l frontend/screenshots
 
-      - uses: actions/upload-artifact@v4
-        if: ${{ always() }}
+      - name: Publish screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
+          name: e2e/screenshots
+          path: e2e/screenshots

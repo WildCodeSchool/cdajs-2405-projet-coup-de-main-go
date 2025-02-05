@@ -1,7 +1,5 @@
 import { test, expect } from "@playwright/test";
 import dotenv from "dotenv";
-import path from "path";
-
 dotenv.config();
 
 test.describe("Login User", () => {
@@ -9,8 +7,6 @@ test.describe("Login User", () => {
     page,
   }) => {
     const frontendUrl = process.env.VITE_FRONTEND_URL;
-    const __dirname = path.dirname(new URL(import.meta.url).pathname);
-    const screenshotDir = path.join(__dirname, "playwright-screenshots");
 
     if (!frontendUrl) {
       throw new Error("VITE_FRONTEND_URL is not defined in the .env file");
@@ -39,7 +35,7 @@ test.describe("Login User", () => {
     await submitButton.click();
 
     await page.screenshot({
-      path: path.join(screenshotDir, "login-success.png"),
+      path: "./screenshots/login-success.png",
     });
 
     await page.waitForLoadState("networkidle");
@@ -48,7 +44,7 @@ test.describe("Login User", () => {
     await expect(userName).toBeVisible();
 
     await page.screenshot({
-      path: path.join(screenshotDir, "user-visible.png"),
+      path: "./screenshots/user-name.png",
     });
   });
 
@@ -56,8 +52,6 @@ test.describe("Login User", () => {
     page,
   }) => {
     const frontendUrl = process.env.VITE_FRONTEND_URL;
-    const __dirname = path.dirname(new URL(import.meta.url).pathname);
-    const screenshotDir = path.join(__dirname, "playwright-screenshots");
 
     if (!frontendUrl) {
       throw new Error("VITE_FRONTEND_URL is not defined in the .env file");
@@ -86,7 +80,7 @@ test.describe("Login User", () => {
     await submitButton.click();
 
     await page.screenshot({
-      path: path.join(screenshotDir, "login-fail.png"),
+      path: "./screenshots/login-fail.png",
     });
 
     await page.waitForLoadState("networkidle");
@@ -96,7 +90,7 @@ test.describe("Login User", () => {
     await expect(errorMessage).toBeVisible();
 
     await page.screenshot({
-      path: path.join(screenshotDir, "error-message.png"),
+      path: "./screenshots/error-message.png",
     });
   });
 });
