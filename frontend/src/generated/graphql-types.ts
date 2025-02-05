@@ -128,6 +128,7 @@ export type Mutation = {
   markMessagesAsReadForUser: Scalars['Boolean']['output'];
   register: User;
   sendMessage: Message;
+  transferBetweenUsers: Scalars['Boolean']['output'];
   transferMango: Scalars['Float']['output'];
   updateAd: Ad;
   updateAdStatus: Ad;
@@ -194,6 +195,13 @@ export type MutationRegisterArgs = {
 export type MutationSendMessageArgs = {
   currentUserId: Scalars['String']['input'];
   messageData: MessageInput;
+};
+
+
+export type MutationTransferBetweenUsersArgs = {
+  amount: Scalars['Float']['input'];
+  fromId: Scalars['String']['input'];
+  toId: Scalars['String']['input'];
 };
 
 
@@ -513,6 +521,13 @@ export type GetAllSkillsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetAllSkillsQuery = { __typename?: 'Query', getAllSkills?: Array<{ __typename?: 'Skill', id: string, name: string, picture: string }> | null };
 
+export type AddTransactionMutationVariables = Exact<{
+  transactionData: TransactionInput;
+}>;
+
+
+export type AddTransactionMutation = { __typename?: 'Mutation', addTransaction: { __typename?: 'Transaction', id: string, ad: { __typename?: 'Ad', id: string }, userRequester: { __typename?: 'User', id: string }, userHelper: { __typename?: 'User', id: string } } };
+
 export type RegisterUserMutationVariables = Exact<{
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -568,6 +583,15 @@ export type TransferMangoMutationVariables = Exact<{
 
 export type TransferMangoMutation = { __typename?: 'Mutation', transferMango: number };
 
+export type TransferBetweenUsersMutationVariables = Exact<{
+  fromId: Scalars['String']['input'];
+  toId: Scalars['String']['input'];
+  amount: Scalars['Float']['input'];
+}>;
+
+
+export type TransferBetweenUsersMutation = { __typename?: 'Mutation', transferBetweenUsers: boolean };
+
 export type LoginUserQueryVariables = Exact<{
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -617,7 +641,7 @@ export type GetUserOverviewByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetUserOverviewByIdQuery = { __typename?: 'Query', getUserOverviewById: { __typename?: 'UserOverview', reviewsAsHelperCount: number, averageRating?: number | null, user: { __typename?: 'User', firstName: string, lastName: string, picture?: string | null, biography?: string | null } } };
+export type GetUserOverviewByIdQuery = { __typename?: 'Query', getUserOverviewById: { __typename?: 'UserOverview', reviewsAsHelperCount: number, averageRating?: number | null, user: { __typename?: 'User', firstName: string, lastName: string, picture?: string | null, biography?: string | null, mangoBalance: number } } };
 
 
 export const UpdateAdStatusDocument = gql`
@@ -1186,6 +1210,48 @@ export type GetAllSkillsQueryHookResult = ReturnType<typeof useGetAllSkillsQuery
 export type GetAllSkillsLazyQueryHookResult = ReturnType<typeof useGetAllSkillsLazyQuery>;
 export type GetAllSkillsSuspenseQueryHookResult = ReturnType<typeof useGetAllSkillsSuspenseQuery>;
 export type GetAllSkillsQueryResult = Apollo.QueryResult<GetAllSkillsQuery, GetAllSkillsQueryVariables>;
+export const AddTransactionDocument = gql`
+    mutation AddTransaction($transactionData: TransactionInput!) {
+  addTransaction(transactionData: $transactionData) {
+    id
+    ad {
+      id
+    }
+    userRequester {
+      id
+    }
+    userHelper {
+      id
+    }
+  }
+}
+    `;
+export type AddTransactionMutationFn = Apollo.MutationFunction<AddTransactionMutation, AddTransactionMutationVariables>;
+
+/**
+ * __useAddTransactionMutation__
+ *
+ * To run a mutation, you first call `useAddTransactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddTransactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addTransactionMutation, { data, loading, error }] = useAddTransactionMutation({
+ *   variables: {
+ *      transactionData: // value for 'transactionData'
+ *   },
+ * });
+ */
+export function useAddTransactionMutation(baseOptions?: Apollo.MutationHookOptions<AddTransactionMutation, AddTransactionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddTransactionMutation, AddTransactionMutationVariables>(AddTransactionDocument, options);
+      }
+export type AddTransactionMutationHookResult = ReturnType<typeof useAddTransactionMutation>;
+export type AddTransactionMutationResult = Apollo.MutationResult<AddTransactionMutation>;
+export type AddTransactionMutationOptions = Apollo.BaseMutationOptions<AddTransactionMutation, AddTransactionMutationVariables>;
 export const RegisterUserDocument = gql`
     mutation RegisterUser($email: String!, $password: String!, $firstName: String!, $lastName: String!, $address: String!, $zipCode: String!, $city: String!, $skillsId: [String!]!) {
   register(
@@ -1391,6 +1457,39 @@ export function useTransferMangoMutation(baseOptions?: Apollo.MutationHookOption
 export type TransferMangoMutationHookResult = ReturnType<typeof useTransferMangoMutation>;
 export type TransferMangoMutationResult = Apollo.MutationResult<TransferMangoMutation>;
 export type TransferMangoMutationOptions = Apollo.BaseMutationOptions<TransferMangoMutation, TransferMangoMutationVariables>;
+export const TransferBetweenUsersDocument = gql`
+    mutation TransferBetweenUsers($fromId: String!, $toId: String!, $amount: Float!) {
+  transferBetweenUsers(fromId: $fromId, toId: $toId, amount: $amount)
+}
+    `;
+export type TransferBetweenUsersMutationFn = Apollo.MutationFunction<TransferBetweenUsersMutation, TransferBetweenUsersMutationVariables>;
+
+/**
+ * __useTransferBetweenUsersMutation__
+ *
+ * To run a mutation, you first call `useTransferBetweenUsersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTransferBetweenUsersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [transferBetweenUsersMutation, { data, loading, error }] = useTransferBetweenUsersMutation({
+ *   variables: {
+ *      fromId: // value for 'fromId'
+ *      toId: // value for 'toId'
+ *      amount: // value for 'amount'
+ *   },
+ * });
+ */
+export function useTransferBetweenUsersMutation(baseOptions?: Apollo.MutationHookOptions<TransferBetweenUsersMutation, TransferBetweenUsersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<TransferBetweenUsersMutation, TransferBetweenUsersMutationVariables>(TransferBetweenUsersDocument, options);
+      }
+export type TransferBetweenUsersMutationHookResult = ReturnType<typeof useTransferBetweenUsersMutation>;
+export type TransferBetweenUsersMutationResult = Apollo.MutationResult<TransferBetweenUsersMutation>;
+export type TransferBetweenUsersMutationOptions = Apollo.BaseMutationOptions<TransferBetweenUsersMutation, TransferBetweenUsersMutationVariables>;
 export const LoginUserDocument = gql`
     query LoginUser($email: String!, $password: String!) {
   login(email: $email, password: $password) {
@@ -1653,6 +1752,7 @@ export const GetUserOverviewByIdDocument = gql`
       lastName
       picture
       biography
+      mangoBalance
     }
     reviewsAsHelperCount
     averageRating
