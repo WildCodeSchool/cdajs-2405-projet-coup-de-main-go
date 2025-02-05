@@ -9,6 +9,7 @@ test.describe("Login User", () => {
     page,
   }) => {
     const frontendUrl = process.env.VITE_FRONTEND_URL;
+    const __dirname = path.dirname(new URL(import.meta.url).pathname);
     const screenshotDir = path.join(__dirname, "playwright-screenshots");
 
     if (!frontendUrl) {
@@ -55,6 +56,7 @@ test.describe("Login User", () => {
     page,
   }) => {
     const frontendUrl = process.env.VITE_FRONTEND_URL;
+    const __dirname = path.dirname(new URL(import.meta.url).pathname);
     const screenshotDir = path.join(__dirname, "playwright-screenshots");
 
     if (!frontendUrl) {
