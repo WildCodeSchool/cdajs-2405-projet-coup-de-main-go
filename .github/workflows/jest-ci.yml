@@ -43,16 +43,11 @@ jobs:
             sleep 5
           done
 
-      - name: Run frontend server
+      - name: Run Project
         run: |
-          echo "Starting frontend..."
-          npm run dev --prefix frontend &
-          sleep 10
-
-      - name: Run backend server
-        run: |
-          echo "Starting backend..."
-          npm run start --prefix backend &
+          echo "Starting project..."
+          npm run start &
+          echo "Waiting for 10 seconds to let the project start..."
           sleep 10
         env:
           DB_HOST: postgres
