@@ -23,8 +23,11 @@ import {
   useUpdateAdStatusMutation,
   useUpdateChatHelpProposalMutation,
   useCreateReviewMutation,
+  useTransferBetweenUsersMutation,
+  useAddTransactionMutation
 } from "../../../generated/graphql-types";
 import Rating from "@mui/material/Rating";
+import { useMango } from "../../../contexts/MangoContext";
 
 const labels: { [index: number]: string } = {
   0.5: "Très décevant",
@@ -70,6 +73,8 @@ export default function ChatConversation({
   onBack,
   onOpenModal,
 }: ChatConversationProps) {
+  const { refetchMango } = useMango();
+
   const [messageInput, setMessageInput] = useState<string>("");
   const [displayedMessages, setDisplayedMessages] = useState<Message[]>([]);
   const [messageCount, setMessageCount] = useState(200);
@@ -101,11 +106,7 @@ export default function ChatConversation({
     ],
   });
 
-  const [updateAdStatus] = useUpdateAdStatusMutation({
-    refetchQueries: [
-      { query: GET_USER_CHATS, variables: { userId: currentUserId } },
-    ],
-  });
+  const [updateAdStatus] = useUpdateAdStatusMutation();
 
   const handleStatusChange = async (newStatus: StatusType) => {
     try {
@@ -127,6 +128,10 @@ export default function ChatConversation({
 
   const isRequester = currentUserId === currentChat?.userRequester.id;
 
+  const [transferBetweenUsers] = useTransferBetweenUsersMutation();
+
+  const [addTransaction] = useAddTransactionMutation();
+
   const handleAcceptHelp = () => {
     handleStatusChange(StatusType.BOOKED);
   };
@@ -138,11 +143,38 @@ export default function ChatConversation({
     });
   };
 
-  const handleFinalisedlHelp = () => {
-    handleStatusChange(StatusType.FINALISED);
+  const handleFinalisedHelp = async () => {
+    if (!currentChat) return;
+
+    const amount = currentChat!.ad.mangoAmount;
+    const fromId = currentChat.userHelper.id;
+    const toId = currentChat.userRequester.id;
+
+    try {
+      // Transfer funds from the helper to the requester
+      await transferBetweenUsers({ variables: { fromId, toId, amount } });
+
+      // Add a transaction to the database
+      await addTransaction({
+        variables: {
+          transactionData: {
+            adId: currentChat.ad.id,
+            userRequesterId: toId,
+            userHelperId: fromId,
+          },
+        },
+      });
+      // Update the ad status to finalised
+      await handleStatusChange(StatusType.FINALISED);
+
+      // Refetch the mango balance
+      refetchMango();
+    } catch (error) {
+      console.error("Erreur lors du transfert de fonds :", error);
+    }
   };
 
-  const handleFinalisedHelp = () => {
+  const handleReviewClick = () => {
     setReviewModalOpen(true);
   };
 
@@ -188,7 +220,7 @@ export default function ChatConversation({
               },
               {
                 label: "Valider l'aide réalisée",
-                onClick: handleFinalisedlHelp,
+                onClick: handleFinalisedHelp,
               },
             ]
           : [{ label: "Annuler l'aide", onClick: handleCancelHelp }];
@@ -197,7 +229,7 @@ export default function ChatConversation({
           ? [
               {
                 label: "Laissez une évaluation",
-                onClick: handleFinalisedHelp,
+                onClick: handleReviewClick,
               },
             ]
           : [

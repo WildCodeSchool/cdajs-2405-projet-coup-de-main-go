@@ -231,6 +231,45 @@ export class UserMutations {
     return user.mangoBalance;
   }
 
+  @Mutation(() => Boolean)
+  async transferBetweenUsers(
+    @Arg("fromId") fromId: string,
+    @Arg("toId") toId: string,
+    @Arg("amount") amount: number
+  ): Promise<boolean> {
+    const fromUser = await dataSource.manager.findOne(User, {
+      where: { id: fromId },
+    });
+    const toUser = await dataSource.manager.findOne(User, {
+      where: { id: toId },
+    });
+
+    if (!fromUser || !toUser) {
+      throw new Error("L'un des utilisateurs n'existe pas");
+    }
+
+    if (fromUser.mangoBalance < amount) {
+      throw new Error("Solde insuffisant");
+    }
+
+    fromUser.mangoBalance -= amount;
+    toUser.mangoBalance += amount;
+
+    try {
+      await dataSource.manager.transaction(
+        async (transactionalEntityManager) => {
+          await transactionalEntityManager.save(fromUser);
+          await transactionalEntityManager.save(toUser);
+        }
+      );
+
+      return true;
+    } catch (error) {
+      console.error("Erreur lors de la transaction :", error);
+      throw new Error("Échec de la transaction");
+    }
+  }
+
   @Mutation(() => User)
   async updateProfilePicture(
     @Arg("id") id: string,
@@ -265,5 +304,27 @@ export class UserMutations {
       }
       throw new Error("Une erreur inconnue est survenue.");
     }
+  }
+
+  @Mutation(() => Boolean)
+  async creditWeeklyMango(): Promise<boolean> {
+    const users: User[] = await dataSource.manager.find(User);
+
+    if (users.length === 0) {
+      throw new Error("Aucun utilisateur trouvé");
+    }
+
+    for (const user of users) {
+      user.mangoBalance += 1;
+
+      try {
+        await dataSource.manager.save(user);
+      } catch (error) {
+        console.error(`Erreur lors de la mise à jour de l'utilisateur ${user.id}:`, error);
+        continue;
+      }
+    }
+
+    return true;
   }
 }

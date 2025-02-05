@@ -200,30 +200,6 @@ async function seed() {
     await ad4.save();
     console.log("Annonces créées avec succès.");
 
-    console.log("Création des transactions...");
-    const transaction1 = dataSource.manager.create(Transaction, {
-      ad: ad1,
-      userHelper: user3,
-      userRequester: user1,
-    });
-
-    const transaction2 = dataSource.manager.create(Transaction, {
-      ad: ad2,
-      userHelper: user2,
-      userRequester: user1,
-    });
-
-    const transaction3 = dataSource.manager.create(Transaction, {
-      ad: ad3,
-      userHelper: user1,
-      userRequester: user2,
-    });
-
-    await transaction1.save();
-    await transaction2.save();
-    await transaction3.save();
-    console.log("Transactions créées avec succès.");
-
     console.log("Création des reviews...");
     const review1 = dataSource.manager.create(Review, {
       title: "Excellent travail",
