@@ -46,7 +46,7 @@ jobs:
       - name: Run frontend server
         run: |
           echo "Starting frontend..."
-          npm run dev --prefix frontend
+          npm run dev --prefix frontend &
 
       - name: Wait for frontend to start
         run: sleep 5
@@ -54,7 +54,7 @@ jobs:
       - name: Run backend server
         run: |
           echo "Starting backend..."
-          npm run start --prefix backend
+          npm run start --prefix backend &
         env:
           DB_HOST: postgres
           DB_USER: ${{ secrets.POSTGRES_USER }}
