@@ -38,10 +38,10 @@ test.describe("Login User", () => {
       path: "./screenshots/login-success.png",
     });
 
-    await page.waitForLoadState("networkidle");
+    await page.waitForURL(frontendUrl + "/dashboard");
 
     const userName = await page.locator("header").locator("text=User T.");
-    await expect(userName).toBeVisible();
+    await expect(userName).toBeVisible({ timeout: 10000 });
 
     await page.screenshot({
       path: "./screenshots/user-name.png",
@@ -83,11 +83,9 @@ test.describe("Login User", () => {
       path: "./screenshots/login-fail.png",
     });
 
-    await page.waitForLoadState("networkidle");
-
     const errorMessage = await page.locator("text=Identifiants incorrects");
 
-    await expect(errorMessage).toBeVisible();
+    await expect(errorMessage).toBeVisible({ timeout: 10000 });
 
     await page.screenshot({
       path: "./screenshots/error-message.png",

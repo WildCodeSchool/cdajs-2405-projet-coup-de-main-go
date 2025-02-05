@@ -67,12 +67,6 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           VITE_FRONTEND_URL: ${{ secrets.VITE_FRONTEND_URL }}
 
-      - name: Debug current directory
-        run: pwd
-      
-      - name: Debug screenshot content
-        run: ls -l frontend/screenshots
-
       - name: Publish screenshots
         if: failure()
         uses: actions/upload-artifact@v4
