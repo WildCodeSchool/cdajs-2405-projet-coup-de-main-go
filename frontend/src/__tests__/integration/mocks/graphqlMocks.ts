@@ -34,6 +34,7 @@ export const mocks: MockedResponse[] = [
             lastName: "Doe",
             picture: "https://example.com/john-doe.jpg",
             biography: "Passionate about helping others.",
+            mangoBalance: 100,
           },
           reviewsAsHelperCount: 10,
           averageRating: 4.8,
