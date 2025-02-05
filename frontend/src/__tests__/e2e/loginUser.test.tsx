@@ -35,10 +35,14 @@ test.describe("Login User", () => {
     });
     await submitButton.click();
 
+    await page.screenshot({ path: 'screenshot-login-success.png' });
+
     await page.waitForLoadState("networkidle");
 
     const userName = await page.locator("header").locator("text=User T.");
     await expect(userName).toBeVisible();
+
+    await page.screenshot({ path: 'screenshot-user-visible.png' });
   });
 
   test("should display an error message when the login fails", async ({
@@ -72,6 +76,8 @@ test.describe("Login User", () => {
     });
     await submitButton.click();
 
+    await page.screenshot({ path: 'screenshot-login-fail.png' });
+
     await page.waitForLoadState("networkidle");
 
     const errorMessage = await page.locator(
@@ -79,5 +85,7 @@ test.describe("Login User", () => {
     );
 
     await expect(errorMessage).toBeVisible();
+
+    await page.screenshot({ path: 'screenshot-error-message.png' });
   });
 });

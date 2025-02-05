@@ -68,6 +68,11 @@ jobs:
           VITE_FRONTEND_URL: ${{ secrets.VITE_FRONTEND_URL }}
 
       - uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: playwright-screenshots
+          path: playwright-screenshots/screenshots/*.png
+          retention-days: 7
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
