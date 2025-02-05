@@ -73,7 +73,9 @@ jobs:
           name: playwright-screenshots
           path: playwright-screenshots/screenshots/*.png
           retention-days: 7
-        if: ${{ !cancelled() }}
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() }}
         with:
           name: playwright-report
           path: playwright-report/
