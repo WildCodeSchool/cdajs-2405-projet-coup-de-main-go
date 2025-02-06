@@ -26,10 +26,10 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
+      - name: Check Internet connectivity
+        run: |
+          echo "Checking Internet connectivity..."
+          ping -c 4 google.com
 
       - name: Install dependencies
         run: npm ci
@@ -83,7 +83,7 @@ jobs:
         run: |
           echo "Frontend URL: ${{ secrets.VITE_FRONTEND_URL }}"
           echo "Backend URL: ${{ secrets.VITE_BACKEND_URL }}"
-          
+
       - name: Move to backend directory
         run: cd backend
 
