@@ -97,6 +97,13 @@ async function startApolloServer() {
     })
   );
 
+  app.get("/health", (req, res) => {
+    res.status(200).send("Okay!");
+  });
+
+  await new Promise<void>((resolve) => httpServer.listen({ port }, resolve));
+  console.log(`🚀 Le serveur est prêt à http://localhost:${port}/graphql`);
+
   await new Promise<void>((resolve) => httpServer.listen({ port }, resolve));
   console.log(`🚀 Le serveur est prêt à http://localhost:${port}/graphql`);
 }

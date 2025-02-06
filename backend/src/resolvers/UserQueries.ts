@@ -51,8 +51,6 @@ export class UserQueries {
       where: { email },
     });
 
-    console.log(user);
-
     if (!user) {
       throw new Error("Identifiants incorrects");
     }

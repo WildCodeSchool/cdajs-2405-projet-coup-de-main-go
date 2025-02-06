@@ -62,13 +62,26 @@ jobs:
           DB_PORT: ${{ secrets.POSTGRES_PORT }}
           DB_DATABASE: ${{ secrets.POSTGRES_DB }}
 
-      - name: Debug PostgreSQL connection
+      - name: Check Backend Health
         run: |
-          echo "Checking PostgreSQL..."
-          PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }} psql -h ${{ secrets.POSTGRES_HOST }} -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -c "SELECT NOW();"
+          echo "Checking if backend is healthy..."
+          for i in {1..10}; do
+            http_response=$(curl --write-out "%{http_code}" --silent --output /dev/null http://localhost:4000/health)
+            if [ "$http_response" -eq 200 ]; then
+              echo "Backend is healthy (status code: $http_response)"
+              break
+            else
+              echo "Backend not healthy yet (status code: $http_response)... retrying in 5s"
+              sleep 5
+            fi
+          done
 
-      - name: Move to backend directory
-        run: cd backend
+      - name: Debug environment variables
+        run: |
+          echo "Frontend URL: ${{ secrets.VITE_FRONTEND_URL }}"
+          echo "Backend URL: ${{ secrets.VITE_BACKEND_URL }}"
+            - name: Move to backend directory
+              run: cd backend
 
       - name: Run Database Seeds
         run: |
