@@ -39,10 +39,6 @@ jobs:
       - name: Install PostgreSQL client
         run: apt-get update && apt-get install -y postgresql-client
 
-      - name: Create Database
-        run: |
-          PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }} psql -h postgres -U ${{ secrets.POSTGRES_USER }} -d postgres -c "CREATE DATABASE ${{ secrets.POSTGRES_DB }};"
-
       - name: Wait for PostgreSQL
         run: |
           echo "Waiting for PostgreSQL to be ready..."
@@ -51,6 +47,10 @@ jobs:
             echo "PostgreSQL not ready yet... retrying in 5s"
             sleep 5
           done
+
+      - name: Create Database
+        run: |
+          PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }} psql -h postgres -U ${{ secrets.POSTGRES_USER }} -d postgres -c "CREATE DATABASE ${{ secrets.POSTGRES_DB }};"
 
       - name: Run Project
         run: |
