@@ -26,11 +26,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Check Internet connectivity
-        run: |
-          echo "Checking Internet connectivity..."
-          ping -c 4 google.com
-
       - name: Install dependencies
         run: npm ci
 
@@ -42,6 +37,14 @@ jobs:
 
       - name: Install curl
         run: apt-get update && apt-get install -y curl
+
+      - name: Install ping
+        run: apt-get update && apt-get install -y iputils-ping
+
+      - name: Check Internet connectivity
+        run: |
+          echo "Checking Internet connectivity..."
+          ping -c 4 google.com
 
       - name: Wait for PostgreSQL
         run: |
