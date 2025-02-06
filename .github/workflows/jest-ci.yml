@@ -48,10 +48,6 @@ jobs:
             sleep 5
           done
 
-      - name: Create Database
-        run: |
-          PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }} psql -h postgres -U ${{ secrets.POSTGRES_USER }} -d postgres -c "CREATE DATABASE ${{ secrets.POSTGRES_DB }};"
-
       - name: Run Project
         run: |
           echo "Starting project..."
