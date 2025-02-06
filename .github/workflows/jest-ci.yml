@@ -39,6 +39,10 @@ jobs:
       - name: Install PostgreSQL client
         run: apt-get update && apt-get install -y postgresql-client
 
+      - name: Create Database
+        run: |
+          PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }} psql -h postgres -U ${{ secrets.POSTGRES_USER }} -d postgres -c "CREATE DATABASE ${{ secrets.POSTGRES_DB }};"
+
       - name: Wait for PostgreSQL
         run: |
           echo "Waiting for PostgreSQL to be ready..."
@@ -60,6 +64,17 @@ jobs:
           DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           DB_PORT: 5432
           DB_DATABASE: ${{ secrets.POSTGRES_DB }}
+
+      - name: Move to backend directory
+        run: cd backend
+
+      - name: Run Database Seeds
+        run: |
+          echo "Starting seed..."
+          npm run seed &
+          echo "Waiting for 10 seconds to let the seed start..."
+          sleep 10
+        working-directory: backend
 
       - name: Run the tests
         run: npm run test
