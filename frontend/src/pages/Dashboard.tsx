@@ -1,6 +1,7 @@
 import { Box, Button, Stack, useMediaQuery } from "@mui/material";
 import DashboardSection from "../components/Dashboard/DashboardSection";
 import theme from "../mui";
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -23,10 +24,12 @@ export default function Dashboard() {
             alignItems: isMobile ? "center" : "flex-start",
           }}
         >
-          <Button sx={{ paddingX: 4 }}>Afficher toutes les annonces</Button>
+          <Button sx={{ paddingX: 4 }} component={Link} to={"/catalog"}>
+            Afficher toutes les annonces
+          </Button>
         </Stack>
 
-        <DashboardSection title="Les plus récentes" skillId="" />
+        <DashboardSection title="Les plus récentes" />
 
         <DashboardSection title="Bricolage" skillId="1" />
 

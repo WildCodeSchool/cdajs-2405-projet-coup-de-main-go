@@ -6,6 +6,7 @@ import Error from "./pages/error/Error.tsx";
 import Home from "./pages/home/Home.tsx";
 import ChatPage from "./pages/ChatPage.tsx";
 import Ad from "./pages/Ad.tsx";
+import Catalog from "./pages/Catalog.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +23,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/catalog",
+        element: (
+          <ProtectedRoute>
+            <Catalog />
           </ProtectedRoute>
         ),
       },
