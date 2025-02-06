@@ -327,6 +327,8 @@ describe("getAllAds", () => {
       undefined, //skillId
       undefined, //mangoAmountMin
       undefined, //mangoAmountMax
+      undefined, //durationMin
+      undefined, //durationMax
       undefined, //status
       page //page
     );
@@ -357,6 +359,8 @@ describe("getAllAds", () => {
       undefined, //skillId
       undefined, //mangoAmountMin
       undefined, //mangoAmountMax
+      undefined, //durationMin
+      undefined, //durationMax
       undefined, //status
       undefined, //page
       limit //limit

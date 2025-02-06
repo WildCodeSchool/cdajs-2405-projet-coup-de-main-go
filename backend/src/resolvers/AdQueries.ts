@@ -11,6 +11,10 @@ export class AdQueries {
     mangoAmountMin?: number,
     @Arg("mangoAmountMax", () => Int, { nullable: true })
     mangoAmountMax?: number,
+    @Arg("durationMin", () => Int, { nullable: true })
+    durationMin?: number,
+    @Arg("durationMax", () => Int, { nullable: true })
+    durationMax?: number,
     @Arg("status", () => Status, { nullable: true }) status?: Status,
     @Arg("page", () => Int, { defaultValue: 1 }) page: number = 1,
     @Arg("limit", () => Int, { defaultValue: 15 }) limit: number = 15,
@@ -36,6 +40,14 @@ export class AdQueries {
 
     if (mangoAmountMax !== undefined) {
       query.andWhere("ad.mangoAmount <= :mangoAmountMax", { mangoAmountMax });
+    }
+
+    if (durationMin !== undefined) {
+      query.andWhere("ad.duration >= :durationMin", { durationMin });
+    }
+
+    if (durationMax !== undefined) {
+      query.andWhere("ad.duration <= :durationMax", { durationMax });
     }
 
     if (status) {
