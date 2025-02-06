@@ -83,8 +83,6 @@ jobs:
         run: |
           echo "Frontend URL: ${{ secrets.VITE_FRONTEND_URL }}"
           echo "Backend URL: ${{ secrets.VITE_BACKEND_URL }}"
-            - name: Move to backend directory
-              run: cd backend
 
       - name: Run Database Seeds
         run: |
