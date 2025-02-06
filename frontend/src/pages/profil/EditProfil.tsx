@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { 
-  Box, Typography, Button, Avatar, TextField, 
+  Box, Typography, Button, TextField, 
   CircularProgress, Snackbar, Alert, LinearProgress 
 } from "@mui/material";
 import { useAuth } from "../../contexts/AuthContext";
 import { useUpdateUserMutation } from "../../generated/graphql-types";
 import { useNavigate, useLocation } from "react-router-dom";
-import UpdateProfilePicturePage from "../UpdateProfilePicturePage"; 
 import ProfilePictureUpload from "../UpdateProfilePicturePage";
 
 
