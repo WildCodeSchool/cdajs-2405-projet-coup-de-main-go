@@ -10,10 +10,16 @@ import AdCard from "../Dashboard/AdCard";
 import theme from "../../mui";
 
 interface FilteredAdsProps {
-  skillId?: string;
+  skillId?: string | null;
+  durationMin?: number | null;
+  durationMax?: number | null;
 }
 
-export default function FilteredAds({ skillId }: FilteredAdsProps) {
+export default function FilteredAds({
+  skillId,
+  durationMin,
+  durationMax,
+}: FilteredAdsProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const {
     loading: adsLoading,
@@ -22,6 +28,8 @@ export default function FilteredAds({ skillId }: FilteredAdsProps) {
   } = useGetAllAdsQuery({
     variables: {
       skillId: skillId || null,
+      durationMin: durationMin ?? 0,
+      durationMax: durationMax ?? 1440,
       status: Status.Posted,
     },
   });
@@ -39,7 +47,7 @@ export default function FilteredAds({ skillId }: FilteredAdsProps) {
           direction={isMobile ? "column" : "row"}
           gap={5}
           sx={{
-            justifyContent: "center",
+            justifyContent: "flex-start",
             alignItems: "center",
             flexWrap: "wrap",
             my: 6,

@@ -1,27 +1,53 @@
-import { FormControl, MenuItem, Select } from "@mui/material";
-import { Skill } from "../../types";
+import {
+  Box,
+  Chip,
+  FormControl,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 
-type SkillSelectProps = {
-  skills: Skill[];
-  selectedSkill: { id: string; name: string } | null;
-  setSelectedSkill: (skill: { id: string; name: string } | null) => void;
+type DurationFilterProps = {
+  selectedDurations: string[];
+  setSelectedDurations: (selectedDurations: string[] | []) => void;
 };
 
-export default function SkillFilter({
-  skills,
-  selectedSkill,
-  setSelectedSkill,
-}: SkillSelectProps) {
+export default function DurationFilter({
+  selectedDurations,
+  setSelectedDurations,
+}: DurationFilterProps) {
+  // Set duration options
+  const durationOptions = ["0 - 2h", "2h - 4h", "4h - 6h"];
+
   return (
     <FormControl sx={{ m: 1, width: 250 }} size="small">
       <Select
-        displayEmpty
-        value={selectedSkill?.id || ""}
+        multiple
+        value={selectedDurations}
         onChange={(event) => {
-          const selected = skills.find(
-            (skill) => skill.id === event.target.value
+          setSelectedDurations(event.target.value as string[]);
+        }}
+        displayEmpty
+        renderValue={(selected) => {
+          if (selected.length === 0) {
+            return <Typography>Durée</Typography>;
+          }
+          return (
+            <Box sx={{ display: "flex", gap: 0.5, justifyContent: "center" }}>
+              {selected.map((value) => (
+                <Chip
+                  key={value}
+                  label={value}
+                  sx={{
+                    backgroundColor: "white",
+                    color: "secondary.main",
+                    fontWeight: "bold",
+                    height: 23,
+                  }}
+                />
+              ))}
+            </Box>
           );
-          setSelectedSkill(selected || null);
         }}
         sx={{
           backgroundColor: "secondary.main",
@@ -50,27 +76,10 @@ export default function SkillFilter({
           },
         }}
       >
-        <MenuItem
-          value=""
-          sx={{
-            backgroundColor: "secondary.main",
-            "&:hover": {
-              backgroundColor: "secondary.light",
-            },
-            "&.Mui-selected": {
-              backgroundColor: "secondary.dark",
-              "&:hover": {
-                backgroundColor: "secondary.light",
-              },
-            },
-          }}
-        >
-          Toutes les catégories
-        </MenuItem>
-        {skills.map((skill) => (
+        {durationOptions.map((option) => (
           <MenuItem
-            key={skill.id}
-            value={skill.id}
+            key={option}
+            value={option}
             sx={{
               backgroundColor: "secondary.main",
               "&:hover": {
@@ -84,7 +93,7 @@ export default function SkillFilter({
               },
             }}
           >
-            {skill.name}
+            {option}
           </MenuItem>
         ))}
       </Select>
