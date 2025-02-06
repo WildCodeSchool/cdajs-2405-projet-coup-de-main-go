@@ -6,8 +6,7 @@ jobs:
   tests:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    container: node:20-bookworm-slim
-
+    
     services:
       postgres:
         image: postgres:15
@@ -37,14 +36,6 @@ jobs:
 
       - name: Install curl
         run: apt-get update && apt-get install -y curl
-
-      - name: Install ping
-        run: apt-get update && apt-get install -y iputils-ping
-
-      - name: Check Internet connectivity
-        run: |
-          echo "Checking Internet connectivity..."
-          ping -c 4 google.com
 
       - name: Wait for PostgreSQL
         run: |
