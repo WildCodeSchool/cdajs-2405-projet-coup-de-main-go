@@ -53,14 +53,19 @@ jobs:
         run: |
           echo "Starting project..."
           npm run start &
-          echo "Waiting for 10 seconds to let the project start..."
-          sleep 10
+          echo "Waiting for 20 seconds to let the project start..."
+          sleep 20
         env:
           DB_HOST: ${{ secrets.POSTGRES_HOST }}
           DB_USER: ${{ secrets.POSTGRES_USER }}
           DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           DB_PORT: ${{ secrets.POSTGRES_PORT }}
           DB_DATABASE: ${{ secrets.POSTGRES_DB }}
+
+      - name: Debug PostgreSQL connection
+        run: |
+          echo "Checking PostgreSQL..."
+          PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }} psql -h ${{ secrets.POSTGRES_HOST }} -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -c "SELECT NOW();"
 
       - name: Move to backend directory
         run: cd backend
