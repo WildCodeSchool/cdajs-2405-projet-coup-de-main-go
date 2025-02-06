@@ -4,6 +4,7 @@ on: pull_request
 
 jobs:
   tests:
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     container: node:20-bookworm-slim
 
@@ -55,10 +56,10 @@ jobs:
           echo "Waiting for 10 seconds to let the project start..."
           sleep 10
         env:
-          DB_HOST: postgres
+          DB_HOST: ${{ secrets.POSTGRES_HOST }}
           DB_USER: ${{ secrets.POSTGRES_USER }}
           DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          DB_PORT: 5432
+          DB_PORT: ${{ secrets.POSTGRES_PORT }}
           DB_DATABASE: ${{ secrets.POSTGRES_DB }}
 
       - name: Move to backend directory
@@ -72,10 +73,10 @@ jobs:
           sleep 10
         working-directory: backend
         env:
-          DB_HOST: postgres
+          DB_HOST: ${{ secrets.POSTGRES_HOST }}
           DB_USER: ${{ secrets.POSTGRES_USER }}
           DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          DB_PORT: 5432
+          DB_PORT: ${{ secrets.POSTGRES_PORT }}
           DB_DATABASE: ${{ secrets.POSTGRES_DB }}
 
       - name: Run the tests
@@ -83,6 +84,8 @@ jobs:
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           VITE_FRONTEND_URL: ${{ secrets.VITE_FRONTEND_URL }}
+          VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
+          VITE_DOMAIN_BACKEND_URL: ${{ secrets.VITE_DOMAIN_BACKEND_URL }}
 
       - name: Publish screenshots
         if: failure()
