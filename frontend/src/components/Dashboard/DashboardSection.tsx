@@ -16,16 +16,18 @@ import AdCard from "./AdCard";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { useNavigate } from "react-router-dom";
 
 interface DashboardSectionProps {
   title: string;
-  skillId: string;
+  skillId?: string;
 }
 
 export default function DashboardSection({
   title,
   skillId,
 }: DashboardSectionProps) {
+  const navigate = useNavigate();
   const isSwippable = useMediaQuery("(max-width: 1400px)");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -35,7 +37,7 @@ export default function DashboardSection({
     data: adsData,
   } = useGetAllAdsQuery({
     variables: {
-      skillId: skillId,
+      skillId: skillId || null,
       limit: 4,
       status: Status.Posted,
     },
@@ -46,6 +48,13 @@ export default function DashboardSection({
   if (!adsData) return <Typography>Aucune donnée trouvée</Typography>;
 
   const adCards: AdCardType[] = adsData?.getAllAds;
+
+  const handleClick = () => {
+    const skillData = { id: skillId, name: title };
+    navigate("/catalog", {
+      state: { skill: skillData },
+    });
+  };
 
   return (
     <>
@@ -82,7 +91,7 @@ export default function DashboardSection({
             }
             navigation
           >
-            {adCards.map((ad: AdCardType) => (
+            {adCards.map((ad) => (
               <SwiperSlide
                 key={ad.id}
                 style={{
@@ -122,6 +131,7 @@ export default function DashboardSection({
             sx={{
               paddingX: 4,
             }}
+            onClick={handleClick}
           >
             Afficher plus
           </Button>

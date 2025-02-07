@@ -1,7 +1,12 @@
+jest.mock("backend/src/utils/sendEmailWithBrevo", () => ({
+    sendEmailWithBrevo: jest.fn(),
+}));
+
 import * as argon2 from "argon2";
 import { faker } from "@faker-js/faker";
 import { mockTypeOrm } from "../tests_mockTypeorm-config";
 
+import { sendEmailWithBrevo } from "backend/src/utils/sendEmailWithBrevo";
 import { User } from "../entities/User";
 import { UserMutations } from "../resolvers/UserMutations";
 
@@ -108,7 +113,22 @@ describe("userMutations", () => {
         it("should return 'L'utilisateur n'existe pas' error", async () => {
             mockTypeOrm().onMock(User).toReturn(null, "findOne");
             await expect(
-                userMutations.changePassword("badId", "P@ssword123")
+                userMutations.changePassword(
+                    "badId",
+                    "P@ssword123",
+                    "P@ssword123"
+                )
+            ).rejects.toThrow("L'utilisateur n'existe pas");
+        });
+
+        it("Les mots de passe doivent être identiques", async () => {
+            mockTypeOrm().onMock(User).toReturn(null, "findOne");
+            await expect(
+                userMutations.changePassword(
+                    "badId",
+                    "P@ssword123",
+                    "P@ssword321"
+                )
             ).rejects.toThrow("L'utilisateur n'existe pas");
         });
 
@@ -118,7 +138,11 @@ describe("userMutations", () => {
                 .toReturn(mockUsers[0], "findOne")
                 .toReturn(mockUsers[0], "save");
             const passwordIsChanged: Boolean =
-                await userMutations.changePassword("goodId", "P@ssword123");
+                await userMutations.changePassword(
+                    "goodId",
+                    "P@ssword123",
+                    "P@ssword123"
+                );
             expect(passwordIsChanged).toBeTruthy();
         });
     });
@@ -203,6 +227,99 @@ describe("userMutations", () => {
                 5
             );
             expect(mangoBalance).toEqual(mockUsers[0].mangoBalance);
+        });
+    });
+
+    describe("sendEmailVerification", () => {
+        it("shoud return 'L'utilisateur n'existe pas' error", async () => {
+            mockTypeOrm().onMock(User).toReturn(null, "findOne");
+
+            await expect(
+                userMutations.sendEmailVerification("john.dur@gmail.com")
+            ).rejects.toThrow("L'utilisateur n'existe pas");
+        });
+
+        it("shoud return email", async () => {
+            mockTypeOrm()
+                .onMock(User)
+                .toReturn(mockUsers[0], "findOne")
+                .toReturn(mockUsers[0], "save");
+
+            const email: string = await userMutations.sendEmailVerification(
+                "john.doe@gmail.com"
+            );
+
+            expect(email).toEqual(mockUsers[0].email);
+            expect(sendEmailWithBrevo).toHaveBeenCalled();
+        });
+    });
+
+    describe("verifyOTP", () => {
+        it("shoud return 'L'utilisateur n'existe pas' error", async () => {
+            mockTypeOrm().onMock(User).toReturn(null, "findOne");
+
+            await expect(
+                userMutations.verifyOTP("john.dur@gmail.com", "4242")
+            ).rejects.toThrow("L'utilisateur n'existe pas");
+        });
+
+        it("shoud return 'Le code de confirmation a expiré' error", async () => {
+            mockTypeOrm()
+                .onMock(User)
+                .toReturn(mockUsers[0], "findOne")
+                .toReturn(mockUsers[0], "save");
+
+            mockUsers[0].otpCreatedAt = new Date(Date.now() - 10 * 60 * 1000);
+
+            await expect(
+                userMutations.verifyOTP("john.doe@gmail.com", "4242")
+            ).rejects.toThrow("Le code de confirmation a expiré");
+        });
+
+        it("shoud return 'Trop de tentatives échouées' error", async () => {
+            mockTypeOrm()
+                .onMock(User)
+                .toReturn(mockUsers[0], "findOne")
+                .toReturn(mockUsers[0], "save");
+
+            mockUsers[0].otpCreatedAt = new Date(Date.now());
+            mockUsers[0].otpAttempts = 3;
+
+            await expect(
+                userMutations.verifyOTP("john.doe@gmail.com", "4242")
+            ).rejects.toThrow("Trop de tentatives échouées");
+        });
+
+        it("shoud return 'Le code de confirmation est incorrect' error", async () => {
+            mockTypeOrm()
+                .onMock(User)
+                .toReturn(mockUsers[0], "findOne")
+                .toReturn(mockUsers[0], "save");
+
+            mockUsers[0].otpCreatedAt = new Date(Date.now());
+            const hashedOTP: string = await argon2.hash("4242");
+            mockUsers[0].otp = hashedOTP;
+
+            await expect(
+                userMutations.verifyOTP("john.doe@gmail.com", "1234")
+            ).rejects.toThrow("Le code de confirmation est incorrect");
+        });
+
+        it("shoud return true", async () => {
+            mockTypeOrm()
+                .onMock(User)
+                .toReturn(mockUsers[0], "findOne")
+                .toReturn(mockUsers[0], "save");
+
+            mockUsers[0].otpCreatedAt = new Date(Date.now());
+            const hashedOTP: string = await argon2.hash("4242");
+            mockUsers[0].otp = hashedOTP;
+            const otpIsValid: Boolean = await userMutations.verifyOTP(
+                "john.doe@gmail.com",
+                "4242"
+            );
+
+            expect(otpIsValid).toBeTruthy();
         });
     });
 });

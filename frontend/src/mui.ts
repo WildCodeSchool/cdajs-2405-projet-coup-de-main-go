@@ -47,6 +47,7 @@ const theme = createTheme(
       secondary: {
         main: "#949e80", // couleur vert
         dark: "#7f8a6f", // couleur vert foncé (hover)
+        light: "#ABB49B", // couleur vert clair
       },
       tertiary: {
         main: "#EDEAE4", // couleur blanc cassé

@@ -1,9 +1,4 @@
-import {
-    Alert,
-    CircularProgress,
-    useMediaQuery,
-    useTheme,
-} from "@mui/material";
+import { Alert, CircularProgress } from "@mui/material";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -18,6 +13,7 @@ import { Skill } from "../../../types";
 import Step1 from "./Register/Step1";
 import Step2 from "./Register/Step2";
 import Step3 from "./Register/Step3";
+import GetStyles from "../styles/GetStyles";
 
 export interface RegisterFormData {
     email: string;
@@ -46,17 +42,7 @@ function Register({ setJustRegistered, goToLogin }: RegisterProps) {
     } = useForm<RegisterFormData>();
     // Trois étapes pour s'inscrire
     const [step, setStep] = useState<number>(1);
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-    let sharedFormStyles: React.CSSProperties = {
-        boxSizing: "border-box",
-        display: "flex",
-        flexDirection: "column",
-        gap: "20px",
-        padding: "20px",
-        overflow: "auto",
-    };
-    let formStyles = {};
+    const { formStyles, sharedFormStyles } = GetStyles();
 
     // Requête Apollo : Enregistrement de l'utilisateur
     const [
@@ -111,18 +97,6 @@ function Register({ setJustRegistered, goToLogin }: RegisterProps) {
             });
         }
     };
-
-    if (isMobile) {
-        formStyles = {
-            width: "100%",
-        };
-    } else {
-        formStyles = {
-            height: "100%",
-            margin: "auto",
-            width: "100%",
-        };
-    }
 
     return (
         <form

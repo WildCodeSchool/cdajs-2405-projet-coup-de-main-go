@@ -5,6 +5,8 @@ export const GET_ALL_ADS_QUERY = gql`
     $skillId: String
     $mangoAmountMin: Int
     $mangoAmountMax: Int
+    $durationMin: Int
+    $durationMax: Int
     $page: Int
     $limit: Int
     $orderBy: String
@@ -14,6 +16,8 @@ export const GET_ALL_ADS_QUERY = gql`
       skillId: $skillId
       mangoAmountMin: $mangoAmountMin
       mangoAmountMax: $mangoAmountMax
+      durationMin: $durationMin
+      durationMax: $durationMax
       page: $page
       limit: $limit
       orderBy: $orderBy
