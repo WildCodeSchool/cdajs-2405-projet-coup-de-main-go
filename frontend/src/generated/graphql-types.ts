@@ -123,6 +123,7 @@ export type Mutation = {
   createAd: Ad;
   createChat: Chat;
   createReview: Review;
+  creditWeeklyMango: Scalars['Boolean']['output'];
   deleteAccount: Scalars['Boolean']['output'];
   deleteAd: Scalars['Boolean']['output'];
   markMessagesAsReadForUser: Scalars['Boolean']['output'];
@@ -303,6 +304,8 @@ export type QueryGetAdsByUserArgs = {
 
 
 export type QueryGetAllAdsArgs = {
+  durationMax?: InputMaybe<Scalars['Int']['input']>;
+  durationMin?: InputMaybe<Scalars['Int']['input']>;
   limit?: Scalars['Int']['input'];
   mangoAmountMax?: InputMaybe<Scalars['Int']['input']>;
   mangoAmountMin?: InputMaybe<Scalars['Int']['input']>;
@@ -470,6 +473,8 @@ export type GetAllAdsQueryVariables = Exact<{
   skillId?: InputMaybe<Scalars['String']['input']>;
   mangoAmountMin?: InputMaybe<Scalars['Int']['input']>;
   mangoAmountMax?: InputMaybe<Scalars['Int']['input']>;
+  durationMin?: InputMaybe<Scalars['Int']['input']>;
+  durationMax?: InputMaybe<Scalars['Int']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Scalars['String']['input']>;
@@ -764,11 +769,13 @@ export type CreateAdMutationHookResult = ReturnType<typeof useCreateAdMutation>;
 export type CreateAdMutationResult = Apollo.MutationResult<CreateAdMutation>;
 export type CreateAdMutationOptions = Apollo.BaseMutationOptions<CreateAdMutation, CreateAdMutationVariables>;
 export const GetAllAdsDocument = gql`
-    query GetAllAds($skillId: String, $mangoAmountMin: Int, $mangoAmountMax: Int, $page: Int, $limit: Int, $orderBy: String, $status: Status) {
+    query GetAllAds($skillId: String, $mangoAmountMin: Int, $mangoAmountMax: Int, $durationMin: Int, $durationMax: Int, $page: Int, $limit: Int, $orderBy: String, $status: Status) {
   getAllAds(
     skillId: $skillId
     mangoAmountMin: $mangoAmountMin
     mangoAmountMax: $mangoAmountMax
+    durationMin: $durationMin
+    durationMax: $durationMax
     page: $page
     limit: $limit
     orderBy: $orderBy
@@ -809,6 +816,8 @@ export const GetAllAdsDocument = gql`
  *      skillId: // value for 'skillId'
  *      mangoAmountMin: // value for 'mangoAmountMin'
  *      mangoAmountMax: // value for 'mangoAmountMax'
+ *      durationMin: // value for 'durationMin'
+ *      durationMax: // value for 'durationMax'
  *      page: // value for 'page'
  *      limit: // value for 'limit'
  *      orderBy: // value for 'orderBy'

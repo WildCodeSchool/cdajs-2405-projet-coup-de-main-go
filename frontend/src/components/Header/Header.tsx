@@ -17,7 +17,11 @@ interface HeaderProps {
 }
 
 export default function Header({ setAuthModalIsOpen }: HeaderProps) {
-  const { mangoBalance, loading: loadingMangoBalance, error: errorMangoBalance } = useMango();
+  const {
+    mangoBalance,
+    loading: loadingMangoBalance,
+    error: errorMangoBalance,
+  } = useMango();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { isAuthenticated, logout, userId } = useAuth();
@@ -62,7 +66,12 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
                   icon="/images/mango.png"
                   onClick={() => setNewAdModalIsOpen(true)}
                 />
-                <HeaderButton color="primary" text="Explorer" paddingX={4} />
+                <HeaderButton
+                  color="primary"
+                  text="Explorer"
+                  paddingX={4}
+                  to={"/catalog"}
+                />
               </>
             )}
           </Box>

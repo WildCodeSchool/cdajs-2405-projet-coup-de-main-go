@@ -44,7 +44,12 @@ export default function MobileMenu({
               icon="/images/mango.png"
               onClick={() => setNewAdModalIsOpen(true)}
             />
-            <HeaderButton color="primary" text="Explorer" paddingX={4} />
+            <HeaderButton
+              color="primary"
+              text="Explorer"
+              paddingX={4}
+              to={"/catalog"}
+            />
             <HeaderButton
               color="error"
               text="Déconnexion"

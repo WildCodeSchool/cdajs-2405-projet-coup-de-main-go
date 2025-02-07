@@ -1,3 +1,5 @@
+import { Status } from "./generated/graphql-types";
+
 export type AdCardType = {
   id: string;
   title: string;
@@ -20,13 +22,6 @@ export enum StatusType {
   BOOKED = "booked",
   FINALISED = "finalised",
   ISREVIEWED = "isreviewed",
-}
-
-export enum Status {
-  Booked = "BOOKED",
-  Finalised = "FINALISED",
-  Posted = "POSTED",
-  isReviewed = "ISREVIEWED",
 }
 
 export type Skill = {
