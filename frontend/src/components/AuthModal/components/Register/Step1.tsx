@@ -10,6 +10,7 @@ import {
 import { UseFormRegister } from "react-hook-form";
 
 import { RegisterFormData } from "../Register";
+import GetStyles from "../../styles/GetStyles";
 
 interface Step1Props {
     goToLogin: () => void;
@@ -19,23 +20,7 @@ interface Step1Props {
 function Step1({ goToLogin, register }: Step1Props) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-    let titleAlign = {};
-    let buttonStyles = {};
-
-    if (isMobile) {
-        titleAlign = { textAlign: "center" };
-        buttonStyles = {
-            width: "100%",
-            textAlign: "center",
-            borderRadius: "10px",
-        };
-    } else {
-        buttonStyles = {
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-end",
-        };
-    }
+    const { titleAlign, buttonStyles } = GetStyles();
 
     return (
         <>
