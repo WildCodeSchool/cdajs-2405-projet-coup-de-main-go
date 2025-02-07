@@ -26,24 +26,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Install dependencies in frontend
-        run: |
-          cd frontend
-          npm i
-
-      - name: Install dependencies in backend
-        run: |
-          cd backend
-          npm i
-
-      - name: Install dependencies in e2e
-        run: |
-          cd e2e
-          npm i
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
       - name: Install PostgreSQL client
         run: apt-get update && apt-get install -y postgresql-client
 
@@ -62,7 +44,7 @@ jobs:
       - name: Start services with Docker Compose
         run: |
           echo "Starting services with Docker Compose dev..."
-          docker compose -f docker-compose.dev.yml up --build
+          docker compose up --build
 
       - name: Verify frontend is running
         run: |
