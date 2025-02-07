@@ -7,20 +7,33 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { GetAdByIdQuery } from "../../generated/graphql-types";
-import { Link } from "react-router-dom";
+import {
+  GetAdByIdQuery,
+  useGetChatByUserAndAdIdQuery,
+  useCreateChatMutation,
+  useUpdateChatHelpProposalMutation,
+  useSendMessageMutation,
+} from "../../generated/graphql-types";
+import { useAuth } from "../../contexts/AuthContext";
 import DetailAdSlider from "./DetailAdSlider";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import MapWithLocation from "./MapWithLocation";
 import Hands from "/images/picture.png";
 import theme from "../../mui";
+import {
+  GET_USER_CHATS,
+  GET_CHAT_BY_USER_AND_AD_ID,
+} from "../../graphql/chatQueries";
+import { useNavigate } from "react-router-dom";
 
 interface DetailAdProps {
   ad: GetAdByIdQuery["getAdById"];
 }
 
 export default function DetailAd({ ad }: DetailAdProps) {
+  const { userId } = useAuth();
+  const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const timeAgo = formatDistanceToNow(new Date(ad.updatedAt), {
     locale: fr,
@@ -40,6 +53,82 @@ export default function DetailAd({ ad }: DetailAdProps) {
   };
 
   const adWithPictures = Boolean(ad.picture1 || ad.picture2 || ad.picture3);
+
+  const { data: existingChatData } = useGetChatByUserAndAdIdQuery({
+    variables: {
+      userId: userId || "",
+      adId: ad.id,
+    },
+  });
+
+  const existingChat = existingChatData?.getChatByUserAndAdId?.[0];
+  const isHelpRejected = existingChat?.isHelpProposed === false;
+  const isHelpProposed = existingChat?.isHelpProposed === true;
+
+  const isUserRequester = ad.userRequester?.id === userId;
+
+  const isButtonDisabled = isHelpProposed || isUserRequester || isHelpRejected;
+
+  const buttonText = isHelpRejected
+    ? "Aide refusée"
+    : isHelpProposed
+    ? "En attente d'acceptation"
+    : isUserRequester
+    ? "Vous êtes l'aidant sur cette annonce"
+    : "Je propose mon aide";
+
+  const [createChat] = useCreateChatMutation();
+  const [updateChatHelpProposal] = useUpdateChatHelpProposalMutation();
+  const [sendMessage] = useSendMessageMutation({
+    refetchQueries: [
+      { query: GET_USER_CHATS, variables: { userId } },
+      { query: GET_CHAT_BY_USER_AND_AD_ID, variables: { userId, adId: ad.id } },
+    ],
+  });
+
+  const handleProposeHelp = async () => {
+    try {
+      if (!userId) {
+        return navigate("/login");
+      }
+
+      const { data } = await createChat({
+        variables: {
+          chatData: {
+            adId: ad.id,
+            userRequesterId: ad.userRequester.id,
+            userHelperId: userId,
+          },
+        },
+      });
+
+      if (data?.createChat.id) {
+        await updateChatHelpProposal({
+          variables: {
+            chatId: data.createChat.id,
+            isHelpProposed: true,
+          },
+        });
+
+        await sendMessage({
+          variables: {
+            messageData: {
+              message: "Bonjour ! Je serais ravi(e) de vous aider 😊",
+              chatId: data.createChat.id,
+              authorId: userId,
+              isViewedByRequester: false,
+              isViewedByHelper: false,
+            },
+            currentUserId: userId,
+          },
+        });
+
+        navigate(`/chat`);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la proposition d'aide :", error);
+    }
+  };
 
   return (
     <>
@@ -123,15 +212,14 @@ export default function DetailAd({ ad }: DetailAdProps) {
             />
           </Stack>
           <Button
-            component={Link}
-            // TODO: A remplacer par le lien vers la page de chat
-            to={"/dashboard"}
+            onClick={handleProposeHelp}
+            disabled={isButtonDisabled}
             sx={{
               px: 4,
               textAlign: "center",
             }}
           >
-            Je propose mon aide
+            {buttonText}
           </Button>
         </Stack>
       </Stack>

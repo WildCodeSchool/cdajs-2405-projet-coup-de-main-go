@@ -128,6 +128,7 @@ export type Mutation = {
   markMessagesAsReadForUser: Scalars['Boolean']['output'];
   register: User;
   sendMessage: Message;
+  transferBetweenUsers: Scalars['Boolean']['output'];
   transferMango: Scalars['Float']['output'];
   updateAd: Ad;
   updateAdStatus: Ad;
@@ -197,6 +198,13 @@ export type MutationSendMessageArgs = {
 };
 
 
+export type MutationTransferBetweenUsersArgs = {
+  amount: Scalars['Float']['input'];
+  fromId: Scalars['String']['input'];
+  toId: Scalars['String']['input'];
+};
+
+
 export type MutationTransferMangoArgs = {
   amount: Scalars['Float']['input'];
   id: Scalars['String']['input'];
@@ -250,6 +258,7 @@ export type Query = {
   getAllAds: Array<Ad>;
   getAllSkills?: Maybe<Array<Skill>>;
   getAllUsers: Array<User>;
+  getChatByUserAndAdId?: Maybe<Array<Chat>>;
   getChatsByUserId?: Maybe<Array<Chat>>;
   getMangoBalanceByUserId: Scalars['Float']['output'];
   getMessagesByChatId?: Maybe<Array<Message>>;
@@ -287,6 +296,12 @@ export type QueryGetAllAdsArgs = {
   page?: Scalars['Int']['input'];
   skillId?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Status>;
+};
+
+
+export type QueryGetChatByUserAndAdIdArgs = {
+  adId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 
@@ -476,6 +491,14 @@ export type GetChatsByUserIdQueryVariables = Exact<{
 
 export type GetChatsByUserIdQuery = { __typename?: 'Query', getChatsByUserId?: Array<{ __typename?: 'Chat', id: string, date: any, isHelpProposed: boolean, messages: Array<{ __typename?: 'Message', id: string, date: any, isViewedByRequester: boolean, isViewedByHelper: boolean, message: string, author: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null } }>, ad: { __typename?: 'Ad', id: string, title: string, description: string, mangoAmount: number, duration: number, status: Status, picture1?: string | null, picture2?: string | null, picture3?: string | null, skill: { __typename?: 'Skill', id: string, name: string, picture: string } }, userHelper: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null, createdAt: any }, userRequester: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null, createdAt: any } }> | null };
 
+export type GetChatByUserAndAdIdQueryVariables = Exact<{
+  userId: Scalars['String']['input'];
+  adId: Scalars['String']['input'];
+}>;
+
+
+export type GetChatByUserAndAdIdQuery = { __typename?: 'Query', getChatByUserAndAdId?: Array<{ __typename?: 'Chat', id: string, isHelpProposed: boolean, userHelper: { __typename?: 'User', id: string }, userRequester: { __typename?: 'User', id: string }, ad: { __typename?: 'Ad', id: string } }> | null };
+
 export type SendMessageMutationVariables = Exact<{
   messageData: MessageInput;
   currentUserId: Scalars['String']['input'];
@@ -503,6 +526,13 @@ export type GetAllSkillsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetAllSkillsQuery = { __typename?: 'Query', getAllSkills?: Array<{ __typename?: 'Skill', id: string, name: string, picture: string }> | null };
+
+export type AddTransactionMutationVariables = Exact<{
+  transactionData: TransactionInput;
+}>;
+
+
+export type AddTransactionMutation = { __typename?: 'Mutation', addTransaction: { __typename?: 'Transaction', id: string, ad: { __typename?: 'Ad', id: string }, userRequester: { __typename?: 'User', id: string }, userHelper: { __typename?: 'User', id: string } } };
 
 export type RegisterUserMutationVariables = Exact<{
   email: Scalars['String']['input'];
@@ -559,6 +589,15 @@ export type TransferMangoMutationVariables = Exact<{
 
 export type TransferMangoMutation = { __typename?: 'Mutation', transferMango: number };
 
+export type TransferBetweenUsersMutationVariables = Exact<{
+  fromId: Scalars['String']['input'];
+  toId: Scalars['String']['input'];
+  amount: Scalars['Float']['input'];
+}>;
+
+
+export type TransferBetweenUsersMutation = { __typename?: 'Mutation', transferBetweenUsers: boolean };
+
 export type LoginUserQueryVariables = Exact<{
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -608,7 +647,7 @@ export type GetUserOverviewByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetUserOverviewByIdQuery = { __typename?: 'Query', getUserOverviewById: { __typename?: 'UserOverview', reviewsAsHelperCount: number, averageRating?: number | null, user: { __typename?: 'User', firstName: string, lastName: string, picture?: string | null, biography?: string | null } } };
+export type GetUserOverviewByIdQuery = { __typename?: 'Query', getUserOverviewById: { __typename?: 'UserOverview', reviewsAsHelperCount: number, averageRating?: number | null, user: { __typename?: 'User', firstName: string, lastName: string, picture?: string | null, biography?: string | null, mangoBalance: number } } };
 
 export type GetUserByIdQueryVariables = Exact<{
   id: Scalars['String']['input'];
@@ -979,6 +1018,57 @@ export type GetChatsByUserIdQueryHookResult = ReturnType<typeof useGetChatsByUse
 export type GetChatsByUserIdLazyQueryHookResult = ReturnType<typeof useGetChatsByUserIdLazyQuery>;
 export type GetChatsByUserIdSuspenseQueryHookResult = ReturnType<typeof useGetChatsByUserIdSuspenseQuery>;
 export type GetChatsByUserIdQueryResult = Apollo.QueryResult<GetChatsByUserIdQuery, GetChatsByUserIdQueryVariables>;
+export const GetChatByUserAndAdIdDocument = gql`
+    query GetChatByUserAndAdId($userId: String!, $adId: String!) {
+  getChatByUserAndAdId(userId: $userId, adId: $adId) {
+    id
+    userHelper {
+      id
+    }
+    userRequester {
+      id
+    }
+    ad {
+      id
+    }
+    isHelpProposed
+  }
+}
+    `;
+
+/**
+ * __useGetChatByUserAndAdIdQuery__
+ *
+ * To run a query within a React component, call `useGetChatByUserAndAdIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChatByUserAndAdIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetChatByUserAndAdIdQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      adId: // value for 'adId'
+ *   },
+ * });
+ */
+export function useGetChatByUserAndAdIdQuery(baseOptions: Apollo.QueryHookOptions<GetChatByUserAndAdIdQuery, GetChatByUserAndAdIdQueryVariables> & ({ variables: GetChatByUserAndAdIdQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetChatByUserAndAdIdQuery, GetChatByUserAndAdIdQueryVariables>(GetChatByUserAndAdIdDocument, options);
+      }
+export function useGetChatByUserAndAdIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatByUserAndAdIdQuery, GetChatByUserAndAdIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetChatByUserAndAdIdQuery, GetChatByUserAndAdIdQueryVariables>(GetChatByUserAndAdIdDocument, options);
+        }
+export function useGetChatByUserAndAdIdSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetChatByUserAndAdIdQuery, GetChatByUserAndAdIdQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetChatByUserAndAdIdQuery, GetChatByUserAndAdIdQueryVariables>(GetChatByUserAndAdIdDocument, options);
+        }
+export type GetChatByUserAndAdIdQueryHookResult = ReturnType<typeof useGetChatByUserAndAdIdQuery>;
+export type GetChatByUserAndAdIdLazyQueryHookResult = ReturnType<typeof useGetChatByUserAndAdIdLazyQuery>;
+export type GetChatByUserAndAdIdSuspenseQueryHookResult = ReturnType<typeof useGetChatByUserAndAdIdSuspenseQuery>;
+export type GetChatByUserAndAdIdQueryResult = Apollo.QueryResult<GetChatByUserAndAdIdQuery, GetChatByUserAndAdIdQueryVariables>;
 export const SendMessageDocument = gql`
     mutation SendMessage($messageData: MessageInput!, $currentUserId: String!) {
   sendMessage(messageData: $messageData, currentUserId: $currentUserId) {
@@ -1133,6 +1223,48 @@ export type GetAllSkillsQueryHookResult = ReturnType<typeof useGetAllSkillsQuery
 export type GetAllSkillsLazyQueryHookResult = ReturnType<typeof useGetAllSkillsLazyQuery>;
 export type GetAllSkillsSuspenseQueryHookResult = ReturnType<typeof useGetAllSkillsSuspenseQuery>;
 export type GetAllSkillsQueryResult = Apollo.QueryResult<GetAllSkillsQuery, GetAllSkillsQueryVariables>;
+export const AddTransactionDocument = gql`
+    mutation AddTransaction($transactionData: TransactionInput!) {
+  addTransaction(transactionData: $transactionData) {
+    id
+    ad {
+      id
+    }
+    userRequester {
+      id
+    }
+    userHelper {
+      id
+    }
+  }
+}
+    `;
+export type AddTransactionMutationFn = Apollo.MutationFunction<AddTransactionMutation, AddTransactionMutationVariables>;
+
+/**
+ * __useAddTransactionMutation__
+ *
+ * To run a mutation, you first call `useAddTransactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddTransactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addTransactionMutation, { data, loading, error }] = useAddTransactionMutation({
+ *   variables: {
+ *      transactionData: // value for 'transactionData'
+ *   },
+ * });
+ */
+export function useAddTransactionMutation(baseOptions?: Apollo.MutationHookOptions<AddTransactionMutation, AddTransactionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddTransactionMutation, AddTransactionMutationVariables>(AddTransactionDocument, options);
+      }
+export type AddTransactionMutationHookResult = ReturnType<typeof useAddTransactionMutation>;
+export type AddTransactionMutationResult = Apollo.MutationResult<AddTransactionMutation>;
+export type AddTransactionMutationOptions = Apollo.BaseMutationOptions<AddTransactionMutation, AddTransactionMutationVariables>;
 export const RegisterUserDocument = gql`
     mutation RegisterUser($email: String!, $password: String!, $firstName: String!, $lastName: String!, $address: String!, $zipCode: String!, $city: String!, $skillsId: [String!]!) {
   register(
@@ -1338,6 +1470,39 @@ export function useTransferMangoMutation(baseOptions?: Apollo.MutationHookOption
 export type TransferMangoMutationHookResult = ReturnType<typeof useTransferMangoMutation>;
 export type TransferMangoMutationResult = Apollo.MutationResult<TransferMangoMutation>;
 export type TransferMangoMutationOptions = Apollo.BaseMutationOptions<TransferMangoMutation, TransferMangoMutationVariables>;
+export const TransferBetweenUsersDocument = gql`
+    mutation TransferBetweenUsers($fromId: String!, $toId: String!, $amount: Float!) {
+  transferBetweenUsers(fromId: $fromId, toId: $toId, amount: $amount)
+}
+    `;
+export type TransferBetweenUsersMutationFn = Apollo.MutationFunction<TransferBetweenUsersMutation, TransferBetweenUsersMutationVariables>;
+
+/**
+ * __useTransferBetweenUsersMutation__
+ *
+ * To run a mutation, you first call `useTransferBetweenUsersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTransferBetweenUsersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [transferBetweenUsersMutation, { data, loading, error }] = useTransferBetweenUsersMutation({
+ *   variables: {
+ *      fromId: // value for 'fromId'
+ *      toId: // value for 'toId'
+ *      amount: // value for 'amount'
+ *   },
+ * });
+ */
+export function useTransferBetweenUsersMutation(baseOptions?: Apollo.MutationHookOptions<TransferBetweenUsersMutation, TransferBetweenUsersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<TransferBetweenUsersMutation, TransferBetweenUsersMutationVariables>(TransferBetweenUsersDocument, options);
+      }
+export type TransferBetweenUsersMutationHookResult = ReturnType<typeof useTransferBetweenUsersMutation>;
+export type TransferBetweenUsersMutationResult = Apollo.MutationResult<TransferBetweenUsersMutation>;
+export type TransferBetweenUsersMutationOptions = Apollo.BaseMutationOptions<TransferBetweenUsersMutation, TransferBetweenUsersMutationVariables>;
 export const LoginUserDocument = gql`
     query LoginUser($email: String!, $password: String!) {
   login(email: $email, password: $password) {
@@ -1602,6 +1767,7 @@ export const GetUserOverviewByIdDocument = gql`
       lastName
       picture
       biography
+      mangoBalance
     }
     reviewsAsHelperCount
     averageRating

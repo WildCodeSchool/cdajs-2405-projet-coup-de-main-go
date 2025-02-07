@@ -36,4 +36,29 @@ export class ChatQueries {
 
     return chats;
   }
+
+  @Query(() => [Chat], { nullable: true })
+  @UseMiddleware(checkUserId)
+  async getChatByUserAndAdId(
+    @Arg("userId") userId: string,
+    @Arg("adId") adId: string
+  ): Promise<Chat[] | null> {
+    const user = await dataSource.manager.findOne(User, {
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new Error("L'utilisateur spécifié n'existe pas.");
+    }
+
+    const chat = await dataSource.manager.find(Chat, {
+      where: [
+        { userHelper: { id: user.id }, ad: { id: adId } },
+        { userRequester: { id: user.id }, ad: { id: adId } },
+      ],
+      relations: ["messages", "ad"],
+    });
+
+    return chat.length > 0 ? chat : null;
+  }
 }

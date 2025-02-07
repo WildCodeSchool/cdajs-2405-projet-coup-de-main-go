@@ -11,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { GET_USER_CHATS } from "../../../graphql/chatQueries";
 import { Chat } from "../../../types";
 import type { MessageForm, Message, User } from "../../../types";
-import { Status } from "../../../types";
+import { StatusType } from "../../../types";
 import ChatConversationHeader from "./ChatConversationHeader";
 import { ChatMessageList } from "../ChatMessage/ChatMessageList";
 import { ChatActionButton } from "../ChatActionButton";
@@ -23,8 +23,11 @@ import {
   useUpdateAdStatusMutation,
   useUpdateChatHelpProposalMutation,
   useCreateReviewMutation,
+  useTransferBetweenUsersMutation,
+  useAddTransactionMutation
 } from "../../../generated/graphql-types";
 import Rating from "@mui/material/Rating";
+import { useMango } from "../../../contexts/MangoContext";
 
 const labels: { [index: number]: string } = {
   0.5: "Très décevant",
@@ -70,12 +73,14 @@ export default function ChatConversation({
   onBack,
   onOpenModal,
 }: ChatConversationProps) {
+  const { refetchMango } = useMango();
+
   const [messageInput, setMessageInput] = useState<string>("");
   const [displayedMessages, setDisplayedMessages] = useState<Message[]>([]);
   const [messageCount, setMessageCount] = useState(200);
   const [isLoading, setIsLoading] = useState(false);
   const [otherUser, setOtherUser] = useState<User | null>(null);
-  const [status, setStatus] = useState<Status | null>(null);
+  const [status, setStatus] = useState<StatusType | null>(null);
   const [isReviewModalOpen, setReviewModalOpen] = useState(false);
   const [hover, setHover] = useState(-1);
   const [commentLength, setCommentLength] = useState(0);
@@ -101,13 +106,9 @@ export default function ChatConversation({
     ],
   });
 
-  const [updateAdStatus] = useUpdateAdStatusMutation({
-    refetchQueries: [
-      { query: GET_USER_CHATS, variables: { userId: currentUserId } },
-    ],
-  });
+  const [updateAdStatus] = useUpdateAdStatusMutation();
 
-  const handleStatusChange = async (newStatus: Status) => {
+  const handleStatusChange = async (newStatus: StatusType) => {
     try {
       await updateAdStatus({
         variables: { id: currentChat!.ad.id, status: newStatus },
@@ -127,33 +128,58 @@ export default function ChatConversation({
 
   const isRequester = currentUserId === currentChat?.userRequester.id;
 
-  const handleProposeHelp = () => {
-    updateChatHelpProposal({
-      variables: { chatId: chatId!, isHelpProposed: true },
-    });
-  };
+  const [transferBetweenUsers] = useTransferBetweenUsersMutation();
+
+  const [addTransaction] = useAddTransactionMutation();
 
   const handleAcceptHelp = () => {
-    handleStatusChange(Status.BOOKED);
+    handleStatusChange(StatusType.BOOKED);
   };
 
   const handleCancelHelp = () => {
-    handleStatusChange(Status.POSTED);
+    handleStatusChange(StatusType.POSTED);
     updateChatHelpProposal({
       variables: { chatId: chatId!, isHelpProposed: false },
     });
   };
 
-  const handleFinalisedlHelp = () => {
-    handleStatusChange(Status.FINALISED);
+  const handleFinalisedHelp = async () => {
+    if (!currentChat) return;
+
+    const amount = currentChat!.ad.mangoAmount;
+    const fromId = currentChat.userHelper.id;
+    const toId = currentChat.userRequester.id;
+
+    try {
+      // Transfer funds from the helper to the requester
+      await transferBetweenUsers({ variables: { fromId, toId, amount } });
+
+      // Add a transaction to the database
+      await addTransaction({
+        variables: {
+          transactionData: {
+            adId: currentChat.ad.id,
+            userRequesterId: toId,
+            userHelperId: fromId,
+          },
+        },
+      });
+      // Update the ad status to finalised
+      await handleStatusChange(StatusType.FINALISED);
+
+      // Refetch the mango balance
+      refetchMango();
+    } catch (error) {
+      console.error("Erreur lors du transfert de fonds :", error);
+    }
   };
 
-  const handleFinalisedHelp = () => {
+  const handleReviewClick = () => {
     setReviewModalOpen(true);
   };
 
   const handleReviewSubmit = () => {
-    handleStatusChange(Status.ISREVIEWED);
+    handleStatusChange(StatusType.ISREVIEWED);
     setReviewModalOpen(false);
   };
 
@@ -162,12 +188,12 @@ export default function ChatConversation({
     if (!currentChat?.isHelpProposed) {
       return isRequester
         ? []
-        : [{ label: "Proposer mon aide", onClick: handleProposeHelp }];
+        : [{ label: "Aide refusée", disabled: true, onClick: () => {} }];
     }
 
     // If the help has been proposed, the requester can accept or refuse the help
     switch (status) {
-      case Status.POSTED:
+      case StatusType.POSTED:
         return isRequester
           ? [
               {
@@ -184,7 +210,7 @@ export default function ChatConversation({
                 onClick: () => {},
               },
             ];
-      case Status.BOOKED:
+      case StatusType.BOOKED:
         return isRequester
           ? [
               {
@@ -194,16 +220,16 @@ export default function ChatConversation({
               },
               {
                 label: "Valider l'aide réalisée",
-                onClick: handleFinalisedlHelp,
+                onClick: handleFinalisedHelp,
               },
             ]
           : [{ label: "Annuler l'aide", onClick: handleCancelHelp }];
-      case Status.FINALISED:
+      case StatusType.FINALISED:
         return isRequester
           ? [
               {
                 label: "Laissez une évaluation",
-                onClick: handleFinalisedHelp,
+                onClick: handleReviewClick,
               },
             ]
           : [
@@ -214,7 +240,7 @@ export default function ChatConversation({
                 type: "text",
               },
             ];
-      case Status.ISREVIEWED:
+      case StatusType.ISREVIEWED:
         return isRequester
           ? [
               {
@@ -251,7 +277,7 @@ export default function ChatConversation({
         lastName: otherUserId.lastName,
       });
 
-      const adStatus = currentChat.ad.status.toLowerCase() as Status;
+      const adStatus = currentChat.ad.status.toLowerCase() as StatusType;
       setStatus(adStatus);
 
       if (currentChat?.messages) {
@@ -358,6 +384,11 @@ export default function ChatConversation({
     setCommentLength(length);
   };
 
+  const isHelpRefused =
+    !currentChat?.isHelpProposed &&
+    status === StatusType.POSTED &&
+    !isRequester;
+
   return (
     <Paper
       elevation={3}
@@ -394,12 +425,37 @@ export default function ChatConversation({
         onScroll={handleScroll}
       />
       <ChatActionButton actions={getActionButtonProps()} />
-      <ChatInput
-        value={messageInput}
-        onChange={handleInputChange}
-        onSubmit={handleSubmit(onSubmit)}
-        onKeyDown={handleKeyDown}
-      />
+      {isHelpRefused ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 2,
+            backgroundColor: "tertiary.main",
+            borderRadius: "12px",
+            margin: 2,
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              color: "text.secondary",
+              alignSelf: "center",
+              padding: "0 16px",
+            }}
+          >
+            L'aide a été refusée. Vous ne pouvez plus envoyer de messages.
+          </Typography>
+        </Box>
+      ) : (
+        <ChatInput
+          value={messageInput}
+          onChange={handleInputChange}
+          onSubmit={handleSubmit(onSubmit)}
+          onKeyDown={handleKeyDown}
+        />
+      )}
       <GenericModal
         open={isReviewModalOpen}
         onClose={handleCloseReviewModal}

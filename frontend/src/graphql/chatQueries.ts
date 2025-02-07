@@ -52,3 +52,21 @@ export const GET_USER_CHATS = gql`
     }
   }
 `;
+
+export const GET_CHAT_BY_USER_AND_AD_ID = gql`
+  query GetChatByUserAndAdId($userId: String!, $adId: String!) {
+    getChatByUserAndAdId(userId: $userId, adId: $adId) {
+      id
+      userHelper {
+        id
+      }
+      userRequester {
+        id
+      }
+      ad {
+        id
+      }
+      isHelpProposed
+    }
+  }
+`;

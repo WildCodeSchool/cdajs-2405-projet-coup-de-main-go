@@ -5,9 +5,13 @@ import { Link } from "react-router-dom";
 
 interface AuthenticatedIconsProps {
   isMobile: boolean;
+  mangoBalance: number;
 }
 
-export default function AuthenticatedIcons({ isMobile }: AuthenticatedIconsProps) {
+export default function AuthenticatedIcons({
+  isMobile,
+  mangoBalance,
+}: AuthenticatedIconsProps) {
   const theme = useTheme();
 
   return (
@@ -42,7 +46,7 @@ export default function AuthenticatedIcons({ isMobile }: AuthenticatedIconsProps
           }}
         />
         <Badge
-          badgeContent={4}
+          badgeContent={mangoBalance}
           sx={{
             position: "absolute",
             bottom: 20,

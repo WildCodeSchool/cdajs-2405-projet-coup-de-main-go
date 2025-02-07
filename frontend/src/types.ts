@@ -15,12 +15,12 @@ export type UserRequester = {
   picture?: string | null;
 };
 
-// export enum Status {
-//   POSTED = "posted",
-//   BOOKED = "booked",
-//   FINALISED = "finalised",
-//   ISREVIEWED = "isreviewed",
-// }
+export enum StatusType {
+  POSTED = "posted",
+  BOOKED = "booked",
+  FINALISED = "finalised",
+  ISREVIEWED = "isreviewed",
+}
 
 export enum Status {
   Booked = "BOOKED",
