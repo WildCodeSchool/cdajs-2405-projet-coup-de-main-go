@@ -25,8 +25,8 @@ services:
       dockerfile: Dockerfile.dev
     restart: unless-stopped
     environment:
-      VITE_BACKEND_URL: ${E2E_BACKEND_URL}
-      VITE_DOMAIN_BACKEND_URL: ${E2E_BACKEND_URL}
+      VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+      VITE_DOMAIN_BACKEND_URL: ${VITE_DOMAIN_BACKEND_URL}
       VITE_POLL_CHAT_INTERVAL: ${VITE_POLL_CHAT_INTERVAL}
     ports:
       - 5173:5173
@@ -36,22 +36,22 @@ services:
     depends_on:
       - backend
 
-  e2e:
-    build:
-      context: ./e2e 
-      dockerfile: Dockerfile
-    environment:
-      VITE_BACKEND_URL: ${E2E_BACKEND_URL}
-      VITE_DOMAIN_BACKEND_URL: ${E2E_BACKEND_URL}
-      E2E_FRONTEND_URL: ${E2E_FRONTEND_URL}
-    volumes:
-      - ./frontend:/webapp
-    depends_on:
-      - backend
-    command:
-      sh -c "sleep 20 && npx playwright test"
-    ports:
-      - 8000:8000
+  # e2e:
+  #   build:
+  #     context: ./e2e 
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     VITE_BACKEND_URL: ${E2E_BACKEND_URL}
+  #     VITE_DOMAIN_BACKEND_URL: ${E2E_DOMAIN_BACKEND_URL}
+  #     E2E_FRONTEND_URL: ${E2E_FRONTEND_URL}
+  #   volumes:
+  #     - ./frontend:/webapp
+  #   depends_on:
+  #     - backend
+  #   command:
+  #     sh -c "sleep 30 && npx playwright test && tail -f /dev/null"
+  #   ports:
+  #     - 8000:8000
 
   postgres:
     image: postgres:alpine

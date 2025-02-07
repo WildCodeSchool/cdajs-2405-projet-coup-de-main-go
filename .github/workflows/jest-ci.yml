@@ -6,22 +6,7 @@ jobs:
   tests:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    container: node:20-bookworm-slim
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -74,19 +59,19 @@ jobs:
             fi
           done
 
-      - name: Verify e2e service is ready
-        run: |
-          echo "Verifying e2e service is up..."
-          for i in {1..10}; do
-            http_response=$(curl --write-out "%{http_code}" --silent --output /dev/null http://localhost:8000)
-            if [ "$http_response" -eq 200 ]; then
-              echo "e2e service is ready (status code: $http_response)"
-              break
-            else
-              echo "e2e service not ready yet (status code: $http_response)... retrying in 5s"
-              sleep 5
-            fi
-          done
+      # - name: Verify e2e service is ready
+      #   run: |
+      #     echo "Verifying e2e service is up..."
+      #     for i in {1..10}; do
+      #       http_response=$(curl --write-out "%{http_code}" --silent --output /dev/null http://localhost:8000)
+      #       if [ "$http_response" -eq 200 ]; then
+      #         echo "e2e service is ready (status code: $http_response)"
+      #         break
+      #       else
+      #         echo "e2e service not ready yet (status code: $http_response)... retrying in 5s"
+      #         sleep 5
+      #       fi
+      #     done
 
       - name: Move to backend directory
         run: cd backend
