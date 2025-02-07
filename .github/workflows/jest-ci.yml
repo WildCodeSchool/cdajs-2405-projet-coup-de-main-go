@@ -11,20 +11,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Install PostgreSQL client
-        run: apt-get update && apt-get install -y postgresql-client
-
       - name: Install curl
         run: apt-get update && apt-get install -y curl
-
-      - name: Wait for PostgreSQL
-        run: |
-          echo "Waiting for PostgreSQL to be ready..."
-          for i in {1..10}; do
-            pg_isready -h postgres -U ${{ secrets.POSTGRES_USER }} && break
-            echo "PostgreSQL not ready yet... retrying in 5s"
-            sleep 5
-          done
 
       - name: Start services with Docker Compose
         run: |
