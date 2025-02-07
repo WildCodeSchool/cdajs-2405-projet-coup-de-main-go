@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install curl
-        run: apt-get update && apt-get install -y curl
+        run: sudo apt-get update && sudo apt-get install -y curl
 
       - name: Start services with Docker Compose
         run: |
