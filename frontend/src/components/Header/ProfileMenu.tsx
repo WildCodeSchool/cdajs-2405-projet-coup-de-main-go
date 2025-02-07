@@ -41,7 +41,7 @@ export default function ProfileMenu({
     >
       <MenuItem
         component={Link}
-        to="/profile"
+        to="/profil"
         onClick={onClose}
         sx={{
           fontSize: "0.875rem",

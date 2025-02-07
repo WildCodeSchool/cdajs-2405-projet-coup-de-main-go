@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import {
   Avatar,
   Box,
@@ -19,10 +19,17 @@ import { useAuth } from "../contexts/AuthContext";
 export default function ProfilePictureUpload({ currentPicture }: { currentPicture?: string }) {
   const { userId } = useAuth();
   const [updateProfilePicture, { loading }] = useMutation(UPDATE_PROFILE_PICTURE);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(currentPicture || null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [success, setSuccess] = useState(false);
+
+
+  useEffect(() => {
+    if (currentPicture && userId) {
+      setPreviewUrl(`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/users/${userId}/${currentPicture}`);
+    }
+  }, [currentPicture, userId]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

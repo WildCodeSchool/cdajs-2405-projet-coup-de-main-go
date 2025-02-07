@@ -49,7 +49,7 @@ export default function EditProfil() {
         setProgress((oldProgress) => {
           if (oldProgress === 100) {
             clearInterval(interval);
-            navigate("/profile");
+            navigate("/profil");
             return 100;
           }
           return Math.min(oldProgress + 10, 100);
@@ -78,8 +78,6 @@ export default function EditProfil() {
       >
         {/* Avatar */}
         <ProfilePictureUpload currentPicture={user?.picture} />
-
-
 
         <Typography variant="h6">{`${formValues.firstName} ${formValues.lastName}`}</Typography>
 
@@ -113,7 +111,7 @@ export default function EditProfil() {
           <Button variant="contained" onClick={handleSubmit} disabled={loading}>
             {loading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "Enregistrer"}
           </Button>
-          <Button variant="outlined" sx={{color: "black"}} onClick={() => navigate("/profile")}>Annuler</Button>
+          <Button variant="outlined" sx={{color: "black"}} onClick={() => navigate("/profil")}>Annuler</Button>
         </Box>
 
         {error && <Typography color="error" sx={{ mt: 2 }}>Erreur lors de la mise à jour du profil.</Typography>}

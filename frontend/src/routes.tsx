@@ -44,7 +44,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "/profile",
+        path: "/profil",
         element: (
           <ProtectedRoute>
             <Profil />
@@ -52,7 +52,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "/profile/modifier",
+        path: "/profil/update",
         element: (
           <ProtectedRoute>
             <EditProfil />

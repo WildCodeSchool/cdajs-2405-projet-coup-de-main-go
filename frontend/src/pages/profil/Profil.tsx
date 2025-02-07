@@ -56,7 +56,7 @@ export default function Profil() {
   };
 
   const handleEditProfile = () => {
-    navigate("/profile/modifier", { state: { user } });
+    navigate("/profil/update", { state: { user } });
   };
 
   return (
