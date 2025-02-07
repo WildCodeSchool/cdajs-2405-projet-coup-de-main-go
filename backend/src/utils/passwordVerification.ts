@@ -6,7 +6,7 @@ export default function passwordVerification(password: string): void {
 
     // Vérification de la robustesse du mot de passe
     const regex =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&:])[A-Za-z\d@$!%*?&:]{8,}$/;
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
     if (!regex.test(password)) {
         throw new Error(
             "Le mot de passe doit inclure au moins une majuscule, une minuscule, un chiffre et un caractère spécial."

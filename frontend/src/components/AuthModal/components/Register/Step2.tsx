@@ -10,6 +10,7 @@ import {
 import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 import { RegisterFormData } from "../Register";
+import GetStyles from "../../styles/GetStyles";
 
 interface Step2Props {
     errors: FieldErrors<RegisterFormData>;
@@ -21,14 +22,15 @@ interface Step2Props {
 function Step3({ errors, register, setStep, setValue }: Step2Props) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-    let titleAlign = {};
-    let buttonStyles = {};
-    let formSpace = "";
+    const { titleAlign, buttonStyles, formSpace } = GetStyles();
 
     const handleChangeZipCode = (string: string): string => {
         const re = /^[0-9]*$/;
 
-        if ((!string.includes(" ") && re.test(string)) || string === "") {
+        if (
+            (!string.includes(" ") && re.test(string) && string.length <= 5) ||
+            string === ""
+        ) {
             return string;
         } else {
             return string
@@ -38,21 +40,6 @@ function Step3({ errors, register, setStep, setValue }: Step2Props) {
         }
     };
 
-    if (isMobile) {
-        titleAlign = { textAlign: "center" };
-        buttonStyles = {
-            width: "100%",
-            textAlign: "center",
-            borderRadius: "10px",
-        };
-        formSpace = "space-between";
-    } else {
-        buttonStyles = {
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-end",
-        };
-    }
     return (
         <>
             <Typography variant="h3" sx={titleAlign}>
