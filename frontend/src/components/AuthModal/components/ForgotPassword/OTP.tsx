@@ -54,7 +54,7 @@ function OTP({ handleChange, handlePaste, control, inputsRef }: OTPProps) {
                         />
                     ))}
             </Box>
-            <Stack sx={buttonStyles}>
+            <Stack sx={{ buttonStyles, alignItems: "center" }}>
                 <Button type="submit" sx={buttonStyles}>
                     Soumettre le code de confirmation
                 </Button>

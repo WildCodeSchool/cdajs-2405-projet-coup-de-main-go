@@ -141,7 +141,11 @@ function ForgotPassword({
 
     return (
         <form
-            style={{ ...sharedFormStyles, ...formStyles }}
+            style={{
+                ...sharedFormStyles,
+                ...formStyles,
+                justifyContent: "center",
+            }}
             onSubmit={handleSubmit(onForgotPasswordFormSubmitted)}
         >
             {email ? (
