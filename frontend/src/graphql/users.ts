@@ -171,6 +171,29 @@ export const CREDENTIALS_VERIFICATION = gql`
     }
 `;
 
+export const GET_USER_BY_ID = gql`
+  query GetUserById($id: String!) {
+    getUserById(id: $id) {
+      id
+      firstName
+      lastName
+      email
+      biography
+      gender
+      dateOfBirth
+      picture
+      address
+      zipCode
+      city
+      mangoBalance
+      skills {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export const GET_USER_OVERVIEW_BY_ID = gql`
     query GetUserOverviewById($id: String!) {
         getUserOverviewById(id: $id) {

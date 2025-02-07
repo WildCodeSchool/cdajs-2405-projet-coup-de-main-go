@@ -1,145 +1,124 @@
-import { ChangeEvent, useState } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import {
+  Avatar,
   Box,
-  Button,
-  TextField,
-  Typography,
   CircularProgress,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  Button,
+  Snackbar,
+  Alert,
 } from "@mui/material";
+import { PhotoCamera } from "@mui/icons-material";
 import { useMutation } from "@apollo/client";
-import { useForm } from "react-hook-form";
 import { UPDATE_PROFILE_PICTURE } from "../graphql/users";
 import { useAuth } from "../contexts/AuthContext";
 
-export default function UpdateProfilePicturePage() {
-  const [updateProfilePicture, { data, loading, error }] = useMutation(
-    UPDATE_PROFILE_PICTURE
-  );
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const { handleSubmit } = useForm();
-  const [file, setFile] = useState<File | null>(null);
-  const [fileError, setFileError] = useState<string | null>(null);
+export default function ProfilePictureUpload({ currentPicture }: { currentPicture?: string }) {
   const { userId } = useAuth();
+  const [updateProfilePicture, { loading }] = useMutation(UPDATE_PROFILE_PICTURE);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  const [success, setSuccess] = useState<string | null>(null);
 
-  const MAX_SIZE_MB = 1;
+  useEffect(() => {
+    if (currentPicture && userId) {
+      setPreviewUrl(`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/users/${userId}/${currentPicture}`);
+    }
+  }, [currentPicture, userId]);
 
-  const onSubmit = async () => {
-    if (!file) return;
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setPreviewUrl(reader.result as string);
+      reader.readAsDataURL(file);
+      setOpenDialog(true); // Ouvrir la confirmation
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) return;
 
     try {
-      const base64 = await convertFileToBase64(file);
+      const base64 = await convertFileToBase64(selectedFile);
       await updateProfilePicture({
-        variables: {
-          id: userId,
-          picture: base64,
-          filename: file.name,
-        },
+        variables: { id: userId, picture: base64, filename: selectedFile.name },
       });
 
-      setSuccess("Photo de profil mise à jour avec succès!");
-      setFile(null);
-      setPreviewUrl(null);
-      setFileError(null);
+      setSuccess(true);
+      setOpenDialog(false);
     } catch (error) {
       console.error(error);
-      setSuccess(null);
     }
   };
 
   function convertFileToBase64(file: Blob) {
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => {
-        if (reader.result) {
-          if (typeof reader.result === "string") {
-            resolve(reader.result);
-          } else {
-            reject(new Error("File reading failed"));
-          }
-        } else {
-          reject(new Error("File reading failed"));
-        }
-      };
-      reader.onerror = (error) => reject(error);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
     });
   }
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    setFileError(null);
-    setSuccess(null);
-    if (selectedFile) {
-      if (selectedFile.size > MAX_SIZE_MB * 1024 * 1024) {
-        setFileError(`Le fichier doit être inférieur à ${MAX_SIZE_MB}MB`);
-        return;
-      }
-      setFile(selectedFile);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(selectedFile);
-    }
-  };
-
   return (
-    <Box sx={{ maxWidth: 400, margin: "auto", mt: 4 }}>
-      <Typography variant="h5" gutterBottom>
-        Modifier la photo de profil
-      </Typography>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <TextField type="file" onChange={handleFileChange} fullWidth />
-        {previewUrl && (
-          <Box sx={{ mt: 2, mb: 2 }}>
-            <img
-              src={previewUrl}
-              alt="Preview"
-              style={{ maxWidth: "100%", maxHeight: 200 }}
-            />
-          </Box>
-        )}
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ mt: 2 }}
-          disabled={loading || !!fileError}
+    <Box sx={{ position: "relative", textAlign: "center" }}>
+      {/* Avatar cliquable */}
+      <label htmlFor="upload-photo">
+        <input
+          accept="image/*"
+          style={{ display: "none" }}
+          id="upload-photo"
+          type="file"
+          onChange={handleFileChange}
+        />
+        <Avatar
+          src={previewUrl || ""}
+          sx={{
+            width: 120,
+            height: 120,
+            border: "4px solid white",
+            cursor: "pointer",
+            transition: "0.3s",
+            "&:hover": { opacity: 0.7 },
+          }}
+        />
+        <IconButton
+          component="span"
+          sx={{
+            position: "absolute",
+            bottom: 10,
+            right: 10,
+            bgcolor: "rgba(0,0,0,0.6)",
+            color: "white",
+            "&:hover": { bgcolor: "rgba(0,0,0,0.8)" },
+          }}
         >
-          {loading ? <CircularProgress size={24} /> : "Modifier"}
-        </Button>
-      </form>
-      {success && (
-        <Typography variant="body1" color="success" sx={{ mt: 2 }}>
-          {success}
-        </Typography>
-      )}
-      {error && (
-        <Typography variant="body1" color="error" sx={{ mt: 2 }}>
-          {error.message}
-        </Typography>
-      )}
-      {fileError && (
-        <Typography variant="body1" color="error" sx={{ mt: 2 }}>
-          {fileError}
-        </Typography>
-      )}
-      {data &&
-        data.updateProfilePicture &&
-        data.updateProfilePicture.picture && (
-          <Box sx={{ mt: 2, mb: 2 }}>
-            <img
-              src={`${
-                import.meta.env.VITE_DOMAIN_BACKEND_URL
-              }/uploads/users/${userId}/${data.updateProfilePicture.picture}`}
-              alt="Preview"
-              style={{ maxWidth: "100%", maxHeight: 200 }}
-            />
-          </Box>
-        )}
+          <PhotoCamera />
+        </IconButton>
+      </label>
+
+      {/* Dialog de confirmation */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Confirmer la mise à jour de la photo ?</DialogTitle>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>Annuler</Button>
+          <Button onClick={handleUpload} color="primary" variant="contained" disabled={loading}>
+            {loading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "Mettre à jour"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar de succès */}
+      <Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
+        <Alert severity="success">Photo mise à jour avec succès !</Alert>
+      </Snackbar>
     </Box>
   );
 }

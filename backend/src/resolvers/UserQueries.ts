@@ -165,4 +165,19 @@ export class UserQueries {
                 : undefined,
         };
     }
+
+    @Query(() => User)
+async getUserById(@Arg("id") id: string): Promise<User> {
+    const user: User | null = await dataSource.manager.findOne(User, {
+        relations: ["skills"],
+        where: { id },
+    });
+
+    if (!user) {
+        throw new Error("L'utilisateur n'existe pas");
+    }
+
+    return user;
+}
+
 }
