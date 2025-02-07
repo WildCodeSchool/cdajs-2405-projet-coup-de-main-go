@@ -1,10 +1,4 @@
-import {
-  AppBar,
-  Toolbar,
-  Box,
-  useTheme,
-  useMediaQuery,
-} from "@mui/material";
+import { AppBar, Toolbar, Box, useTheme, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import Logo from "./Logo";
@@ -14,14 +8,16 @@ import MobileMenu from "./MobileMenu";
 import AuthenticatedIcons from "./AuthenticatedIcons";
 import GenericModal from "../Modal/GenericModal";
 import AdModalForm from "../NewAdModal/AdModalForm";
-import { useGetUserOverviewByIdQuery } from "../../generated/graphql-types";
 import { formatFullName } from "../../utils/formatName";
+import { useMango } from "../../contexts/MangoContext";
+import { useGetUserOverviewByIdQuery } from "../../generated/graphql-types";
 
 interface HeaderProps {
   setAuthModalIsOpen: (isOpen: boolean) => void;
 }
 
 export default function Header({ setAuthModalIsOpen }: HeaderProps) {
+  const { mangoBalance, loading: loadingMangoBalance, error: errorMangoBalance } = useMango();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { isAuthenticated, logout, userId } = useAuth();
@@ -34,11 +30,10 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
     setNewAdModalIsOpen(false);
   };
 
-  const { loading, error, data } = useGetUserOverviewByIdQuery({
+  const { data, loading, error } = useGetUserOverviewByIdQuery({
     variables: { id: userId || "" },
     skip: !userId,
   });
-
   const user = data?.getUserOverviewById?.user;
   const displayName = user
     ? formatFullName(user.firstName, user.lastName)
@@ -75,7 +70,10 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
           <Box sx={{ display: "flex", alignItems: "center" }}>
             {isAuthenticated ? (
               <>
-                <AuthenticatedIcons isMobile={isMobile} />
+                <AuthenticatedIcons
+                  isMobile={isMobile}
+                  mangoBalance={mangoBalance}
+                />
                 {isMobile ? (
                   <MobileMenu
                     isOpen={drawerOpen}
@@ -87,8 +85,8 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
                   <DesktopMenu
                     onLogout={logout}
                     displayName={displayName}
-                    loading={loading}
-                    error={error}
+                    loading={loading || loadingMangoBalance}
+                    error={error || errorMangoBalance}
                   />
                 )}
               </>

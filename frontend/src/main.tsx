@@ -20,6 +20,7 @@ import {
   COOKIE_NAME_ID,
   TOKEN_COOKIE_NAME,
 } from "./contexts/AuthContext";
+import { MangoProvider } from "./contexts/MangoContext";
 
 import "./App.css";
 import { AuthModalProvider } from "./contexts/AuthModalContext";
@@ -75,9 +76,11 @@ createRoot(document.getElementById("root")!).render(
     <ApolloProvider client={apolloClient}>
       <ThemeProvider theme={theme}>
         <AuthProvider>
-          <AuthModalProvider>
-            <RouterProvider router={router} />
-          </AuthModalProvider>
+          <MangoProvider>
+            <AuthModalProvider>
+              <RouterProvider router={router} />
+            </AuthModalProvider>
+          </MangoProvider>
         </AuthProvider>
       </ThemeProvider>
     </ApolloProvider>

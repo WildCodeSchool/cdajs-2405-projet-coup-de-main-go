@@ -90,6 +90,16 @@ export const USER_TRANSFER_MANGO_MUTATION = gql`
     }
 `;
 
+export const USERS_TRANSFER_MANGO_MUTATION = gql`
+    mutation TransferBetweenUsers(
+        $fromId: String!
+        $toId: String!
+        $amount: Float!
+    ) {
+        transferBetweenUsers(fromId: $fromId, toId: $toId, amount: $amount)
+    }
+`;
+
 export const USER_LOGIN_QUERY = gql`
     query LoginUser($email: String!, $password: String!) {
         login(email: $email, password: $password) {
@@ -169,6 +179,7 @@ export const GET_USER_OVERVIEW_BY_ID = gql`
                 lastName
                 picture
                 biography
+                mangoBalance
             }
             reviewsAsHelperCount
             averageRating
