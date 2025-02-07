@@ -1,8 +1,18 @@
 import { useState } from "react";
-import { Box, Typography, Button, Avatar, Tabs, Tab, CircularProgress, useTheme } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Tabs,
+  Tab,
+  CircularProgress,
+  useTheme,
+  Avatar,
+} from "@mui/material";
 import { useAuth } from "../../contexts/AuthContext";
 import { useGetUserByIdQuery } from "../../generated/graphql-types";
 import { useNavigate } from "react-router-dom";
+
 
 export default function Profil() {
   const { userId } = useAuth();
@@ -10,7 +20,6 @@ export default function Profil() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0);
 
-  // Requête Apollo : GetUserByEmail
   const { loading, error, data } = useGetUserByIdQuery({
     variables: { id: userId! },
     skip: !userId,
@@ -47,7 +56,7 @@ export default function Profil() {
   };
 
   const handleEditProfile = () => {
-    navigate("/profile/modifier");
+    navigate("/profile/modifier", { state: { user } });
   };
 
   return (
@@ -56,12 +65,8 @@ export default function Profil() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        minHeight: "100vh",
-        p: 2,
-        bgcolor: "#f7f7f7",
       }}
     >
-      {/* Box principale contenant toutes les informations */}
       <Box
         sx={{
           display: "flex",
@@ -75,18 +80,20 @@ export default function Profil() {
           boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
         }}
       >
-        {/* Avatar et informations utilisateur */}
-        <Avatar
-          src={user.picture || ""}
-          sx={{
-            width: 100,
-            height: 100,
-            border: "4px solid white",
-            mb: 2,
-          }}
-        >
+        {/*Avatar*/}
+          <Avatar
+            src={`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/users/${user.id}/${user.picture}`}
+            sx={{
+              width: 120,
+              height: 120,
+              mb: 2,
+            }}
+          >
           {!user.picture && `${user.firstName[0]}${user.lastName[0]}`}
         </Avatar>
+
+
+        {/* Infos utilisateur */}
         <Typography variant="h6">{`${user.firstName} ${user.lastName}`}</Typography>
         <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
           {user.biography || "Aucune biographie disponible"}
@@ -106,32 +113,16 @@ export default function Profil() {
           Modifier le profil
         </Button>
 
-        {/* Boutons principaux */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            gap: 2,
-            mt: 2,
-            width: "100%",
-          }}
-        >
+        {/* Skills */}
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 2, width: "100%" }}>
           {user.skills.map((skill: { id: string; name: string }) => (
-            <Button
-              key={skill.id}
-              variant="outlined"
-              sx={{
-                color: "black",
-                borderRadius: "5px",
-                borderColor: "black",
-              }}
-            >
+            <Button key={skill.id} variant="outlined" sx={{ color: "black", borderRadius: "5px", borderColor: "black" }}>
               {skill.name}
             </Button>
           ))}
         </Box>
 
-        {/* Onglets avec MUI */}
+        {/* Onglets*/}
         <Box sx={{ width: "100%", mt: 4 }}>
           <Box
             sx={{
@@ -149,14 +140,9 @@ export default function Profil() {
             </Tabs>
           </Box>
 
-          {/* Contenu des onglets */}
           <Box sx={{ p: 3 }}>
-            {activeTab === 0 && (
-              <Typography variant="body1">Vous n'avez encore aucun avis.</Typography>
-            )}
-            {activeTab === 1 && (
-              <Typography variant="body1">Vous n'avez encore publié aucune annonce.</Typography>
-            )}
+            {activeTab === 0 && <Typography variant="body1">Vous n'avez encore aucun avis.</Typography>}
+            {activeTab === 1 && <Typography variant="body1">Vous n'avez encore publié aucune annonce.</Typography>}
           </Box>
         </Box>
       </Box>
