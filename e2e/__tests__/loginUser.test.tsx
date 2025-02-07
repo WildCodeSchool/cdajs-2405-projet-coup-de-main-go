@@ -32,14 +32,10 @@ test.describe("Login User", () => {
     });
     await submitButton.click();
 
-    // wait 10secondes
-    await page.waitForTimeout(10000);
-
     await page.screenshot({
       path: "./screenshots/login-success.png",
     });
 
-    // await page.waitForURL(frontendUrl + "/dashboard", { timeout: 10000 });
 
     const userName = await page.locator("header").locator("text=User T.");
     await expect(userName).toBeVisible({ timeout: 10000 });
@@ -79,8 +75,6 @@ test.describe("Login User", () => {
       hasText: "Se connecter",
     });
     await submitButton.click();
-
-    await page.waitForTimeout(10000);
 
     await page.screenshot({
       path: "./screenshots/login-fail.png",
