@@ -29,17 +29,17 @@ jobs:
       - name: Install dependencies in frontend
         run: |
           cd frontend
-          npm ci
+          npm i
 
       - name: Install dependencies in backend
         run: |
           cd backend
-          npm ci
+          npm i
 
       - name: Install dependencies in e2e
         run: |
           cd e2e
-          npm ci
+          npm i
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
