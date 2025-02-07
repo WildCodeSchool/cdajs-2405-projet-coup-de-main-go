@@ -11,7 +11,7 @@ export default defineConfig({
       provider: "istanbul",
       reporter: ["text", "json", "html"],
     },
-    exclude: ["**/e2e/**"],
+    exclude: ["**/e2e/**", "node_modules"],
   },
   resolve: {
     alias: [
@@ -19,4 +19,7 @@ export default defineConfig({
       { find: "@components", replacement: "/src/components" },
     ],
   },
+  server: {
+    allowedHosts: ['frontend', 'backend', 'localhost', '0.0.0.0'],
+  }
 });

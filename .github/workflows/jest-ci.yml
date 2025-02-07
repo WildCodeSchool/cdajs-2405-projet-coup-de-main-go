@@ -6,7 +6,8 @@ jobs:
   tests:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    
+    container: node:20-bookworm-slim
+
     services:
       postgres:
         image: postgres:15
@@ -25,8 +26,20 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install dependencies in frontend
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Install dependencies in backend
+        run: |
+          cd backend
+          npm ci
+
+      - name: Install dependencies in e2e
+        run: |
+          cd e2e
+          npm ci
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
@@ -46,18 +59,24 @@ jobs:
             sleep 5
           done
 
-      - name: Run Project
+      - name: Start services with Docker Compose
         run: |
-          echo "Starting project..."
-          npm run start &
-          echo "Waiting for 20 seconds to let the project start..."
-          sleep 20
-        env:
-          DB_HOST: ${{ secrets.POSTGRES_HOST }}
-          DB_USER: ${{ secrets.POSTGRES_USER }}
-          DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          DB_PORT: ${{ secrets.POSTGRES_PORT }}
-          DB_DATABASE: ${{ secrets.POSTGRES_DB }}
+          echo "Starting services with Docker Compose dev..."
+          docker compose -f docker-compose.dev.yml up --build
+
+      - name: Verify frontend is running
+        run: |
+          echo "Verifying frontend is up..."
+          for i in {1..10}; do
+            http_response=$(curl --write-out "%{http_code}" --silent --output /dev/null http://localhost:5173)
+            if [ "$http_response" -eq 200 ]; then
+              echo "Frontend is running (status code: $http_response)"
+              break
+            else
+              echo "Frontend not running yet (status code: $http_response)... retrying in 5s"
+              sleep 5
+            fi
+          done
 
       - name: Check Backend Health
         run: |
@@ -73,10 +92,19 @@ jobs:
             fi
           done
 
-      - name: Debug environment variables
+      - name: Verify e2e service is ready
         run: |
-          echo "Frontend URL: ${{ secrets.VITE_FRONTEND_URL }}"
-          echo "Backend URL: ${{ secrets.VITE_BACKEND_URL }}"
+          echo "Verifying e2e service is up..."
+          for i in {1..10}; do
+            http_response=$(curl --write-out "%{http_code}" --silent --output /dev/null http://localhost:8000)
+            if [ "$http_response" -eq 200 ]; then
+              echo "e2e service is ready (status code: $http_response)"
+              break
+            else
+              echo "e2e service not ready yet (status code: $http_response)... retrying in 5s"
+              sleep 5
+            fi
+          done
 
       - name: Move to backend directory
         run: cd backend
@@ -107,5 +135,5 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: screenshots
-          path: frontend/screenshots
+          name: e2e-screenshots
+          path: e2e/screenshots

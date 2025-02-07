@@ -6,10 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "test": "vitest",
     "coverage": "vitest run --coverage",
-    "test": "npm run test:integration-unit && npm run test:e2e",
-    "test:integration-unit": "vitest",
-    "test:e2e": "npx playwright test",
     "lint": "eslint .",
     "preview": "vite preview",
     "codegen": "graphql-codegen -w --config codegen.ts"
@@ -41,7 +39,6 @@
     "@graphql-codegen/typescript-operations": "^4.2.0",
     "@graphql-codegen/typescript-react-apollo": "^4.3.0",
     "@parcel/watcher": "^2.4.1",
-    "@playwright/test": "^1.50.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
@@ -63,5 +60,8 @@
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1",
     "vitest": "^3.0.5"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-arm64-musl": "^4.34.4"
   }
 }

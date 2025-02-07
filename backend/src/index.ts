@@ -70,6 +70,15 @@ async function startApolloServer() {
   app.use("/uploads", express.static(staticFolderPath));
 
   app.use(
+    cors({
+      origin: "*",
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+      credentials: true,
+    })
+  );
+
+  app.use(
     "/graphql",
     cors<cors.CorsRequest>(),
     express.json({ limit: "3mb" }),
@@ -100,9 +109,6 @@ async function startApolloServer() {
   app.get("/health", (req, res) => {
     res.status(200).send("Okay!");
   });
-
-  await new Promise<void>((resolve) => httpServer.listen({ port }, resolve));
-  console.log(`🚀 Le serveur est prêt à http://localhost:${port}/graphql`);
 
   await new Promise<void>((resolve) => httpServer.listen({ port }, resolve));
   console.log(`🚀 Le serveur est prêt à http://localhost:${port}/graphql`);

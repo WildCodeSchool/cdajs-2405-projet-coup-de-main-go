@@ -1,12 +1,10 @@
 import { test, expect } from "@playwright/test";
-import dotenv from "dotenv";
-dotenv.config();
 
 test.describe("Login User", () => {
   test("should login successfully and display the user name in the header", async ({
     page,
   }) => {
-    const frontendUrl = process.env.VITE_FRONTEND_URL;
+    const frontendUrl = process.env.E2E_FRONTEND_URL;
 
     if (!frontendUrl) {
       throw new Error("VITE_FRONTEND_URL is not defined in the .env file");
@@ -54,7 +52,7 @@ test.describe("Login User", () => {
   test("should display an error message when the login fails", async ({
     page,
   }) => {
-    const frontendUrl = process.env.VITE_FRONTEND_URL;
+    const frontendUrl = process.env.E2E_FRONTEND_URL;
 
     if (!frontendUrl) {
       throw new Error("VITE_FRONTEND_URL is not defined in the .env file");
