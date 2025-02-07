@@ -17,6 +17,7 @@ import {
 } from "../../../generated/graphql-types";
 
 import { useAuth } from "../../../contexts/AuthContext";
+import GetStyles from "../styles/GetStyles";
 
 export interface LoginFormData {
     email: string;
@@ -25,29 +26,26 @@ export interface LoginFormData {
 
 interface LoginProps {
     justRegistered: boolean;
+    passwordChanged: boolean;
     setJustRegistered: (justRegistered: boolean) => void;
+    setPasswordChanged: (passwordChanged: boolean) => void;
     goToRegister: () => void;
+    resetPassword: () => void;
 }
 
 function Login({
     justRegistered,
+    passwordChanged,
     setJustRegistered,
+    setPasswordChanged,
     goToRegister,
+    resetPassword,
 }: LoginProps) {
     const { login } = useAuth();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-    let sharedFormStyles: React.CSSProperties = {
-        boxSizing: "border-box",
-        display: "flex",
-        flexDirection: "column",
-        gap: "20px",
-        padding: "20px",
-        overflow: "auto",
-    };
-    let formStyles = {};
-    let titleAlign = {};
-    let buttonStyles = {};
+    const { formStyles, titleAlign, buttonStyles, sharedFormStyles } =
+        GetStyles();
 
     const [sendLoginQuery, { loading, error }] = useLoginUserLazyQuery({
         onCompleted: (data: LoginUserQuery) => {
@@ -60,33 +58,11 @@ function Login({
 
     const onLoginFormSubmitted = (formData: LoginFormData) => {
         setJustRegistered(false);
+        setPasswordChanged(false);
         sendLoginQuery({
             variables: formData,
         });
     };
-
-    if (isMobile) {
-        formStyles = {
-            width: "100%",
-        };
-        titleAlign = { textAlign: "center" };
-        buttonStyles = {
-            width: "100%",
-            textAlign: "center",
-            borderRadius: "10px",
-        };
-    } else {
-        formStyles = {
-            height: "100%",
-            margin: "auto",
-            width: "100%",
-        };
-        buttonStyles = {
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-end",
-        };
-    }
 
     return (
         <form
@@ -144,10 +120,26 @@ function Login({
                     </>
                 )}
             </Stack>
+            <Typography
+                onClick={() => resetPassword()}
+                sx={{
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                    textDecoration: "underline",
+                    alignSelf: isMobile ? "center" : "flex-end",
+                }}
+            >
+                Mot de passe oublié ?
+            </Typography>
             {error && <Alert severity="error">{error.message}</Alert>}
             {loading && <CircularProgress />}
-            {justRegistered && (
+            {justRegistered && !passwordChanged && (
                 <Alert severity="success">Inscription réussi !</Alert>
+            )}
+            {passwordChanged && (
+                <Alert severity="success">
+                    Le mot de passe a bien été renitialisé !
+                </Alert>
             )}
         </form>
     );

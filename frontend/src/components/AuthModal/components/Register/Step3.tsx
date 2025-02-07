@@ -11,6 +11,7 @@ import { UseFormRegister } from "react-hook-form";
 
 import { RegisterFormData } from "../Register";
 import { Skill } from "../../../../types";
+import GetStyles from "../../styles/GetStyles";
 
 interface Step2Props {
     skills: Skill[];
@@ -21,23 +22,7 @@ interface Step2Props {
 function Step3({ skills, setStep, register }: Step2Props) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-    let titleAlign = {};
-    let buttonStyles = {};
-
-    if (isMobile) {
-        titleAlign = { textAlign: "center" };
-        buttonStyles = {
-            width: "100%",
-            textAlign: "center",
-            borderRadius: "10px",
-        };
-    } else {
-        buttonStyles = {
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-end",
-        };
-    }
+    const { titleAlign, buttonStyles } = GetStyles();
 
     return (
         <>

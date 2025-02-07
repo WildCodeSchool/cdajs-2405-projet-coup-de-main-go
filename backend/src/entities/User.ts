@@ -129,6 +129,18 @@ export class User extends BaseEntity {
     @Field(() => [Skill])
     skills?: Skill[];
 
+    @Column({ nullable: true })
+    @Field({ nullable: true })
+    otp?: string;
+
+    @Column({ nullable: true })
+    @Field({ nullable: true })
+    otpCreatedAt?: Date;
+
+    @Column()
+    @Field()
+    otpAttempts: number = 0;
+
     constructor(
         firstName: string,
         lastName: string,
