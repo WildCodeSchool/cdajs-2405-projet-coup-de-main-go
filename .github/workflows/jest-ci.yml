@@ -17,7 +17,7 @@ jobs:
       - name: Start services with Docker Compose
         run: |
           echo "Starting services with Docker Compose dev..."
-          docker compose -f docker-compose.dev.yml up --build
+          docker compose -f docker-compose.dev.yml up --build -d
         env:
           DB_USER: ${{ secrets.POSTGRES_USER }}
           DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
@@ -80,3 +80,7 @@ jobs:
           VITE_FRONTEND_URL: ${{ secrets.VITE_FRONTEND_URL }}
           VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
           VITE_DOMAIN_BACKEND_URL: ${{ secrets.VITE_DOMAIN_BACKEND_URL }}
+
+      - name: Show Docker logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.dev.yml logs
