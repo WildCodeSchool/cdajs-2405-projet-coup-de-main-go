@@ -76,9 +76,9 @@ export default function DistanceFilter({
             color: "common.white",
             "& .MuiSlider-thumb": {
               color: "common.white",
-              border: "2px solid common.white", // Ensure the border is white
+              border: "2px solid common.white",
               "&:focus, &:hover, &.Mui-focusVisible": {
-                boxShadow: "none", // Remove the box shadow on focus
+                boxShadow: "none",
               },
             },
           }}
