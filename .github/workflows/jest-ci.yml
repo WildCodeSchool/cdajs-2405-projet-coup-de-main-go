@@ -58,13 +58,10 @@ jobs:
             fi
           done
 
-      - name: Move to backend directory
-        run: cd backend
-
       - name: Run Database Seeds
         run: |
           echo "Starting seed..."
-          npm run seed &
+          docker exec $(docker ps -qf "name=backend") npm run seed
           echo "Waiting for 10 seconds to let the seed start..."
           sleep 10
         working-directory: backend
@@ -76,7 +73,9 @@ jobs:
           DB_DATABASE: ${{ secrets.POSTGRES_DB }}
 
       - name: Run the tests
-        run: npm run test
+        run: |
+          echo "Running tests in backend container..."
+          docker exec $(docker ps -qf "name=backend") npm run test
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           VITE_FRONTEND_URL: ${{ secrets.VITE_FRONTEND_URL }}
