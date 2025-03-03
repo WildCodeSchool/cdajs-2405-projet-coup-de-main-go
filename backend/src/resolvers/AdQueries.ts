@@ -64,6 +64,7 @@ export class AdQueries {
     // Apply distance filter if maxDistance and user coordinates are provided
     if (
       maxDistance !== undefined &&
+      maxDistance > 0 &&
       userLatitude !== undefined &&
       userLongitude !== undefined
     ) {
