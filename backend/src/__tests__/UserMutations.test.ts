@@ -6,7 +6,7 @@ import * as argon2 from "argon2";
 import { faker } from "@faker-js/faker";
 import { mockTypeOrm } from "../tests_mockTypeorm-config";
 
-import { sendEmailWithBrevo } from "backend/src/utils/sendEmailWithBrevo";
+import { sendEmailWithBrevo } from "../utils/sendEmailWithBrevo";
 import { User } from "../entities/User";
 import { UserMutations } from "../resolvers/UserMutations";
 
