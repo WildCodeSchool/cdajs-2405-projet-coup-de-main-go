@@ -2,7 +2,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     restart: unless-stopped
     environment:
       APOLLO_PORT: ${APOLLO_PORT}
@@ -22,7 +22,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     restart: unless-stopped
     environment:
       VITE_BACKEND_URL: ${VITE_BACKEND_URL}
@@ -43,9 +43,9 @@ services:
   #   environment:
   #     VITE_BACKEND_URL: ${E2E_BACKEND_URL}
   #     VITE_DOMAIN_BACKEND_URL: ${E2E_DOMAIN_BACKEND_URL}
-  #     E2E_FRONTEND_URL: ${E2E_FRONTEND_URL}
+  #     VITE_FRONTEND_URL: ${E2E_FRONTEND_URL}
   #   volumes:
-  #     - ./frontend:/webapp
+  #     - ./e2e:/e2e
   #   depends_on:
   #     - backend
   #   command:

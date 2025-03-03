@@ -1,13 +1,13 @@
 FROM node:18-alpine 
 
-WORKDIR /webapp
+WORKDIR /app
 
 COPY package*.json package-lock.json ./
 
 RUN npm install
 
+RUN apk add --no-cache curl
+
 COPY . .
 
-RUN npx playwright install
-
-CMD npm run dev -- --host
+CMD npx ts-node ./src/index.ts

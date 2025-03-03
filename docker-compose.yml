@@ -3,6 +3,11 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.deploy
+    healthcheck:
+      test: 'curl --fail --silent --show-error http://localhost:4000/health || exit 1'
+      interval: 5s
+      timeout: 5s
+      retries: 10
     environment:
       CI: true
       APOLLO_PORT: ${APOLLO_PORT}
@@ -17,14 +22,19 @@ services:
     volumes:
       - ./backend:/app
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile.deploy
+    healthcheck:
+      test: "curl --fail --request GET --url 'http://localhost:5173' || exit 1"
+      interval: 5s
+      timeout: 5s
+      retries: 10
     environment:
-      CI: true
       VITE_BACKEND_URL: ${VITE_BACKEND_URL}
       VITE_DOMAIN_BACKEND_URL: ${VITE_DOMAIN_BACKEND_URL}
       VITE_POLL_CHAT_INTERVAL: ${VITE_POLL_CHAT_INTERVAL}
@@ -34,28 +44,16 @@ services:
       - ./frontend:/webapp
       - node_modules:/webapp/node_modules
     depends_on:
-      - backend
-
-  # e2e:
-  #   build:
-  #     context: ./e2e 
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     CI: true
-  #     VITE_BACKEND_URL: ${E2E_BACKEND_URL}
-  #     VITE_DOMAIN_BACKEND_URL: ${E2E_DOMAIN_BACKEND_URL}
-  #     E2E_FRONTEND_URL: ${E2E_FRONTEND_URL}
-  #   volumes:
-  #     - ./e2e:/e2e
-  #   depends_on:
-  #     - backend
-  #   command:
-  #     sh -c "sleep 30 && npx playwright test && tail -f /dev/null"
-  #   ports:
-  #     - 8000:8000
+      backend:
+        condition: service_healthy
 
   postgres:
     image: postgres:alpine
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d postgres -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
     shm_size: 128mb
     environment:
       POSTGRES_USER: ${DB_USER}
