@@ -17,7 +17,7 @@ jobs:
       - name: Start services with Docker Compose
         run: |
           echo "Starting services with Docker Compose dev..."
-          docker compose -f docker-compose.yml up --build
+          docker compose -f docker-compose.dev.yml up --build
         env:
           DB_USER: ${{ secrets.POSTGRES_USER }}
           DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
