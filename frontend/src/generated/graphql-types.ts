@@ -280,8 +280,8 @@ export type Query = {
   getReviewsByUserHelperId?: Maybe<Array<Review>>;
   getTransactionsHistoryByUser?: Maybe<Array<Transaction>>;
   getUserByEmail: User;
-  getUserOverviewById: UserOverview;
   getUserById: User;
+  getUserOverviewById: UserOverview;
   login: LoginResponse;
 };
 
@@ -309,10 +309,13 @@ export type QueryGetAllAdsArgs = {
   limit?: Scalars['Int']['input'];
   mangoAmountMax?: InputMaybe<Scalars['Int']['input']>;
   mangoAmountMin?: InputMaybe<Scalars['Int']['input']>;
+  maxDistance?: InputMaybe<Scalars['Float']['input']>;
   orderBy?: Scalars['String']['input'];
   page?: Scalars['Int']['input'];
   skillId?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Status>;
+  userLatitude?: InputMaybe<Scalars['Float']['input']>;
+  userLongitude?: InputMaybe<Scalars['Float']['input']>;
 };
 
 
@@ -352,12 +355,12 @@ export type QueryGetUserByEmailArgs = {
 };
 
 
-export type QueryGetUserOverviewByIdArgs = {
+export type QueryGetUserByIdArgs = {
   id: Scalars['String']['input'];
 };
 
 
-export type QueryGetUserByIdArgs = {
+export type QueryGetUserOverviewByIdArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -432,6 +435,8 @@ export type User = {
   gender?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   lastName: Scalars['String']['output'];
+  latitude?: Maybe<Scalars['Float']['output']>;
+  longitude?: Maybe<Scalars['Float']['output']>;
   mangoBalance: Scalars['Float']['output'];
   messages: Array<Message>;
   otp?: Maybe<Scalars['String']['output']>;
@@ -479,6 +484,9 @@ export type GetAllAdsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Status>;
+  maxDistance?: InputMaybe<Scalars['Float']['input']>;
+  userLatitude?: InputMaybe<Scalars['Float']['input']>;
+  userLongitude?: InputMaybe<Scalars['Float']['input']>;
 }>;
 
 
@@ -639,7 +647,7 @@ export type GetUserByEmailQueryVariables = Exact<{
 }>;
 
 
-export type GetUserByEmailQuery = { __typename?: 'Query', getUserByEmail: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, city: string, otp?: string | null, picture?: string | null, biography?: string | null, skills: Array<{ __typename?: 'Skill', id: string, name: string }> } };
+export type GetUserByEmailQuery = { __typename?: 'Query', getUserByEmail: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, city: string, otp?: string | null, skills: Array<{ __typename?: 'Skill', id: string, name: string }> } };
 
 export type GetMangoBalanceByUserIdQueryVariables = Exact<{
   id: Scalars['String']['input'];
@@ -665,6 +673,13 @@ export type CredentialsVerificationQueryVariables = Exact<{
 
 export type CredentialsVerificationQuery = { __typename?: 'Query', credentialsVerification: boolean };
 
+export type GetUserByIdQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type GetUserByIdQuery = { __typename?: 'Query', getUserById: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, biography?: string | null, gender?: string | null, dateOfBirth?: any | null, picture?: string | null, address: string, zipCode: string, city: string, latitude?: number | null, longitude?: number | null, mangoBalance: number, skills: Array<{ __typename?: 'Skill', id: string, name: string }> } };
+
 export type GetUserOverviewByIdQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
@@ -686,13 +701,6 @@ export type VerifyOtpMutationVariables = Exact<{
 
 
 export type VerifyOtpMutation = { __typename?: 'Mutation', verifyOTP: boolean };
-
-export type GetUserByIdQueryVariables = Exact<{
-  id: Scalars['String']['input'];
-}>;
-
-
-export type GetUserByIdQuery = { __typename?: 'Query', getUserById: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, biography?: string | null, gender?: string | null, dateOfBirth?: any | null, picture?: string | null, address: string, zipCode: string, city: string, mangoBalance: number, skills: Array<{ __typename?: 'Skill', id: string, name: string }> } };
 
 
 export const UpdateAdStatusDocument = gql`
@@ -769,7 +777,7 @@ export type CreateAdMutationHookResult = ReturnType<typeof useCreateAdMutation>;
 export type CreateAdMutationResult = Apollo.MutationResult<CreateAdMutation>;
 export type CreateAdMutationOptions = Apollo.BaseMutationOptions<CreateAdMutation, CreateAdMutationVariables>;
 export const GetAllAdsDocument = gql`
-    query GetAllAds($skillId: String, $mangoAmountMin: Int, $mangoAmountMax: Int, $durationMin: Int, $durationMax: Int, $page: Int, $limit: Int, $orderBy: String, $status: Status) {
+    query GetAllAds($skillId: String, $mangoAmountMin: Int, $mangoAmountMax: Int, $durationMin: Int, $durationMax: Int, $page: Int, $limit: Int, $orderBy: String, $status: Status, $maxDistance: Float, $userLatitude: Float, $userLongitude: Float) {
   getAllAds(
     skillId: $skillId
     mangoAmountMin: $mangoAmountMin
@@ -780,6 +788,9 @@ export const GetAllAdsDocument = gql`
     limit: $limit
     orderBy: $orderBy
     status: $status
+    maxDistance: $maxDistance
+    userLatitude: $userLatitude
+    userLongitude: $userLongitude
   ) {
     id
     title
@@ -822,6 +833,9 @@ export const GetAllAdsDocument = gql`
  *      limit: // value for 'limit'
  *      orderBy: // value for 'orderBy'
  *      status: // value for 'status'
+ *      maxDistance: // value for 'maxDistance'
+ *      userLatitude: // value for 'userLatitude'
+ *      userLongitude: // value for 'userLongitude'
  *   },
  * });
  */
@@ -1647,8 +1661,6 @@ export const GetUserByEmailDocument = gql`
     firstName
     lastName
     city
-    picture
-    biography
     skills {
       id
       name
@@ -1807,6 +1819,63 @@ export type CredentialsVerificationQueryHookResult = ReturnType<typeof useCreden
 export type CredentialsVerificationLazyQueryHookResult = ReturnType<typeof useCredentialsVerificationLazyQuery>;
 export type CredentialsVerificationSuspenseQueryHookResult = ReturnType<typeof useCredentialsVerificationSuspenseQuery>;
 export type CredentialsVerificationQueryResult = Apollo.QueryResult<CredentialsVerificationQuery, CredentialsVerificationQueryVariables>;
+export const GetUserByIdDocument = gql`
+    query GetUserById($id: String!) {
+  getUserById(id: $id) {
+    id
+    firstName
+    lastName
+    email
+    biography
+    gender
+    dateOfBirth
+    picture
+    address
+    zipCode
+    city
+    latitude
+    longitude
+    mangoBalance
+    skills {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUserByIdQuery__
+ *
+ * To run a query within a React component, call `useGetUserByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetUserByIdQuery(baseOptions: Apollo.QueryHookOptions<GetUserByIdQuery, GetUserByIdQueryVariables> & ({ variables: GetUserByIdQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserByIdQuery, GetUserByIdQueryVariables>(GetUserByIdDocument, options);
+      }
+export function useGetUserByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserByIdQuery, GetUserByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserByIdQuery, GetUserByIdQueryVariables>(GetUserByIdDocument, options);
+        }
+export function useGetUserByIdSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUserByIdQuery, GetUserByIdQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserByIdQuery, GetUserByIdQueryVariables>(GetUserByIdDocument, options);
+        }
+export type GetUserByIdQueryHookResult = ReturnType<typeof useGetUserByIdQuery>;
+export type GetUserByIdLazyQueryHookResult = ReturnType<typeof useGetUserByIdLazyQuery>;
+export type GetUserByIdSuspenseQueryHookResult = ReturnType<typeof useGetUserByIdSuspenseQuery>;
+export type GetUserByIdQueryResult = Apollo.QueryResult<GetUserByIdQuery, GetUserByIdQueryVariables>;
 export const GetUserOverviewByIdDocument = gql`
     query GetUserOverviewById($id: String!) {
   getUserOverviewById(id: $id) {
@@ -1918,58 +1987,3 @@ export function useVerifyOtpMutation(baseOptions?: Apollo.MutationHookOptions<Ve
 export type VerifyOtpMutationHookResult = ReturnType<typeof useVerifyOtpMutation>;
 export type VerifyOtpMutationResult = Apollo.MutationResult<VerifyOtpMutation>;
 export type VerifyOtpMutationOptions = Apollo.BaseMutationOptions<VerifyOtpMutation, VerifyOtpMutationVariables>;
-export const GetUserByIdDocument = gql`
-    query GetUserById($id: String!) {
-  getUserById(id: $id) {
-    id
-    firstName
-    lastName
-    email
-    biography
-    gender
-    dateOfBirth
-    picture
-    address
-    zipCode
-    city
-    mangoBalance
-    skills {
-      id
-      name
-    }
-  }
-}
-    `;
-
-/**
- * __useGetUserByIdQuery__
- *
- * To run a query within a React component, call `useGetUserByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUserByIdQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useGetUserByIdQuery(baseOptions: Apollo.QueryHookOptions<GetUserByIdQuery, GetUserByIdQueryVariables> & ({ variables: GetUserByIdQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUserByIdQuery, GetUserByIdQueryVariables>(GetUserByIdDocument, options);
-      }
-export function useGetUserByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserByIdQuery, GetUserByIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUserByIdQuery, GetUserByIdQueryVariables>(GetUserByIdDocument, options);
-        }
-export function useGetUserByIdSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUserByIdQuery, GetUserByIdQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetUserByIdQuery, GetUserByIdQueryVariables>(GetUserByIdDocument, options);
-        }
-export type GetUserByIdQueryHookResult = ReturnType<typeof useGetUserByIdQuery>;
-export type GetUserByIdLazyQueryHookResult = ReturnType<typeof useGetUserByIdLazyQuery>;
-export type GetUserByIdSuspenseQueryHookResult = ReturnType<typeof useGetUserByIdSuspenseQuery>;
-export type GetUserByIdQueryResult = Apollo.QueryResult<GetUserByIdQuery, GetUserByIdQueryVariables>;

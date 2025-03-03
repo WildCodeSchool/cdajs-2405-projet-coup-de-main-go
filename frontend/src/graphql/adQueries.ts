@@ -11,6 +11,9 @@ export const GET_ALL_ADS_QUERY = gql`
     $limit: Int
     $orderBy: String
     $status: Status
+    $maxDistance: Float
+    $userLatitude: Float
+    $userLongitude: Float
   ) {
     getAllAds(
       skillId: $skillId
@@ -22,6 +25,9 @@ export const GET_ALL_ADS_QUERY = gql`
       limit: $limit
       orderBy: $orderBy
       status: $status
+      maxDistance: $maxDistance
+      userLatitude: $userLatitude
+      userLongitude: $userLongitude
     ) {
       id
       title

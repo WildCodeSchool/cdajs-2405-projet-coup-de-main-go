@@ -50,6 +50,8 @@ export type User = {
   picture: string | null;
   skills?: Skill[];
   createdAt?: Date;
+  latitude: number;
+  longitude: number;
 };
 
 export type Ad = {

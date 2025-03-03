@@ -13,12 +13,18 @@ interface FilteredAdsProps {
   skillId?: string | null;
   durationMin?: number | null;
   durationMax?: number | null;
+  maxDistance: number;
+  userLatitude: number | null | undefined;
+  userLongitude: number | null | undefined;
 }
 
 export default function FilteredAds({
   skillId,
   durationMin,
   durationMax,
+  maxDistance,
+  userLatitude,
+  userLongitude,
 }: FilteredAdsProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const {
@@ -31,6 +37,9 @@ export default function FilteredAds({
       durationMin: durationMin ?? 0,
       durationMax: durationMax ?? 1440,
       status: Status.Posted,
+      maxDistance: maxDistance,
+      userLatitude: userLatitude,
+      userLongitude: userLongitude,
     },
   });
 
@@ -50,7 +59,8 @@ export default function FilteredAds({
             justifyContent: "flex-start",
             alignItems: "center",
             flexWrap: "wrap",
-            my: 1,
+            mt: 1,
+            mb: 6,
           }}
         >
           {adCards.map((ad) => (
