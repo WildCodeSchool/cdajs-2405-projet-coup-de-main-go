@@ -50,7 +50,7 @@ export default function FilteredAds({
             justifyContent: "flex-start",
             alignItems: "center",
             flexWrap: "wrap",
-            my: 6,
+            my: 1,
           }}
         >
           {adCards.map((ad) => (

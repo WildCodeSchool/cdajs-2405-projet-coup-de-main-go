@@ -15,6 +15,7 @@ import SkillFilter from "../components/Catalog/SkillFilter";
 import { getDurationValues } from "../utils/duration";
 import DurationFilter from "../components/Catalog/DurationFilter";
 import theme from "../mui";
+import DistanceFilter from "../components/Catalog/DistanceFilter";
 
 export default function Catalog() {
   const location = useLocation();
@@ -27,6 +28,7 @@ export default function Catalog() {
   } | null>(location.state?.skill || null);
   const [selectedDurations, setSelectedDurations] = useState<string[]>([]);
   const { durationMin, durationMax } = getDurationValues(selectedDurations);
+  const [selectedMaxDistance, setSelectedMaxDistance] = useState<number>(0);
 
   // Fetch SkillFilter options
   const {
@@ -49,7 +51,7 @@ export default function Catalog() {
         direction={isMobile ? "column" : "row"}
         sx={{
           justifyContent: isMobile ? "center" : "flex-start",
-          alignItems: "center",
+          alignItems: "flex-start",
         }}
       >
         <SkillFilter
@@ -60,6 +62,10 @@ export default function Catalog() {
         <DurationFilter
           selectedDurations={selectedDurations}
           setSelectedDurations={setSelectedDurations}
+        />
+        <DistanceFilter
+          selectedMaxDistance={selectedMaxDistance}
+          setSelectedMaxDistance={setSelectedMaxDistance}
         />
       </Stack>
 
