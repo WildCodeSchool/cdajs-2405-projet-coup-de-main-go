@@ -1,5 +1,13 @@
-import { Box, Button, FormControl, Slider, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  IconButton,
+  Slider,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
+import DeleteSharpIcon from "@mui/icons-material/DeleteSharp";
 
 type DistanceFilterProps = {
   selectedMaxDistance: number;
@@ -11,6 +19,10 @@ export default function DistanceFilter({
   setSelectedMaxDistance,
 }: DistanceFilterProps) {
   const [showSlider, setShowSlider] = useState(false);
+
+  const isMaxDistanceSelected = () => {
+    return selectedMaxDistance != 0;
+  };
 
   return (
     <FormControl sx={{ m: 1, width: 250 }} size="small">
@@ -42,7 +54,9 @@ export default function DistanceFilter({
           visibility: showSlider ? "visible" : "hidden",
           backgroundColor: "secondary.main",
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "space-between",
+          paddingRight: "15px",
+          paddingLeft: "60px",
           alignItems: "center",
         }}
       >
@@ -59,7 +73,6 @@ export default function DistanceFilter({
           valueLabelDisplay="auto"
           valueLabelFormat={(value) => `${value} km`}
           sx={{
-            width: "70%",
             color: "common.white",
             "& .MuiSlider-thumb": {
               color: "common.white",
@@ -70,6 +83,16 @@ export default function DistanceFilter({
             },
           }}
         />
+        <IconButton onClick={() => setSelectedMaxDistance(0)}>
+          <DeleteSharpIcon
+            sx={{
+              color: isMaxDistanceSelected()
+                ? "common.white"
+                : "secondary.main",
+              marginLeft: "15px",
+            }}
+          />
+        </IconButton>
       </Box>
     </FormControl>
   );
