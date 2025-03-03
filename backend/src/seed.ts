@@ -5,7 +5,6 @@ import { Chat } from "./entities/Chat";
 import { Message } from "./entities/Message";
 import { Review } from "./entities/Review";
 import { Skill } from "./entities/Skill";
-import { Transaction } from "./entities/Transaction";
 import { User } from "./entities/User";
 import { Status } from "./entities/Ad";
 

@@ -8,4 +8,6 @@ RUN npm install
 
 COPY . .
 
+RUN npx playwright install
+
 CMD npm run dev -- --host

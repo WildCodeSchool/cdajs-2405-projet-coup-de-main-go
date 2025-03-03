@@ -2,7 +2,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     restart: unless-stopped
     environment:
       APOLLO_PORT: ${APOLLO_PORT}
@@ -22,7 +22,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     restart: unless-stopped
     environment:
       VITE_BACKEND_URL: ${VITE_BACKEND_URL}
