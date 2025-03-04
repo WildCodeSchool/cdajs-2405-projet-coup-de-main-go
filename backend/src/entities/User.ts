@@ -1,12 +1,12 @@
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    BaseEntity,
-    BeforeInsert,
-    OneToMany,
-    ManyToMany,
-    JoinTable,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  BeforeInsert,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { Field, ObjectType, ID } from "type-graphql";
 import { IsEmail, Length, Matches } from "class-validator";
@@ -20,150 +20,158 @@ import { Review } from "./Review";
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    @Field((type) => ID)
-    id?: string;
+  @PrimaryGeneratedColumn()
+  @Field((type) => ID)
+  id?: string;
 
-    @Length(1, 25, {
-        message: "Le prénom doit contenir entre 1 et 25 caractères.",
-    })
-    @Column({ length: 25 })
-    @Field()
-    firstName: string = "";
+  @Length(1, 25, {
+    message: "Le prénom doit contenir entre 1 et 25 caractères.",
+  })
+  @Column({ length: 25 })
+  @Field()
+  firstName: string = "";
 
-    @Length(1, 25, {
-        message: "Le nom doit contenir entre 1 et 25 caractères.",
-    })
-    @Column({ length: 25 })
-    @Field()
-    lastName: string = "";
+  @Length(1, 25, {
+    message: "Le nom doit contenir entre 1 et 25 caractères.",
+  })
+  @Column({ length: 25 })
+  @Field()
+  lastName: string = "";
 
-    @Column({ unique: true })
-    @Field()
-    @IsEmail()
-    email: string = "";
+  @Column({ unique: true })
+  @Field()
+  @IsEmail()
+  email: string = "";
 
-    @Column({ length: 100 })
-    @Field()
-    password: string = "";
+  @Column({ length: 100 })
+  @Field()
+  password: string = "";
 
-    @Column({ nullable: true, length: 255 })
-    @Field({ nullable: true })
-    biography?: string;
+  @Column({ nullable: true, length: 255 })
+  @Field({ nullable: true })
+  biography?: string;
 
-    @Column({ nullable: true })
-    @Field({ nullable: true })
-    gender?: string;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  gender?: string;
 
-    @Column({ nullable: true })
-    @Field({ nullable: true })
-    dateOfBirth?: Date;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  dateOfBirth?: Date;
 
-    @Column({ nullable: true })
-    @Field({ nullable: true })
-    picture?: string;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  picture?: string;
 
-    @Length(1, 255, {
-        message: "L'adresse doit contenir entre 1 et 255 caractères.",
-    })
-    @Column({ length: 255 })
-    @Field()
-    address: string = "";
+  @Length(1, 255, {
+    message: "L'adresse doit contenir entre 1 et 255 caractères.",
+  })
+  @Column({ length: 255 })
+  @Field()
+  address: string = "";
 
-    @Length(5, 5, {
-        message: "Le code postal doit contenir 5 caractères.",
-    })
-    @Column({ length: 5 })
-    @Field()
-    zipCode: string = "";
+  @Length(5, 5, {
+    message: "Le code postal doit contenir 5 caractères.",
+  })
+  @Column({ length: 5 })
+  @Field()
+  zipCode: string = "";
 
-    @Length(1, 100, {
-        message: "La ville doit contenir entre 1 et 100 caractères.",
-    })
-    @Column({ length: 100 })
-    @Field()
-    city: string = "";
+  @Length(1, 100, {
+    message: "La ville doit contenir entre 1 et 100 caractères.",
+  })
+  @Column({ length: 100 })
+  @Field()
+  city: string = "";
 
-    @Column()
-    @Field()
-    mangoBalance: number = 6;
+  @Column({ type: "double precision", nullable: true })
+  @Field({ nullable: true })
+  latitude?: number;
 
-    @Column()
-    @Field()
-    createdAt?: Date;
+  @Column({ type: "double precision", nullable: true })
+  @Field({ nullable: true })
+  longitude?: number;
 
-    @OneToMany(() => Chat, (chat) => chat.userHelper)
-    @Field((type) => [Chat])
-    chatsAsHelper?: Promise<Chat[]>;
+  @Column()
+  @Field()
+  mangoBalance: number = 6;
 
-    @OneToMany(() => Chat, (chat) => chat.userRequester)
-    @Field((type) => [Chat])
-    chatsAsRequester?: Promise<Chat[]>;
+  @Column()
+  @Field()
+  createdAt?: Date;
 
-    @OneToMany(() => Transaction, (transaction) => transaction.userHelper)
-    @Field((type) => [Transaction])
-    transactionsAsHelper?: Promise<Transaction[]>;
+  @OneToMany(() => Chat, (chat) => chat.userHelper)
+  @Field((type) => [Chat])
+  chatsAsHelper?: Promise<Chat[]>;
 
-    @OneToMany(() => Transaction, (transaction) => transaction.userRequester)
-    @Field((type) => [Transaction])
-    transactionsAsRequester?: Promise<Transaction[]>;
+  @OneToMany(() => Chat, (chat) => chat.userRequester)
+  @Field((type) => [Chat])
+  chatsAsRequester?: Promise<Chat[]>;
 
-    @OneToMany(() => Review, (review) => review.userRequester)
-    @Field((type) => [Review])
-    reviewsAsRequester?: Promise<Review[]>;
+  @OneToMany(() => Transaction, (transaction) => transaction.userHelper)
+  @Field((type) => [Transaction])
+  transactionsAsHelper?: Promise<Transaction[]>;
 
-    @OneToMany(() => Review, (review) => review.userHelper)
-    @Field((type) => [Review])
-    reviewsAsHelper?: Promise<Review[]>;
+  @OneToMany(() => Transaction, (transaction) => transaction.userRequester)
+  @Field((type) => [Transaction])
+  transactionsAsRequester?: Promise<Transaction[]>;
 
-    @OneToMany(() => Message, (message) => message.author)
-    @Field((type) => [Message])
-    messages?: Promise<Message[]>;
+  @OneToMany(() => Review, (review) => review.userRequester)
+  @Field((type) => [Review])
+  reviewsAsRequester?: Promise<Review[]>;
 
-    @OneToMany(() => Ad, (ad) => ad.userRequester)
-    @Field((type) => [Ad])
-    ads?: Promise<Ad[]>;
+  @OneToMany(() => Review, (review) => review.userHelper)
+  @Field((type) => [Review])
+  reviewsAsHelper?: Promise<Review[]>;
 
-    @ManyToMany(() => Skill)
-    @JoinTable()
-    @Field(() => [Skill])
-    skills?: Skill[];
+  @OneToMany(() => Message, (message) => message.author)
+  @Field((type) => [Message])
+  messages?: Promise<Message[]>;
 
-    @Column({ nullable: true })
-    @Field({ nullable: true })
-    otp?: string;
+  @OneToMany(() => Ad, (ad) => ad.userRequester)
+  @Field((type) => [Ad])
+  ads?: Promise<Ad[]>;
 
-    @Column({ nullable: true })
-    @Field({ nullable: true })
-    otpCreatedAt?: Date;
+  @ManyToMany(() => Skill)
+  @JoinTable()
+  @Field(() => [Skill])
+  skills?: Skill[];
 
-    @Column()
-    @Field()
-    otpAttempts: number = 0;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  otp?: string;
 
-    constructor(
-        firstName: string,
-        lastName: string,
-        email: string,
-        password: string,
-        picture: string,
-        address: string,
-        zipCode: string,
-        city: string
-    ) {
-        super();
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.picture = picture;
-        this.address = address;
-        this.zipCode = zipCode;
-        this.city = city;
-    }
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  otpCreatedAt?: Date;
 
-    @BeforeInsert()
-    onBeforeInsert() {
-        this.createdAt = new Date();
-    }
+  @Column()
+  @Field()
+  otpAttempts: number = 0;
+
+  constructor(
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+    picture: string,
+    address: string,
+    zipCode: string,
+    city: string
+  ) {
+    super();
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+    this.password = password;
+    this.picture = picture;
+    this.address = address;
+    this.zipCode = zipCode;
+    this.city = city;
+  }
+
+  @BeforeInsert()
+  onBeforeInsert() {
+    this.createdAt = new Date();
+  }
 }

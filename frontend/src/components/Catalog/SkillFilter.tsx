@@ -1,5 +1,6 @@
-import { FormControl, MenuItem, Select } from "@mui/material";
+import { FormControl, MenuItem, Select, useMediaQuery } from "@mui/material";
 import { Skill } from "../../types";
+import theme from "../../mui";
 
 type SkillSelectProps = {
   skills: Skill[];
@@ -12,8 +13,13 @@ export default function SkillFilter({
   selectedSkill,
   setSelectedSkill,
 }: SkillSelectProps) {
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
-    <FormControl sx={{ m: 1, width: 250 }} size="small">
+    <FormControl
+      sx={{ m: 1, width: 250, paddingBottom: isMobile ? 0 : 8 }}
+      size="small"
+    >
       <Select
         displayEmpty
         value={selectedSkill?.id || ""}

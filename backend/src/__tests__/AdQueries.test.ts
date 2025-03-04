@@ -330,6 +330,9 @@ describe("getAllAds", () => {
       undefined, //durationMin
       undefined, //durationMax
       undefined, //status
+      undefined, //maxDistance
+      undefined, //userLatitude
+      undefined, // userLongitude
       page //page
     );
     expect(retrievedAds.length).toBe(15);
@@ -362,6 +365,9 @@ describe("getAllAds", () => {
       undefined, //durationMin
       undefined, //durationMax
       undefined, //status
+      undefined, //maxDistance
+      undefined, //userLatitude
+      undefined, // userLongitude
       undefined, //page
       limit //limit
     );
