@@ -64,7 +64,6 @@ export default function DistanceFilter({
           value={selectedMaxDistance}
           onChange={(_, newValue: number | number[]) => {
             setSelectedMaxDistance(newValue as number);
-            console.log("new MaxDistance", selectedMaxDistance);
           }}
           aria-labelledby="distance-slider"
           min={0}
@@ -83,7 +82,12 @@ export default function DistanceFilter({
             },
           }}
         />
-        <IconButton onClick={() => setSelectedMaxDistance(0)}>
+        <IconButton
+          onClick={() => {
+            setSelectedMaxDistance(0);
+            setShowSlider(false);
+          }}
+        >
           <DeleteSharpIcon
             sx={{
               color: isMaxDistanceSelected()
