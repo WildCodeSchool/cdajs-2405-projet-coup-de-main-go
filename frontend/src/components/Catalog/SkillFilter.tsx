@@ -13,7 +13,7 @@ export default function SkillFilter({
   setSelectedSkill,
 }: SkillSelectProps) {
   return (
-    <FormControl sx={{ m: 1, width: 250 }} size="small">
+    <FormControl sx={{ m: 1, width: 250, paddingBottom: 8 }} size="small">
       <Select
         displayEmpty
         value={selectedSkill?.id || ""}
