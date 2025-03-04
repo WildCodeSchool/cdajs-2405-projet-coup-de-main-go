@@ -176,7 +176,34 @@ Le projet est configuré avec GitHub Actions pour exécuter les tests unitaires 
 4. Lance les tests unitaires.
 
 5. Affiche les logs Docker en cas d'échec.
-    
+
+---
+
+### Api Documentation
+
+Le projet dispose d'une documentation Api avec `Magidoc`.
+
+Pour cela :
+
+1. Se déplacer dans le dossier backend :
+    ```bash
+    cd backend
+    ```
+
+2. Installer le package globalement avec pnpm et lancer la génération :
+    ```bash
+    pnpm add --global @magidoc/cli@latest && magidoc generate
+    ```
+
+    Si jamais vous n'avez pas pnpm :
+    - L'installer sur votre machine (exemple avec Homebrew : `brew install pnpm`)
+    - Faire le setup : `pnpm setup`
+    - Lancer la commande fournie en retour dans votre terminal
+
+3. Si tout s'est bien passé, lancer la commande de prévisualisation de la documentation Api :
+    ```bash
+    magidoc preview
+    ```
 
 
 
