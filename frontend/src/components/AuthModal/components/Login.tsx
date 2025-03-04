@@ -85,6 +85,7 @@ function Login({
                 label="Mot de passe"
                 {...register("password", { required: true })}
                 required
+                defaultValue="123456Aa!"
             />
             {!isMobile && (
                 <Typography>
