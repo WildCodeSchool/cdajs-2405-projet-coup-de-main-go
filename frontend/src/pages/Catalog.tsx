@@ -67,7 +67,7 @@ export default function Catalog() {
         direction={isMobile ? "column" : "row"}
         sx={{
           justifyContent: isMobile ? "center" : "flex-start",
-          alignItems: "flex-start",
+          alignItems: isMobile ? "center" : "flex-start",
         }}
       >
         <SkillFilter
