@@ -99,7 +99,7 @@ Cette commande va :
 
 2. Lancez les services avec Docker Compose :
    ```bash
-   docker compose -f docker-compose.deploy.yml up --build
+   docker compose up --build
    ```
     Les services sont configurés avec des healthchecks pour s'assurer qu'ils sont prêts avant de démarrer les dépendances.
 
