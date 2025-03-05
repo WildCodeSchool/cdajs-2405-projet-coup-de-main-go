@@ -279,7 +279,7 @@ export class AdMutations {
               base64String: adData.picture1,
               targetType: "ad",
               id: ad.id?.toString()!,
-              oldFileName: adData.picture1, 
+              oldFileName: adData.picture1,
             });
             ad.picture1 = uploadResponse || "";
           } catch (error) {
@@ -297,7 +297,7 @@ export class AdMutations {
               base64String: adData.picture2,
               targetType: "ad",
               id: ad.id?.toString()!,
-              oldFileName: adData.picture2, 
+              oldFileName: adData.picture2,
             });
             ad.picture2 = uploadResponse;
           } catch (error) {
@@ -315,7 +315,7 @@ export class AdMutations {
               base64String: adData.picture3,
               targetType: "ad",
               id: ad.id?.toString()!,
-              oldFileName: adData.picture3, 
+              oldFileName: adData.picture3,
             });
             ad.picture3 = uploadResponse;
           } catch (error) {
@@ -343,7 +343,10 @@ export class AdMutations {
 
   // Mutation to delete Ad (possible only when no transaction is associated to this specific Ad)
   @Mutation((_) => Boolean)
-  async deleteAd(@Arg("id") id: string): Promise<boolean> {
+  async deleteAd(
+    @Arg("id") id: string,
+    @Arg("userRequesterId") userRequesterId: string
+  ): Promise<boolean> {
     return await dataSource.transaction(async (transactionalEntityManager) => {
       // Find ad to delete
       const ad = await transactionalEntityManager.findOne(Ad, {
@@ -352,6 +355,10 @@ export class AdMutations {
 
       if (!ad) {
         throw new Error("Ad not found");
+      }
+
+      if (userRequesterId && ad.userRequester?.id != userRequesterId) {
+        throw new Error("User not allowed to delete the ad");
       }
 
       const associatedTransaction = await transactionalEntityManager.findOne(

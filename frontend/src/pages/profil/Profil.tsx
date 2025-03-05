@@ -12,7 +12,7 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 import { useGetUserByIdQuery } from "../../generated/graphql-types";
 import { useNavigate } from "react-router-dom";
-
+import ProfileActiveAds from "../../components/Profile/ProfileActiveAds";
 
 export default function Profil() {
   const { userId } = useAuth();
@@ -30,14 +30,19 @@ export default function Profil() {
   if (loading)
     return (
       <Box sx={{ p: 4 }}>
-        <CircularProgress size={36} sx={{ color: theme.palette.primary.main }} />
+        <CircularProgress
+          size={36}
+          sx={{ color: theme.palette.primary.main }}
+        />
       </Box>
     );
 
   if (error)
     return (
       <Box sx={{ p: 4, display: "flex", alignItems: "center" }}>
-        <Typography color="error">Erreur lors du chargement des informations utilisateur</Typography>
+        <Typography color="error">
+          Erreur lors du chargement des informations utilisateur
+        </Typography>
       </Box>
     );
 
@@ -81,17 +86,18 @@ export default function Profil() {
         }}
       >
         {/*Avatar*/}
-          <Avatar
-            src={`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/users/${user.id}/${user.picture}`}
-            sx={{
-              width: 120,
-              height: 120,
-              mb: 2,
-            }}
-          >
+        <Avatar
+          src={`${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/users/${
+            user.id
+          }/${user.picture}`}
+          sx={{
+            width: 120,
+            height: 120,
+            mb: 2,
+          }}
+        >
           {!user.picture && `${user.firstName[0]}${user.lastName[0]}`}
         </Avatar>
-
 
         {/* Infos utilisateur */}
         <Typography variant="h6">{`${user.firstName} ${user.lastName}`}</Typography>
@@ -114,9 +120,21 @@ export default function Profil() {
         </Button>
 
         {/* Skills */}
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 2, width: "100%" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 2,
+            mt: 2,
+            width: "100%",
+          }}
+        >
           {user.skills.map((skill: { id: string; name: string }) => (
-            <Button key={skill.id} variant="outlined" sx={{ color: "black", borderRadius: "5px", borderColor: "black" }}>
+            <Button
+              key={skill.id}
+              variant="outlined"
+              sx={{ color: "black", borderRadius: "5px", borderColor: "black" }}
+            >
               {skill.name}
             </Button>
           ))}
@@ -136,13 +154,17 @@ export default function Profil() {
           >
             <Tabs value={activeTab} onChange={handleChange}>
               <Tab label="Avis" />
-              <Tab label="Annonces" />
+              <Tab label="Annonces en ligne" />
             </Tabs>
           </Box>
 
           <Box sx={{ p: 3 }}>
-            {activeTab === 0 && <Typography variant="body1">Vous n'avez encore aucun avis.</Typography>}
-            {activeTab === 1 && <Typography variant="body1">Vous n'avez encore publié aucune annonce.</Typography>}
+            {activeTab === 0 && (
+              <Typography variant="body1">
+                Vous n'avez encore aucun avis.
+              </Typography>
+            )}
+            {activeTab === 1 && <ProfileActiveAds userId={userId} />}
           </Box>
         </Box>
       </Box>

@@ -175,6 +175,7 @@ export type MutationDeleteAccountArgs = {
 
 export type MutationDeleteAdArgs = {
   id: Scalars['String']['input'];
+  userRequesterId: Scalars['String']['input'];
 };
 
 
@@ -474,6 +475,14 @@ export type CreateAdMutationVariables = Exact<{
 
 export type CreateAdMutation = { __typename?: 'Mutation', createAd: { __typename?: 'Ad', id: string, title: string, description: string, picture1?: string | null, picture2?: string | null, picture3?: string | null } };
 
+export type DeleteAdMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+  userRequesterId: Scalars['String']['input'];
+}>;
+
+
+export type DeleteAdMutation = { __typename?: 'Mutation', deleteAd: boolean };
+
 export type GetAllAdsQueryVariables = Exact<{
   skillId?: InputMaybe<Scalars['String']['input']>;
   mangoAmountMin?: InputMaybe<Scalars['Int']['input']>;
@@ -498,6 +507,13 @@ export type GetAdByIdQueryVariables = Exact<{
 
 
 export type GetAdByIdQuery = { __typename?: 'Query', getAdById: { __typename?: 'Ad', id: string, title: string, updatedAt: any, mangoAmount: number, description: string, duration: number, longitude?: number | null, latitude?: number | null, status: Status, address: string, zipCode: string, city: string, picture1?: string | null, picture2?: string | null, picture3?: string | null, skill: { __typename?: 'Skill', id: string, name: string }, userRequester: { __typename?: 'User', id: string, firstName: string, lastName: string, picture?: string | null, biography?: string | null } } };
+
+export type GetAdsByUserQueryVariables = Exact<{
+  userId: Scalars['String']['input'];
+}>;
+
+
+export type GetAdsByUserQuery = { __typename?: 'Query', getAdsByUser: Array<{ __typename?: 'Ad', id: string, title: string, description: string, updatedAt: any, mangoAmount: number, status: Status, picture1?: string | null, skill: { __typename?: 'Skill', id: string, name: string, picture: string }, userRequester: { __typename?: 'User', id: string, picture?: string | null } }> };
 
 export type CreateChatMutationVariables = Exact<{
   chatData: ChatInput;
@@ -776,6 +792,38 @@ export function useCreateAdMutation(baseOptions?: Apollo.MutationHookOptions<Cre
 export type CreateAdMutationHookResult = ReturnType<typeof useCreateAdMutation>;
 export type CreateAdMutationResult = Apollo.MutationResult<CreateAdMutation>;
 export type CreateAdMutationOptions = Apollo.BaseMutationOptions<CreateAdMutation, CreateAdMutationVariables>;
+export const DeleteAdDocument = gql`
+    mutation DeleteAd($id: String!, $userRequesterId: String!) {
+  deleteAd(id: $id, userRequesterId: $userRequesterId)
+}
+    `;
+export type DeleteAdMutationFn = Apollo.MutationFunction<DeleteAdMutation, DeleteAdMutationVariables>;
+
+/**
+ * __useDeleteAdMutation__
+ *
+ * To run a mutation, you first call `useDeleteAdMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteAdMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteAdMutation, { data, loading, error }] = useDeleteAdMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      userRequesterId: // value for 'userRequesterId'
+ *   },
+ * });
+ */
+export function useDeleteAdMutation(baseOptions?: Apollo.MutationHookOptions<DeleteAdMutation, DeleteAdMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteAdMutation, DeleteAdMutationVariables>(DeleteAdDocument, options);
+      }
+export type DeleteAdMutationHookResult = ReturnType<typeof useDeleteAdMutation>;
+export type DeleteAdMutationResult = Apollo.MutationResult<DeleteAdMutation>;
+export type DeleteAdMutationOptions = Apollo.BaseMutationOptions<DeleteAdMutation, DeleteAdMutationVariables>;
 export const GetAllAdsDocument = gql`
     query GetAllAds($skillId: String, $mangoAmountMin: Int, $mangoAmountMax: Int, $durationMin: Int, $durationMax: Int, $page: Int, $limit: Int, $orderBy: String, $status: Status, $maxDistance: Float, $userLatitude: Float, $userLongitude: Float) {
   getAllAds(
@@ -920,6 +968,61 @@ export type GetAdByIdQueryHookResult = ReturnType<typeof useGetAdByIdQuery>;
 export type GetAdByIdLazyQueryHookResult = ReturnType<typeof useGetAdByIdLazyQuery>;
 export type GetAdByIdSuspenseQueryHookResult = ReturnType<typeof useGetAdByIdSuspenseQuery>;
 export type GetAdByIdQueryResult = Apollo.QueryResult<GetAdByIdQuery, GetAdByIdQueryVariables>;
+export const GetAdsByUserDocument = gql`
+    query GetAdsByUser($userId: String!) {
+  getAdsByUser(userId: $userId) {
+    id
+    title
+    description
+    updatedAt
+    mangoAmount
+    status
+    picture1
+    skill {
+      id
+      name
+      picture
+    }
+    userRequester {
+      id
+      picture
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAdsByUserQuery__
+ *
+ * To run a query within a React component, call `useGetAdsByUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAdsByUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAdsByUserQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetAdsByUserQuery(baseOptions: Apollo.QueryHookOptions<GetAdsByUserQuery, GetAdsByUserQueryVariables> & ({ variables: GetAdsByUserQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAdsByUserQuery, GetAdsByUserQueryVariables>(GetAdsByUserDocument, options);
+      }
+export function useGetAdsByUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAdsByUserQuery, GetAdsByUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAdsByUserQuery, GetAdsByUserQueryVariables>(GetAdsByUserDocument, options);
+        }
+export function useGetAdsByUserSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAdsByUserQuery, GetAdsByUserQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAdsByUserQuery, GetAdsByUserQueryVariables>(GetAdsByUserDocument, options);
+        }
+export type GetAdsByUserQueryHookResult = ReturnType<typeof useGetAdsByUserQuery>;
+export type GetAdsByUserLazyQueryHookResult = ReturnType<typeof useGetAdsByUserLazyQuery>;
+export type GetAdsByUserSuspenseQueryHookResult = ReturnType<typeof useGetAdsByUserSuspenseQuery>;
+export type GetAdsByUserQueryResult = Apollo.QueryResult<GetAdsByUserQuery, GetAdsByUserQueryVariables>;
 export const CreateChatDocument = gql`
     mutation CreateChat($chatData: ChatInput!) {
   createChat(chatData: $chatData) {

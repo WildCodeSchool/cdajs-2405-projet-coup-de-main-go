@@ -82,3 +82,27 @@ export const GET_AD_BY_ID_QUERY = gql`
     }
   }
 `;
+
+// Get all ads for a specific user (ProfileAds)
+export const GET_ADS_BY_USER_QUERY = gql`
+  query GetAdsByUser($userId: String!) {
+    getAdsByUser(userId: $userId) {
+      id
+      title
+      description
+      updatedAt
+      mangoAmount
+      status
+      picture1
+      skill {
+        id
+        name
+        picture
+      }
+      userRequester {
+        id
+        picture
+      }
+    }
+  }
+`;
