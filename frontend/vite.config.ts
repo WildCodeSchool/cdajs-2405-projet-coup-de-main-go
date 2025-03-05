@@ -23,7 +23,7 @@ export default defineConfig({
     allowedHosts: ['frontend', 'backend', 'localhost', '0.0.0.0'],
     proxy: {
       '/hooks': {
-        target: 'https://ops.quest-demo.wns.wilders.dev',
+        target: 'https://052024-jaune-1.wns.wilders.dev',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/hooks/, ''),
