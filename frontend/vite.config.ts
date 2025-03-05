@@ -20,14 +20,6 @@ export default defineConfig({
     ],
   },
   server: {
-    allowedHosts: ['frontend', 'backend', 'localhost', '0.0.0.0'],
-    proxy: {
-      '/hooks': {
-        target: 'https://052024-jaune-1.wns.wilders.dev',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/hooks/, ''),
-      },
-    },
+    allowedHosts: ['frontend', 'backend', 'localhost', '0.0.0.0']
   }
 });
