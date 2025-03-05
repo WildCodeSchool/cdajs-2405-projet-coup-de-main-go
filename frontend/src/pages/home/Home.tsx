@@ -101,7 +101,7 @@ export default function Home() {
                         fontWeight={500}
                         paddingBottom="2.5rem"
                     >
-                        COMMENT ÇA MARCHE ? 🤔
+                        COMMENT ÇA MARCHE ? 🤔🤔
                     </Typography>
                 )}
                 <Cards />

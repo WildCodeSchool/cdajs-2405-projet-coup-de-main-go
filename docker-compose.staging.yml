@@ -12,9 +12,6 @@ services:
             JWT_SECRET: ${JWT_SECRET}
         ports:
             - 4001:4000
-        volumes:
-            - ./backend:/app
-            - /app/node_modules
         depends_on:
             - postgres
 
@@ -26,9 +23,6 @@ services:
             VITE_POLL_CHAT_INTERVAL: ${VITE_POLL_CHAT_INTERVAL}
         ports:
             - 5174:5173
-        volumes:
-            - ./frontend:/webapp
-            - /webapp/node_modules
         depends_on:
             - backend
 
