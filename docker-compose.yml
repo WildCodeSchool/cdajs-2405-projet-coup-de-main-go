@@ -44,7 +44,6 @@ services:
         volumes:
             - ./frontend:/webapp
             - /webapp/node_modules
-            - web-client-build:/webapp/build
         depends_on:
             backend:
                 condition: service_healthy
@@ -82,9 +81,7 @@ services:
             - ${GATEWAY_PORT:-8000}:80
         volumes:
             - ./nginx.conf:/etc/nginx/nginx.conf
-            - web-client-build:/web-client-build
             - ./logs:/var/log/nginx
 
 volumes:
     postgres-data:
-    web-client-build:
