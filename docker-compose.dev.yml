@@ -1,0 +1,77 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    environment:
+      APOLLO_PORT: ${APOLLO_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - 4000:4000
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    environment:
+      VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+      VITE_DOMAIN_BACKEND_URL: ${VITE_DOMAIN_BACKEND_URL}
+      VITE_POLL_CHAT_INTERVAL: ${VITE_POLL_CHAT_INTERVAL}
+    ports:
+      - 5173:5173
+    volumes:
+      - ./frontend:/webapp
+      - /webapp/node_modules
+    depends_on:
+      - backend
+
+  # e2e:
+  #   build:
+  #     context: ./e2e 
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     VITE_BACKEND_URL: ${E2E_BACKEND_URL}
+  #     VITE_DOMAIN_BACKEND_URL: ${E2E_DOMAIN_BACKEND_URL}
+  #     VITE_FRONTEND_URL: ${E2E_FRONTEND_URL}
+  #   volumes:
+  #     - ./e2e:/e2e
+  #   depends_on:
+  #     - backend
+  #   command:
+  #     sh -c "sleep 30 && npx playwright test && tail -f /dev/null"
+  #   ports:
+  #     - 8000:8000
+
+  postgres:
+    image: postgres:alpine
+    restart: unless-stopped
+    shm_size: 128mb
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  postgres-data:

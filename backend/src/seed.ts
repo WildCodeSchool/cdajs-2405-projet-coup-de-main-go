@@ -5,7 +5,6 @@ import { Chat } from "./entities/Chat";
 import { Message } from "./entities/Message";
 import { Review } from "./entities/Review";
 import { Skill } from "./entities/Skill";
-import { Transaction } from "./entities/Transaction";
 import { User } from "./entities/User";
 import { Status } from "./entities/Ad";
 
@@ -114,9 +113,27 @@ async function seed() {
       otpAttempts: 0,
     });
 
+    // create user test
+    const user4 = dataSource.manager.create(User, {
+      firstName: "User",
+      lastName: "Test",
+      email: "user.test@yopmail.com",
+      password:
+        "$argon2id$v=19$m=65536,t=3,p=4$jxsp+6AIQzVVLJKlcw/R7g$g77fYM/y/ItztTbPrwPQen5Y5ko1b7D5Si+H+htxF2U",
+      biography: "User test.",
+      gender: "Homme",
+      dateOfBirth: new Date("1900-01-01"),
+      address: "1 rue de la République",
+      zipCode: "75000",
+      city: "Paris",
+      mangoBalance: 1000,
+      skills: [skill1],
+    });
+
     await user1.save();
     await user2.save();
     await user3.save();
+    await user4.save();
     console.log("Utilisateurs créés avec succès.");
 
     console.log("Création des annonces...");
