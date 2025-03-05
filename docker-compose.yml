@@ -44,6 +44,7 @@ services:
         volumes:
             - ./frontend:/webapp
             - /webapp/node_modules
+            - web-client-build:/webapp/build
         depends_on:
             backend:
                 condition: service_healthy
