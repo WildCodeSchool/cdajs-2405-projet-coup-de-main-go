@@ -26,6 +26,6 @@ jobs:
         name: Build and push
         with:
           context: ./frontend
-          file: ./frontend/Dockerfile
+          file: ./frontend/Dockerfile.deploy
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_FRONTEND_IMAGE_NAME }}:latest

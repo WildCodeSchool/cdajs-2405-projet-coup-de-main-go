@@ -26,6 +26,6 @@ jobs:
         name: Build and push
         with:
           context: ./backend
-          file: ./backend/Dockerfile
+          file: ./backend/Dockerfile.deploy
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_BACKEND_IMAGE_NAME }}:latest
