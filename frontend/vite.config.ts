@@ -21,5 +21,13 @@ export default defineConfig({
   },
   server: {
     allowedHosts: ['frontend', 'backend', 'localhost', '0.0.0.0'],
+    proxy: {
+      '/hooks': {
+        target: 'https://ops.quest-demo.wns.wilders.dev',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/hooks/, ''),
+      },
+    },
   }
 });
