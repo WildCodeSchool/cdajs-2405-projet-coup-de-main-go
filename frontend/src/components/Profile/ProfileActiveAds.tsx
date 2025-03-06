@@ -4,11 +4,10 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { useGetAdsByUserQuery } from "../../generated/graphql-types";
+import { Status, useGetAdsByUserQuery } from "../../generated/graphql-types";
 import AdCard from "../AdCard/AdCard";
 import theme from "../../mui";
 import { AdCardType } from "../../types";
-import { useLocation } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
@@ -38,6 +37,7 @@ export default function ProfileActiveAds({ userId }: ProfileAdsProps) {
   } = useGetAdsByUserQuery({
     variables: {
       userId: userId,
+      status: Status.Posted,
     },
   });
 

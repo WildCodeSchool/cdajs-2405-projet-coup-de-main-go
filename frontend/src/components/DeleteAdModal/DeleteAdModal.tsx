@@ -1,5 +1,5 @@
 import { Button, CircularProgress, Stack, Typography } from "@mui/material";
-import { useDeleteAdMutation } from "../../generated/graphql-types";
+import { Status, useDeleteAdMutation } from "../../generated/graphql-types";
 import { GET_ADS_BY_USER_QUERY } from "../../graphql/adQueries";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -19,7 +19,10 @@ export default function DeleteAdModal({
   const [deleteAd, { loading, error }] = useDeleteAdMutation({
     variables: { id: adId, userRequesterId: userId },
     refetchQueries: [
-      { query: GET_ADS_BY_USER_QUERY, variables: { userId: userId } },
+      {
+        query: GET_ADS_BY_USER_QUERY,
+        variables: { userId: userId, status: Status.Posted },
+      },
     ],
   });
 

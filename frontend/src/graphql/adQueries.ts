@@ -85,8 +85,8 @@ export const GET_AD_BY_ID_QUERY = gql`
 
 // Get all ads for a specific user (ProfileAds)
 export const GET_ADS_BY_USER_QUERY = gql`
-  query GetAdsByUser($userId: String!) {
-    getAdsByUser(userId: $userId) {
+  query GetAdsByUser($userId: String!, $status: Status) {
+    getAdsByUser(userId: $userId, status: $status) {
       id
       title
       description

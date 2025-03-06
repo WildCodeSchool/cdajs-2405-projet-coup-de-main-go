@@ -300,6 +300,7 @@ export type QueryGetAdByIdArgs = {
 
 
 export type QueryGetAdsByUserArgs = {
+  status?: InputMaybe<Status>;
   userId: Scalars['String']['input'];
 };
 
@@ -510,6 +511,7 @@ export type GetAdByIdQuery = { __typename?: 'Query', getAdById: { __typename?: '
 
 export type GetAdsByUserQueryVariables = Exact<{
   userId: Scalars['String']['input'];
+  status?: InputMaybe<Status>;
 }>;
 
 
@@ -969,8 +971,8 @@ export type GetAdByIdLazyQueryHookResult = ReturnType<typeof useGetAdByIdLazyQue
 export type GetAdByIdSuspenseQueryHookResult = ReturnType<typeof useGetAdByIdSuspenseQuery>;
 export type GetAdByIdQueryResult = Apollo.QueryResult<GetAdByIdQuery, GetAdByIdQueryVariables>;
 export const GetAdsByUserDocument = gql`
-    query GetAdsByUser($userId: String!) {
-  getAdsByUser(userId: $userId) {
+    query GetAdsByUser($userId: String!, $status: Status) {
+  getAdsByUser(userId: $userId, status: $status) {
     id
     title
     description
@@ -1004,6 +1006,7 @@ export const GetAdsByUserDocument = gql`
  * const { data, loading, error } = useGetAdsByUserQuery({
  *   variables: {
  *      userId: // value for 'userId'
+ *      status: // value for 'status'
  *   },
  * });
  */

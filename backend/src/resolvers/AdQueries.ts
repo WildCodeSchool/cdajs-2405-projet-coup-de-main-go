@@ -108,10 +108,18 @@ export class AdQueries {
   }
 
   @Query(() => [Ad])
-  async getAdsByUser(@Arg("userId") userId: string): Promise<Ad[]> {
-    const ads: Ad[] = await dataSource.manager.findBy(Ad, {
-      userRequester: { id: userId },
-    });
+  async getAdsByUser(
+    @Arg("userId") userId: string,
+    @Arg("status", () => Status, { nullable: true }) status?: Status
+  ): Promise<Ad[]> {
+    const query: any = { userRequester: { id: userId } };
+
+    // Apply status filter is provided
+    if (status !== undefined) {
+      query.status = status;
+    }
+
+    const ads: Ad[] = await dataSource.manager.findBy(Ad, query);
 
     if (!ads) {
       throw new Error(`Aucune annonce trouvée pour l'utilisateur ${userId}`);
