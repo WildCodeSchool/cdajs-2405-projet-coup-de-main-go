@@ -34,7 +34,7 @@ export default function DeleteAdModal({
       if (response.data?.deleteAd) {
         setDeleteModalOpen(false);
         navigate(`/profil`, {
-          state: { message: "Annonce ajoutée !" },
+          state: { message: "Annonce supprimée avec succès !" },
         });
       }
     } catch (e) {
