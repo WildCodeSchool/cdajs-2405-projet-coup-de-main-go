@@ -9,6 +9,7 @@ import AdCard from "../AdCard/AdCard";
 import theme from "../../mui";
 import { AdCardType } from "../../types";
 import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -18,14 +19,16 @@ interface ProfileAdsProps {
 
 export default function ProfileActiveAds({ userId }: ProfileAdsProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
 
   const location = useLocation();
 
   useEffect(() => {
     if (location.state && location.state.message) {
       toast.success(location.state.message);
+      navigate(location.pathname, { state: {} });
     }
-  }, [location]);
+  }, [location, navigate]);
 
   // Fetch ads for the user
   const {
