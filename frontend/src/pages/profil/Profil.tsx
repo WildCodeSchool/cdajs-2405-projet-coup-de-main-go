@@ -153,18 +153,18 @@ export default function Profil() {
             }}
           >
             <Tabs value={activeTab} onChange={handleChange}>
-              <Tab label="Avis" />
               <Tab label="Annonces en ligne" />
+              <Tab label="Avis" />
             </Tabs>
           </Box>
 
           <Box sx={{ p: 3 }}>
-            {activeTab === 0 && (
+            {activeTab === 0 && <ProfileActiveAds userId={userId} />}
+            {activeTab === 1 && (
               <Typography variant="body1">
                 Vous n'avez encore aucun avis.
               </Typography>
             )}
-            {activeTab === 1 && <ProfileActiveAds userId={userId} />}
           </Box>
         </Box>
       </Box>
