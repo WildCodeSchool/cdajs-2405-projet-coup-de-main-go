@@ -9,7 +9,11 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useForm, FormProvider } from "react-hook-form";
-import { AdInput, useCreateAdMutation } from "../../generated/graphql-types";
+import {
+  AdInput,
+  Status,
+  useCreateAdMutation,
+} from "../../generated/graphql-types";
 import { useState } from "react";
 import theme from "../../mui";
 import AdModalFormAddress from "./modalComponents/AdModalFormAddress";
@@ -22,15 +26,25 @@ import AdModalFormDuration from "./modalComponents/AdModalFormDuration";
 import { AddressSuggestion } from "../../types";
 import Cookies from "js-cookie";
 import { convertFileToBase64 } from "../../utils/convertFileToBase64";
+import { GET_ADS_BY_USER_QUERY } from "../../graphql/adQueries";
+import { useNavigate } from "react-router-dom";
 
 export default function AdModalForm({ onClose }: { onClose: () => void }) {
   const userId = Cookies.get("cdmg-userId");
   const isResponsiveLayout = useMediaQuery(theme.breakpoints.down("md"));
+  const navigate = useNavigate();
   const methods = useForm<AdInput>({
     defaultValues: { title: "", description: "", duration: 0, skillId: "" },
   });
 
-  const [createAdMutation, { loading, error }] = useCreateAdMutation();
+  const [createAdMutation, { loading, error }] = useCreateAdMutation({
+    refetchQueries: [
+      {
+        query: GET_ADS_BY_USER_QUERY,
+        variables: { userId: userId, status: Status.Posted },
+      },
+    ],
+  });
 
   // Pictures and preview management
   const MAX_SIZE_MB = 1;
@@ -115,6 +129,9 @@ export default function AdModalForm({ onClose }: { onClose: () => void }) {
         },
       });
       onClose();
+      navigate(`/profil`, {
+        state: { message: "Annonce ajoutée avec succès !" },
+      });
     } catch (error) {
       console.error("Erreur lors de la création de l'annonce :", error);
     }

@@ -1,6 +1,5 @@
 import {
   Avatar,
-  Button,
   Card,
   CardContent,
   CardMedia,
@@ -9,16 +8,17 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import type { AdCardType } from "../../types";
-import { Link } from "react-router-dom";
 import theme from "../../mui";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import AdCardButtons from "./AdCardButtons";
 
 interface AdCardProps {
   ad: AdCardType;
+  isProfileCard?: boolean;
 }
 
-export default function AdCard({ ad }: AdCardProps) {
+export default function AdCard({ ad, isProfileCard = false }: AdCardProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const timeAgo = formatDistanceToNow(new Date(ad.updatedAt), {
     locale: fr,
@@ -28,7 +28,6 @@ export default function AdCard({ ad }: AdCardProps) {
       key={ad.id}
       sx={{
         borderRadius: "1.25rem",
-        //height: isMobile ? "20.5rem" : "22.5rem",
         height: "22.5rem",
         width: "18rem",
       }}
@@ -56,7 +55,6 @@ export default function AdCard({ ad }: AdCardProps) {
           />
           <Typography
             sx={{
-              //marginLeft: "0.02rem",
               fontSize: isMobile ? "1.25rem" : "1.5rem",
               fontWeight: "500",
             }}
@@ -123,21 +121,7 @@ export default function AdCard({ ad }: AdCardProps) {
             style={{ width: "1.25rem", height: "1.25rem" }}
           />
         </Stack>
-        <Button
-          component={Link}
-          color={"secondary"}
-          to={`/ad/${ad.id}`}
-          sx={{
-            textAlign: "center",
-            lineHeight: "1rem",
-            paddingY: 1,
-            paddingX: 4,
-          }}
-        >
-          Plus
-          <br />
-          d'informations
-        </Button>
+        <AdCardButtons adId={ad.id} isProfileCard={isProfileCard} />
       </Stack>
     </Card>
   );

@@ -21,3 +21,9 @@ export const CREATE_AD = gql`
     }
   }
 `;
+
+export const DELETE_AD = gql`
+  mutation DeleteAd($id: String!, $userRequesterId: String!) {
+    deleteAd(id: $id, userRequesterId: $userRequesterId)
+  }
+`;
