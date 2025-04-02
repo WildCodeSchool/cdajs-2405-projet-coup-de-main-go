@@ -202,10 +202,27 @@ async function seed() {
       skill: skill3,
     });
 
+    const ad5 = dataSource.manager.create(Ad, {
+      title: "Test",
+      description:
+        "test",
+      address: "1 Rue de la Republique",
+      zipCode: "95100",
+      city: "Argenteuil",
+      latitude: 48.949954,
+      longitude: 	2.258203,
+      duration: 60,
+      mangoAmount: 2,
+      status: Status.POSTED,
+      userRequester: user4,
+      skill: skill7,
+    });
+
     await ad1.save();
     await ad2.save();
     await ad3.save();
     await ad4.save();
+    await ad5.save();
     console.log("Annonces créées avec succès.");
 
     console.log("Création des reviews...");
@@ -239,29 +256,37 @@ async function seed() {
 
     console.log("Création des chats...");
     const chat1 = dataSource.manager.create(Chat, {
-      isHelpProposed: false,
+      isHelpProposed: true,
       userHelper: user2,
       userRequester: user1,
       ad: ad1,
     });
 
     const chat2 = dataSource.manager.create(Chat, {
-      isHelpProposed: false,
+      isHelpProposed: true,
       userHelper: user1,
       userRequester: user2,
       ad: ad2,
     });
 
     const chat3 = dataSource.manager.create(Chat, {
-      isHelpProposed: false,
+      isHelpProposed: true,
       userHelper: user1,
       userRequester: user3,
       ad: ad3,
     });
 
+    const chat4 = dataSource.manager.create(Chat, {
+      isHelpProposed: true,
+      userHelper: user1,
+      userRequester: user4,
+      ad: ad5,
+    });
+
     await chat1.save();
     await chat2.save();
     await chat3.save();
+    await chat4.save();
     console.log("Chats créés avec succès.");
 
     console.log("Création des messages...");
@@ -301,10 +326,20 @@ async function seed() {
       date: new Date("2024-11-23T10:00:00"),
     });
 
+    const message5 = dataSource.manager.create(Message, {
+      message: "Bonjour ! Je serais ravi(e) de vous aider 😊",
+      isViewedByRequester: true,
+      isViewedByHelper: true,
+      chat: chat2,
+      author: user1,
+      date: new Date("2025-04-02T10:00:00"),
+    });
+
     await message1.save();
     await message2.save();
     await message3.save();
     await message4.save();
+    await message5.save();
     console.log("Messages créés avec succès.");
 
     console.log("Données fictives insérées avec succès !");
