@@ -20,7 +20,7 @@ export default function App() {
       >
         <AuthModal />
       </GenericModal>
-      <Container maxWidth="xl" disableGutters sx={{ flexGrow: 1 }}>
+      <Container maxWidth={false} disableGutters sx={{ flexGrow: 1 }}>
         <Outlet context={setAuthModalIsOpen} />
       </Container>
       <Footer />

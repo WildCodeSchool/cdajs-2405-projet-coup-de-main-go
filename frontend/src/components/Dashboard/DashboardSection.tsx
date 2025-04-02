@@ -11,7 +11,7 @@ import { Navigation } from "swiper/modules";
 import { useGetAllAdsQuery, Status } from "../../generated/graphql-types";
 import { AdCardType } from "../../types";
 import theme from "../../mui";
-import AdCard from "./AdCard";
+import AdCard from "../AdCard/AdCard";
 
 import "swiper/css";
 import "swiper/css/navigation";

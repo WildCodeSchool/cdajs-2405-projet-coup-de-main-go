@@ -4,42 +4,40 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { AdCardType } from "../../types";
-import { Status, useGetAllAdsQuery } from "../../generated/graphql-types";
+import { Status, useGetAdsByUserQuery } from "../../generated/graphql-types";
 import AdCard from "../AdCard/AdCard";
 import theme from "../../mui";
+import { AdCardType } from "../../types";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
-interface FilteredAdsProps {
-  skillId?: string | null;
-  durationMin?: number | null;
-  durationMax?: number | null;
-  maxDistance: number;
-  userLatitude: number | null | undefined;
-  userLongitude: number | null | undefined;
+interface ProfileAdsProps {
+  userId: string;
 }
 
-export default function FilteredAds({
-  skillId,
-  durationMin,
-  durationMax,
-  maxDistance,
-  userLatitude,
-  userLongitude,
-}: FilteredAdsProps) {
+export default function ProfileActiveAds({ userId }: ProfileAdsProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state && location.state.message) {
+      toast.success(location.state.message);
+      navigate(location.pathname, { state: {} });
+    }
+  }, [location, navigate]);
+
+  // Fetch ads for the user
   const {
     loading: adsLoading,
     error: adsError,
     data: adsData,
-  } = useGetAllAdsQuery({
+  } = useGetAdsByUserQuery({
     variables: {
-      skillId: skillId || null,
-      durationMin: durationMin ?? 0,
-      durationMax: durationMax ?? 1440,
+      userId: userId,
       status: Status.Posted,
-      maxDistance: maxDistance,
-      userLatitude: userLatitude,
-      userLongitude: userLongitude,
     },
   });
 
@@ -47,7 +45,7 @@ export default function FilteredAds({
   if (adsError) return <p>Error: {adsError.message}</p>;
   if (!adsData) return <Typography>Aucune donnée trouvée</Typography>;
 
-  const adCards: AdCardType[] = adsData?.getAllAds;
+  const adCards: AdCardType[] = adsData?.getAdsByUser;
 
   return (
     <>
@@ -64,14 +62,15 @@ export default function FilteredAds({
           }}
         >
           {adCards.map((ad) => (
-            <AdCard key={ad.id} ad={ad} />
+            <AdCard key={ad.id} ad={ad} isProfileCard={true} />
           ))}
         </Stack>
       ) : (
         <Typography sx={{ my: 10 }}>
-          Il n'existe pas d'annonce pour cette catégorie.
+          Vous n'avez encore publié aucune annonce.
         </Typography>
       )}
+      <ToastContainer position="bottom-right" />
     </>
   );
 }
