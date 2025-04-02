@@ -11,3 +11,5 @@ e2e/playwright/.cache/
 e2e/screenshots/
 
 backend/docs
+
+logs
