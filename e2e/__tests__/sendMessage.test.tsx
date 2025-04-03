@@ -4,10 +4,10 @@ import { config } from "dotenv";
 config();
 
 test.describe("Chat Message", () => {
-  let frontendUrl: string;
+  let frontendUrl: string | undefined;
 
   test.beforeEach(async ({ page }) => {
-    frontendUrl = process.env.VITE_FRONTEND_URL || "";
+    frontendUrl = process.env.VITE_FRONTEND_URL;
 
     if (!frontendUrl) {
       throw new Error("VITE_FRONTEND_URL is not defined in the .env file");
