@@ -24,7 +24,7 @@ import {
   useUpdateChatHelpProposalMutation,
   useCreateReviewMutation,
   useTransferBetweenUsersMutation,
-  useAddTransactionMutation
+  useAddTransactionMutation,
 } from "../../../generated/graphql-types";
 import Rating from "@mui/material/Rating";
 import { useMango } from "../../../contexts/MangoContext";
@@ -400,6 +400,7 @@ export default function ChatConversation({
         border: 0,
         borderRadius: "12px",
       }}
+      data-testid="chat-conversation-container"
     >
       {isMobile && otherUser && (
         <ChatConversationMobileBanner

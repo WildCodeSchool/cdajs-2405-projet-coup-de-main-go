@@ -31,6 +31,7 @@ export function ChatMessageList({
         borderColor: "divider",
       }}
       onScroll={onScroll}
+      data-testid="chat-message-list"
     >
       {isLoading && (
         <Box sx={{ textAlign: "center", py: 2 }}>

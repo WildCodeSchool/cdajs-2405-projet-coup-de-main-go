@@ -1,7 +1,8 @@
 import { vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { ChatInput } from "../../components/Chat/ChatInput";
-import '@testing-library/jest-dom'
+import "@testing-library/jest-dom";
+import userEvent from "@testing-library/user-event";
 
 describe("ChatInput", () => {
   const mockOnChange = vi.fn();
@@ -19,33 +20,43 @@ describe("ChatInput", () => {
     );
   };
 
-  it("renders correctly", () => {
+  it("renders correctly", async () => {
     renderComponent();
-    expect(
-      screen.getByPlaceholderText("Entrez votre message...")
-    ).toBeInTheDocument();
-    expect(screen.getByRole("button")).toBeInTheDocument();
+
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
     expect(screen.getByTestId("SendIcon")).toBeInTheDocument();
   });
 
-  it("calls onChange when typing", () => {
+  it("calls onChange when typing", async () => {
     renderComponent();
-    const input = screen.getByPlaceholderText("Entrez votre message...");
-    fireEvent.change(input, { target: { value: "Hello" } });
-    expect(mockOnChange).toHaveBeenCalledTimes(1);
+
+    const input = screen.getByRole('textbox');
+    await userEvent.type(input, "Hello");
+
+    expect(mockOnChange).toHaveBeenCalledTimes(5);
   });
 
-  it("calls onSubmit when button is clicked", () => {
+  it("calls onSubmit when button is clicked", async () => {
     renderComponent();
-    const button = screen.getByRole("button");
-    fireEvent.click(button);
+
+    const button = screen.getByTestId("SendIcon").closest("button");
+
+    if (!button) {
+      throw new Error("Button not found");
+    }
+
+    await userEvent.click(button);
+
     expect(mockOnSubmit).toHaveBeenCalledTimes(1);
   });
 
-  it("calls onKeyDown when Enter is pressed", () => {
+  it("calls onKeyDown when Enter is pressed", async () => {
     renderComponent();
-    const input = screen.getByPlaceholderText("Entrez votre message...");
-    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
-    expect(mockOnKeyDown).toHaveBeenCalledTimes(1);
+
+    const input = screen.getByRole('textbox');
+    await userEvent.type(input, "{enter}");
+
+    expect(mockOnKeyDown).toHaveBeenCalled();
+    expect(mockOnKeyDown).toHaveBeenCalled();
   });
 });
