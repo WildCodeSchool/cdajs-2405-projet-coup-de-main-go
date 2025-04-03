@@ -39,17 +39,16 @@ test.describe("Chat Message", () => {
     const chatIcon = page.locator('a[href="/chat"]');
     await chatIcon.click();
 
-    const jeanConversation = page
+    const testConversation = page
       .locator('.MuiListItemButton-root:has-text("Jean D.")')
       .first();
-    await jeanConversation.click();
+    await testConversation.click();
 
     const messageInput = page.locator('.MuiOutlinedInput-input[type="text"]');
     const replyMessage = "Merci Jean ! J'apprécie votre aide.";
     await messageInput.fill(replyMessage);
     await messageInput.press("Enter");
 
-    // Verify the sent message is visible
     await expect(page.locator(`text=${replyMessage}`).last()).toBeVisible();
 
     await page.screenshot({
@@ -63,10 +62,10 @@ test.describe("Chat Message", () => {
     const chatIcon = page.locator('a[href="/chat"]');
     await chatIcon.click();
 
-    const jeanConversation = page
+    const testConversation = page
       .locator('.MuiListItemButton-root:has-text("Jean D.")')
       .first();
-    await jeanConversation.click();
+    await testConversation.click();
 
     // Send multiple messages
     const messageInput = page.locator('.MuiOutlinedInput-input[type="text"]');
