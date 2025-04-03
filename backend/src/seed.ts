@@ -148,9 +148,6 @@ async function seed() {
       duration: 90,
       mangoAmount: 3,
       status: Status.POSTED,
-      picture1: "garden1.jpg",
-      picture2: "garden2.jpg",
-      picture3: "garden3.jpg",
       userRequester: user1,
       skill: skill2,
     });
@@ -166,7 +163,6 @@ async function seed() {
       duration: 60,
       mangoAmount: 2,
       status: Status.POSTED,
-      picture1: "furniture.jpg",
       userRequester: user2,
       skill: skill1,
     });
