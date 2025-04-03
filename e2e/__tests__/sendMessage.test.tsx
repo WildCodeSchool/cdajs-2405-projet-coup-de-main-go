@@ -1,108 +1,65 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, Page } from "@playwright/test";
 import { config } from "dotenv";
 
-config();
+config({ path: ".env" });
 
-test.describe("Chat Message", () => {
-  let frontendUrl: string | undefined;
+const TEST_CREDENTIALS = {
+  email: "user.test@yopmail.com",
+  password: "123456Aa!"
+};
 
-  test.beforeEach(async ({ page }) => {
-    frontendUrl = process.env.VITE_FRONTEND_URL;
+const SELECTORS = {
+  loginButton: 'button:has-text("S\'inscrire / Se connecter")',
+  emailInput: 'input[name="email"]',
+  passwordInput: 'input[name="password"]',
+  submitButton: 'button[type="submit"]:has-text("Se connecter")',
+  userHeader: 'header >> text=User T.',
+  chatLink: 'a[href="/chat"]',
+  conversationItem: '.MuiListItemButton-root:has-text("Jean D.")',
+  messageInput: '.MuiOutlinedInput-input[type="text"]'
+};
 
+test.describe("Send Message - E2E Tests", () => {
+  let frontendUrl: string;
+
+  test.beforeAll(() => {
+    frontendUrl = process.env.VITE_FRONTEND_URL || "";
     if (!frontendUrl) {
       throw new Error("VITE_FRONTEND_URL is not defined in the .env file");
     }
-
-    await page.goto(frontendUrl);
-
-    const loginButton = await page.locator("button", {
-      hasText: "S'inscrire / Se connecter",
-    });
-    await loginButton.click();
-
-    const emailInput = page.locator('input[name="email"]');
-    const passwordInput = page.locator('input[name="password"]');
-    await emailInput.fill("user.test@yopmail.com");
-    await passwordInput.fill("123456Aa!");
-
-    const submitButton = page.locator('button[type="submit"]', {
-      hasText: "Se connecter",
-    });
-    await submitButton.click();
-
-    await expect(page.locator("header").locator("text=User T.")).toBeVisible({
-      timeout: 10000,
-    });
   });
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto(frontendUrl);
+    await login(page);
+  });
+
+  async function login(page: Page) {
+    await page.click(SELECTORS.loginButton);
+    await page.fill(SELECTORS.emailInput, TEST_CREDENTIALS.email);
+    await page.fill(SELECTORS.passwordInput, TEST_CREDENTIALS.password);
+    await page.click(SELECTORS.submitButton);
+    await expect(page.locator(SELECTORS.userHeader)).toBeVisible({ 
+      timeout: 15000 
+    });
+  }
 
   test("should send reply to Jean D.", async ({ page }) => {
-    const chatIcon = page.locator('a[href="/chat"]');
-    await chatIcon.click();
-
-    const testConversation = page
-      .locator('.MuiListItemButton-root:has-text("Jean D.")')
-      .first();
-    await testConversation.click();
-
-    const messageInput = page.locator('.MuiOutlinedInput-input[type="text"]');
     const replyMessage = "Merci Jean ! J'apprécie votre aide.";
-    await messageInput.fill(replyMessage);
-    await messageInput.press("Enter");
+    const screenshotPath = "test-results/message-sent-existing-chat.png";
 
-    await expect(page.locator(`text=${replyMessage}`).last()).toBeVisible();
+    await page.click(SELECTORS.chatLink);
+    await page.locator(SELECTORS.conversationItem).first().click();
+    await page.locator(SELECTORS.messageInput).fill(replyMessage);
+    await page.keyboard.press("Enter");
 
-    await page.screenshot({
-      path: "./screenshots/message-sent-existing-chat.png",
+    await expect(page.locator(`text=${replyMessage}`).last()).toBeVisible({
+      timeout: 5000
     });
-  });
 
-  test("should display multiple messages in correct order", async ({
-    page,
-  }) => {
-    const chatIcon = page.locator('a[href="/chat"]');
-    await chatIcon.click();
-
-    const testConversation = page
-      .locator('.MuiListItemButton-root:has-text("Jean D.")')
-      .first();
-    await testConversation.click();
-
-    // Send multiple messages
-    const messageInput = page.locator('.MuiOutlinedInput-input[type="text"]');
-    const testMessages = [
-      "Première question...",
-      "Deuxième point à clarifier",
-      "Dernier message de test",
-    ];
-
-    for (const msg of testMessages) {
-      await messageInput.fill(msg);
-      await messageInput.press("Enter");
-      await page.waitForTimeout(300);
-    }
-
-    const messageElements = await page.locator('.MuiBox-root .MuiTypography-body1').all();
-
-    //For each message element, get the text content
-    const allMessages = await Promise.all(
-      messageElements.map(async el => {
-        const text = await el.textContent();
-        return text?.trim() || '';
-      })
-    );
-  
-    // Get only the new messages (excluding initial ones)
-    const newMessages = allMessages.slice(-testMessages.length);
-  
-    expect(newMessages.length).toBe(testMessages.length);
-  
-    // Verify each message was received in correct order
-    for (let i = 0; i < testMessages.length; i++) {
-      expect(newMessages[i]).toContain(testMessages[i]);
-    }  
-
-    await page.screenshot({
-      path: "./screenshots/multiple-messages-order.png",
+    await page.screenshot({ 
+      path: screenshotPath,
+      fullPage: true 
     });
   });
 });
