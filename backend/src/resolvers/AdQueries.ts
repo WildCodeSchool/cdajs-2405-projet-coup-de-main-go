@@ -2,6 +2,8 @@ import { Query, Resolver, Arg, Int, Float } from "type-graphql";
 import { Ad, Status } from "../entities/Ad";
 import { dataSource } from "../datasource";
 import calculateDistance from "../utils/calculateDistance";
+import { redisClient } from "../utils/redisClient";
+import { CACHE_EXPIRATION } from "../constants/cache";
 
 @Resolver(Ad)
 export class AdQueries {
@@ -28,6 +30,20 @@ export class AdQueries {
     @Arg("orderBy", () => String, { defaultValue: "DESC" })
     orderBy: "ASC" | "DESC" = "DESC"
   ): Promise<Ad[]> {
+    const cacheKey = `ads:all:${skillId || "all"}:${mangoAmountMin || "min"}:${
+      mangoAmountMax || "max"
+    }:${durationMin || "dmin"}:${durationMax || "dmax"}:${status || "all"}:${
+      maxDistance || "dist"
+    }:${userLatitude || "lat"}:${
+      userLongitude || "lng"
+    }:${page}:${limit}:${orderBy}`;
+
+    // Check if the data is cached
+    const cachedData = await redisClient.get(cacheKey);
+    if (cachedData) {
+      return JSON.parse(cachedData);
+    }
+
     const query = dataSource.getRepository(Ad).createQueryBuilder("ad");
     const offset = (page - 1) * limit;
 
@@ -61,6 +77,8 @@ export class AdQueries {
       query.andWhere("ad.status = :status", { status });
     }
 
+    let results: Ad[];
+
     // Apply distance filter if maxDistance and user coordinates are provided
     if (
       maxDistance !== undefined &&
@@ -69,7 +87,7 @@ export class AdQueries {
       userLongitude !== undefined
     ) {
       const ads = await query.getMany();
-      const filteredAds = ads.filter((ad) => {
+      results = ads.filter((ad) => {
         if (ad.latitude !== undefined && ad.longitude !== undefined) {
           const distance = calculateDistance(
             userLatitude,
@@ -81,17 +99,21 @@ export class AdQueries {
         }
         return false;
       });
-      return filteredAds;
+    } else {
+      // Apply pagination
+      query.skip(offset).take(limit);
+
+      // Apply sorting by date (createdAt or similar field)
+      query.orderBy("ad.updatedAt", orderBy);
+
+      results = await query.getMany();
     }
 
-    // Apply pagination
-    query.skip(offset).take(limit);
+    await redisClient.set(cacheKey, JSON.stringify(results), {
+      EX: CACHE_EXPIRATION.GET_ALL_ADS,
+    });
 
-    // Apply sorting by date (createdAt or similar field)
-    query.orderBy("ad.updatedAt", orderBy);
-
-    // Execute request and return results
-    return await query.getMany();
+    return results;
   }
 
   @Query(() => Ad)

@@ -85,6 +85,21 @@ services:
             - web-client-build:/web-client-build
             - ./logs:/var/log/nginx
 
+    redis:
+        hostname: redis
+        image: redis
+
+    redis-commander:
+        image: rediscommander/redis-commander:latest
+        platform: linux/amd64
+        restart: always
+        ports:
+            - 8081:8081
+        environment:
+            - REDIS_HOSTS=redis
+        depends_on:
+            - redis
+
 volumes:
     postgres-data:
     web-client-build:
