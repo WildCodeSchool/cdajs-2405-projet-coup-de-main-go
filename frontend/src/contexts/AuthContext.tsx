@@ -9,7 +9,7 @@ interface AuthContextType {
     logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const TOKEN_COOKIE_NAME = "cdmg-token";
 export const COOKIE_NAME_ID = "cdmg-userId";

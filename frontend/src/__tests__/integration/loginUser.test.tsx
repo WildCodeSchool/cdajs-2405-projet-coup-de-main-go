@@ -56,7 +56,7 @@ describe("Login user", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText("John D.")).toBeInTheDocument();
+      expect(screen.getByText("Jean D.")).toBeInTheDocument();
     });
   });
 });
