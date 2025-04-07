@@ -85,7 +85,7 @@ jobs:
       - name: Run the tests in the frontend container
         run: |
           echo "Running tests in frontend container..."
-          docker exec $(docker ps -qf "name=frontend") npm run test
+          docker exec $(docker ps -qf "name=frontend") npm run test:ci
         env:
           VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
 
