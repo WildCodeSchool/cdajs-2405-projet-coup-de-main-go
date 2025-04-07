@@ -3,25 +3,33 @@ import { createContext, ReactNode, useContext, useState } from "react";
 
 interface AuthContextType {
     isAuthenticated: boolean;
-    userId: string | null; 
+    userId: string | null;
     setIsAuthenticated: (isAuthenticated: boolean) => void;
     login: (token: string, userId: string) => void;
     logout: () => void;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+    undefined
+);
 
 export const TOKEN_COOKIE_NAME = "cdmg-token";
 export const COOKIE_NAME_ID = "cdmg-userId";
+
+const production = process.env.NODE_ENV !== "dev";
+
 const COOKIE_OPTIONS = {
-    expires: 30, // 30 days
-    secure: true,
-    sameSite: "strict" as const,
+    expires: 30,
+    secure: production,
+    httpOnly: production,
+    sameSite: production ? ("None" as const) : ("Lax" as const),
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-        Cookies.get(TOKEN_COOKIE_NAME) && Cookies.get(COOKIE_NAME_ID) ? true : false
+        Cookies.get(TOKEN_COOKIE_NAME) && Cookies.get(COOKIE_NAME_ID)
+            ? true
+            : false
     );
 
     const [userId, setUserId] = useState<string | null>(
@@ -49,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 setIsAuthenticated,
                 login,
                 logout,
-                userId
+                userId,
             }}
         >
             {children}

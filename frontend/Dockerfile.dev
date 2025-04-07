@@ -1,11 +1,11 @@
 FROM node:18-alpine 
 
-WORKDIR /webapp
+WORKDIR /client
 
-COPY package*.json package-lock.json ./
+COPY package*.json ./
 
 RUN npm install
 
-COPY . .
+COPY src src
 
 CMD npm run dev -- --host
