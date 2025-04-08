@@ -40,7 +40,6 @@ export type AddressSuggestion = {
   geometry: {
     coordinates: [number, number];
   };
-  picture?: string | null;
 };
 
 export type User = {

@@ -3,13 +3,16 @@ import { AdInput } from "../../../generated/graphql-types";
 import { useState } from "react";
 import { AddressSuggestion } from "../../../types";
 import { Autocomplete, TextField } from "@mui/material";
+import { fetchAddressSuggestions } from "../../../services/addressService";
 
 interface AdModalFormAddressProps {
   setSelectedSuggestion: (value: AddressSuggestion | null) => void;
+  selectedSuggestion?: AddressSuggestion | null;
 }
 
 export default function AdModalFormAddress({
   setSelectedSuggestion,
+  selectedSuggestion,
 }: AdModalFormAddressProps) {
   const {
     control,
@@ -19,35 +22,6 @@ export default function AdModalFormAddress({
   const [addressSuggestions, setAddressSuggestions] = useState<
     AddressSuggestion[]
   >([]);
-
-  const fetchAddressSuggestions = async (query: string) => {
-    if (query.length >= 3) {
-      try {
-        const response = await fetch(
-          `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
-            query
-          )}&limit=5`
-        );
-        const data = await response.json();
-        setAddressSuggestions(data.features || []);
-      } catch (error) {
-        console.error(
-          "Erreur lors de la récupération des suggestions :",
-          error
-        );
-      }
-    }
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function isAddressSuggestion(value: any): value is AddressSuggestion {
-    return (
-      value &&
-      typeof value === "object" &&
-      "properties" in value &&
-      "label" in value.properties
-    );
-  }
 
   return (
     <>
@@ -64,9 +38,11 @@ export default function AdModalFormAddress({
             getOptionLabel={(option: AddressSuggestion) =>
               option.properties.label
             }
-            value={isAddressSuggestion(field.value) ? field.value : null}
-            onInputChange={(_, value) => {
-              fetchAddressSuggestions(value);
+            // value={isAddressSuggestion(field.value) ? field.value : null}
+            value={selectedSuggestion}
+            onInputChange={async (_, value) => {
+              const results = await fetchAddressSuggestions(value);
+              setAddressSuggestions(results);
             }}
             onChange={(_, value: AddressSuggestion | null) => {
               field.onChange(value);

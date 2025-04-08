@@ -9,39 +9,92 @@ import {
 import { useForm, FormProvider } from "react-hook-form";
 import {
   AdInput,
+  GetAdByIdQuery,
   Status,
   useCreateAdMutation,
-} from "../../generated/graphql-types";
-import { useState } from "react";
-import theme from "../../mui";
-import AdModalFormAddress from "./modalComponents/AdModalFormAddress";
-import AdModalFormTitle from "./modalComponents/AdModalFormTitle";
-import AdModalFormDescription from "./modalComponents/AdModalFormDescription";
-import AdModalFormCategory from "./modalComponents/AdModalFormCategory";
-import AdModalFormDuration from "./modalComponents/AdModalFormDuration";
-import { AddressSuggestion } from "../../types";
-import Cookies from "js-cookie";
-import { convertFileToBase64 } from "../../utils/convertFileToBase64";
-import { GET_ADS_BY_USER_QUERY } from "../../graphql/adQueries";
+  useUpdateAdMutation,
+} from "../../../generated/graphql-types";
+import { useEffect, useState } from "react";
+import theme from "../../../mui";
+import AdModalFormAddress from "./AdModalFormAddress";
+import AdModalFormTitle from "./AdModalFormTitle";
+import AdModalFormDescription from "./AdModalFormDescription";
+import AdModalFormCategory from "./AdModalFormCategory";
+import AdModalFormDuration from "./AdModalFormDuration";
+import { AddressSuggestion } from "../../../types";
+import { convertFileToBase64 } from "../../../utils/convertFileToBase64";
+import { GET_ADS_BY_USER_QUERY } from "../../../graphql/adQueries";
 import { useNavigate } from "react-router-dom";
-import AdModalFormPhotos from "./modalComponents/AdModalFormPhotos";
+import AdModalFormPhotos from "./AdModalFormPhotos";
+import { useAuth } from "../../../contexts/AuthContext";
 
-export default function AdModalForm({ onClose }: { onClose: () => void }) {
-  const userId = Cookies.get("cdmg-userId");
+interface AdModalFormProps {
+  onClose: () => void;
+  isEditing?: boolean;
+  ad?: GetAdByIdQuery["getAdById"] | null | undefined;
+}
+
+export default function AdModalForm({
+  onClose,
+  isEditing,
+  ad,
+}: AdModalFormProps) {
+  const { userId } = useAuth();
   const isResponsiveLayout = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
+  // Address selection
+  const [selectedSuggestion, setSelectedSuggestion] =
+    useState<AddressSuggestion | null>(null);
+
   const methods = useForm<AdInput>({
-    defaultValues: { title: "", description: "", duration: 0, skillId: "" },
+    defaultValues: {
+      title: ad ? ad.title : "",
+      description: ad ? ad.description : "",
+      address: ad ? ad.address : "",
+      zipCode: ad ? ad.zipCode : "",
+      city: ad ? ad.city : "",
+      latitude: ad ? ad.latitude : 0,
+      longitude: ad ? ad.longitude : 0,
+      duration: ad ? ad.duration : 0,
+      skillId: ad ? ad.skill.id : "",
+    },
   });
 
-  const [createAdMutation, { loading, error }] = useCreateAdMutation({
-    refetchQueries: [
-      {
-        query: GET_ADS_BY_USER_QUERY,
-        variables: { userId: userId, status: Status.Posted },
-      },
-    ],
-  });
+  useEffect(() => {
+    if (ad) {
+      setSelectedSuggestion({
+        properties: {
+          label: `${ad.address} ${ad.zipCode} ${ad.city}`,
+          name: ad.address,
+          postcode: ad.zipCode,
+          city: ad.city,
+        },
+        geometry: {
+          coordinates: [ad.longitude ?? 0, ad?.latitude ?? 0],
+        },
+      });
+    }
+  }, [ad, methods]);
+
+  const [createAdMutation, { loading: loadingCreate, error: errorCreate }] =
+    useCreateAdMutation({
+      refetchQueries: [
+        {
+          query: GET_ADS_BY_USER_QUERY,
+          variables: { userId: userId, status: Status.Posted },
+        },
+      ],
+    });
+
+  const [updateAdMutation, { loading: loadingUpdate, error: errorUpdate }] =
+    useUpdateAdMutation({
+      refetchQueries: [
+        {
+          query: GET_ADS_BY_USER_QUERY,
+          variables: { userId: userId, status: Status.Posted },
+        },
+      ],
+    });
 
   // Pictures and preview management
   const MAX_SIZE_MB = 1;
@@ -84,10 +137,6 @@ export default function AdModalForm({ onClose }: { onClose: () => void }) {
     setFileUrls(newFileUrls);
   };
 
-  // Address selection
-  const [selectedSuggestion, setSelectedSuggestion] =
-    useState<AddressSuggestion | null>(null);
-
   // NewAdForm submission
   const onFormSubmitted = async (formData: AdInput) => {
     if (!selectedSuggestion) {
@@ -100,37 +149,55 @@ export default function AdModalForm({ onClose }: { onClose: () => void }) {
       return;
     }
 
-    try {
-      const pictures = await Promise.all(
-        files.map((file) => (file ? convertFileToBase64(file) : null))
-      );
+    const pictures = await Promise.all(
+      files.map((file) => (file ? convertFileToBase64(file) : null))
+    );
 
-      await createAdMutation({
-        variables: {
-          formData: {
-            title: formData.title,
-            description: formData.description,
-            address: selectedSuggestion.properties.name,
-            zipCode: selectedSuggestion.properties.postcode,
-            city: selectedSuggestion.properties.city,
-            latitude: selectedSuggestion.geometry.coordinates[1],
-            longitude: selectedSuggestion.geometry.coordinates[0],
-            duration: formData.duration,
-            mangoAmount: formData.duration / 30,
-            picture1: pictures[0] as string | null,
-            picture2: pictures[1] as string | null,
-            picture3: pictures[2] as string | null,
-            skillId: formData.skillId,
-            userRequesterId: userId,
+    const commonData = {
+      title: formData.title,
+      description: formData.description,
+      address: selectedSuggestion.properties.name,
+      zipCode: selectedSuggestion.properties.postcode,
+      city: selectedSuggestion.properties.city,
+      latitude: selectedSuggestion.geometry.coordinates[1],
+      longitude: selectedSuggestion.geometry.coordinates[0],
+      duration: formData.duration,
+      mangoAmount: formData.duration / 30,
+      picture1: pictures[0] as string | null,
+      picture2: pictures[1] as string | null,
+      picture3: pictures[2] as string | null,
+      skillId: formData.skillId,
+    };
+
+    try {
+      if (isEditing && ad) {
+        await updateAdMutation({
+          variables: {
+            id: ad.id,
+            formData: commonData,
           },
-        },
-      });
+        });
+      } else {
+        await createAdMutation({
+          variables: {
+            formData: {
+              ...commonData,
+              userRequesterId: userId,
+            },
+          },
+        });
+      }
+
       onClose();
       navigate(`/profil`, {
-        state: { message: "Annonce ajoutée avec succès !" },
+        state: {
+          message: isEditing
+            ? "Annonce modifiée avec succès !"
+            : "Annonce ajoutée avec succès !",
+        },
       });
     } catch (error) {
-      console.error("Erreur lors de la création de l'annonce :", error);
+      console.error("Erreur lors de la soumission du formulaire :", error);
     }
   };
 
@@ -141,7 +208,7 @@ export default function AdModalForm({ onClose }: { onClose: () => void }) {
         component="h2"
         sx={{ fontWeight: 600, textAlign: "center" }}
       >
-        Créer une annonce
+        {isEditing ? "Modifiez votre annonce" : "Créer une annonce"}
       </Typography>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onFormSubmitted)}>
@@ -168,6 +235,7 @@ export default function AdModalForm({ onClose }: { onClose: () => void }) {
               {/* Adresse autocompletion */}
               <AdModalFormAddress
                 setSelectedSuggestion={setSelectedSuggestion}
+                selectedSuggestion={selectedSuggestion}
               />
 
               {/* Skill */}
@@ -210,8 +278,9 @@ export default function AdModalForm({ onClose }: { onClose: () => void }) {
               Envoyer
             </Button>
           </Stack>
-          {loading && <CircularProgress />}
-          {error && "Une erreur est survenue, merci de réessayer..."}
+          {(loadingCreate || loadingUpdate) && <CircularProgress />}
+          {(errorCreate || errorUpdate) &&
+            "Une erreur est survenue, merci de réessayer..."}
         </form>
       </FormProvider>
     </>
