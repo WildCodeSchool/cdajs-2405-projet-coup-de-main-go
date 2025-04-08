@@ -2,6 +2,7 @@ import { CameraAlt } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import theme from "../../../mui";
+import { Controller, useFormContext } from "react-hook-form";
 
 type AdModalFormPhotosProps = {
   files: File[];
@@ -19,6 +20,8 @@ export default function AdModalFormPhotos({
   handleFileChange,
   handleDelete,
 }: AdModalFormPhotosProps) {
+  const { control } = useFormContext();
+
   return (
     <>
       <Typography
@@ -74,26 +77,35 @@ export default function AdModalFormPhotos({
             ) : (
               <>
                 {/* When no files is selected, the camera icon is visible*/}
-                <IconButton
-                  component="label"
-                  sx={{
-                    position: "absolute",
-                    zIndex: 1,
-                  }}
-                >
-                  <CameraAlt
-                    sx={{
-                      width: 50,
-                      height: 50,
-                    }}
-                  />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: "none" }}
-                    onChange={(e) => handleFileChange(e, index)}
-                  />
-                </IconButton>
+                <Controller
+                  name={`photos[${index}]`}
+                  control={control}
+                  render={({ field }) => (
+                    <IconButton
+                      component="label"
+                      sx={{
+                        position: "absolute",
+                        zIndex: 1,
+                      }}
+                    >
+                      <CameraAlt
+                        sx={{
+                          width: 50,
+                          height: 50,
+                        }}
+                      />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        onChange={(e) => {
+                          handleFileChange(e, index);
+                          field.onChange(e.target.files); // Met à jour la valeur dans react-hook-form
+                        }}
+                      />
+                    </IconButton>
+                  )}
+                />
               </>
             )}
           </Box>
