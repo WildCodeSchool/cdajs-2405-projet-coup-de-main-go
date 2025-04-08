@@ -116,6 +116,14 @@ export class AdUpdateInput {
   @IsInt()
   duration?: number;
 
+  @Field({ nullable: true })
+  @IsOptional()
+  latitude?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  longitude?: number;
+
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()

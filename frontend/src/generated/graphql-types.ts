@@ -64,6 +64,8 @@ export type AdUpdateInput = {
   city?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   duration?: InputMaybe<Scalars['Int']['input']>;
+  latitude?: InputMaybe<Scalars['Float']['input']>;
+  longitude?: InputMaybe<Scalars['Float']['input']>;
   mangoAmount?: InputMaybe<Scalars['Int']['input']>;
   picture1?: InputMaybe<Scalars['String']['input']>;
   picture2?: InputMaybe<Scalars['String']['input']>;
@@ -476,6 +478,14 @@ export type CreateAdMutationVariables = Exact<{
 
 export type CreateAdMutation = { __typename?: 'Mutation', createAd: { __typename?: 'Ad', id: string, title: string, description: string, picture1?: string | null, picture2?: string | null, picture3?: string | null } };
 
+export type UpdateAdMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+  formData: AdUpdateInput;
+}>;
+
+
+export type UpdateAdMutation = { __typename?: 'Mutation', updateAd: { __typename?: 'Ad', id: string } };
+
 export type DeleteAdMutationVariables = Exact<{
   id: Scalars['String']['input'];
   userRequesterId: Scalars['String']['input'];
@@ -794,6 +804,40 @@ export function useCreateAdMutation(baseOptions?: Apollo.MutationHookOptions<Cre
 export type CreateAdMutationHookResult = ReturnType<typeof useCreateAdMutation>;
 export type CreateAdMutationResult = Apollo.MutationResult<CreateAdMutation>;
 export type CreateAdMutationOptions = Apollo.BaseMutationOptions<CreateAdMutation, CreateAdMutationVariables>;
+export const UpdateAdDocument = gql`
+    mutation UpdateAd($id: String!, $formData: AdUpdateInput!) {
+  updateAd(id: $id, adData: $formData) {
+    id
+  }
+}
+    `;
+export type UpdateAdMutationFn = Apollo.MutationFunction<UpdateAdMutation, UpdateAdMutationVariables>;
+
+/**
+ * __useUpdateAdMutation__
+ *
+ * To run a mutation, you first call `useUpdateAdMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAdMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateAdMutation, { data, loading, error }] = useUpdateAdMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      formData: // value for 'formData'
+ *   },
+ * });
+ */
+export function useUpdateAdMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAdMutation, UpdateAdMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateAdMutation, UpdateAdMutationVariables>(UpdateAdDocument, options);
+      }
+export type UpdateAdMutationHookResult = ReturnType<typeof useUpdateAdMutation>;
+export type UpdateAdMutationResult = Apollo.MutationResult<UpdateAdMutation>;
+export type UpdateAdMutationOptions = Apollo.BaseMutationOptions<UpdateAdMutation, UpdateAdMutationVariables>;
 export const DeleteAdDocument = gql`
     mutation DeleteAd($id: String!, $userRequesterId: String!) {
   deleteAd(id: $id, userRequesterId: $userRequesterId)

@@ -22,6 +22,14 @@ export const CREATE_AD = gql`
   }
 `;
 
+export const UPDATE_AD = gql`
+  mutation UpdateAd($id: String!, $formData: AdUpdateInput!) {
+    updateAd(id: $id, adData: $formData) {
+      id
+    }
+  }
+`;
+
 export const DELETE_AD = gql`
   mutation DeleteAd($id: String!, $userRequesterId: String!) {
     deleteAd(id: $id, userRequesterId: $userRequesterId)
