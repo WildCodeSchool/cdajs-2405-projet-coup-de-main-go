@@ -72,7 +72,7 @@ jobs:
           DB_PORT: ${{ secrets.POSTGRES_PORT }}
           DB_DATABASE: ${{ secrets.POSTGRES_DB }}
 
-      - name: Run the tests
+      - name: Run the tests in the backend container
         run: |
           echo "Running tests in backend container..."
           docker exec $(docker ps -qf "name=backend") npm run test
@@ -81,6 +81,13 @@ jobs:
           VITE_FRONTEND_URL: ${{ secrets.VITE_FRONTEND_URL }}
           VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
           VITE_DOMAIN_BACKEND_URL: ${{ secrets.VITE_DOMAIN_BACKEND_URL }}
+
+      - name: Run the tests in the frontend container
+        run: |
+          echo "Running tests in frontend container..."
+          docker exec $(docker ps -qf "name=frontend") npm run test:ci
+        env:
+          VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
 
       - name: Show Docker logs on failure
         if: failure()
