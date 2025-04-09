@@ -33,9 +33,17 @@ test.describe("Send Message - E2E Tests", () => {
 
     test.beforeEach(async ({ page }) => {
         await page.goto(frontendUrl);
+
+        // Écouter les requêtes réseau
         page.on("request", (request) => {
             console.log(`[NETWORK] ${request.method()} ${request.url()}`);
         });
+
+        // Écouter les messages de la console
+        page.on("console", (msg) => {
+            console.log(`[CONSOLE] ${msg.type()} - ${msg.text()}`);
+        });
+
         await login(page);
     });
 
@@ -55,25 +63,24 @@ test.describe("Send Message - E2E Tests", () => {
 
         await page.click(SELECTORS.chatLink);
         await page.locator(SELECTORS.conversationItem).first().click();
-        await page.locator(SELECTORS.messageInput).fill(replyMessage);
+
+        const input = page.locator(SELECTORS.messageInput);
+        await input.fill(replyMessage);
         await page.screenshot({
-            path: "screenshots/reply-msg.png",
+            path: "screenshots/one-message.png",
             fullPage: true,
         });
-        await page.keyboard.press("Enter");
-        await page.waitForTimeout(3000); // Passe à 3s pour tester
+        await input.press("Enter");
 
         const messageLocator = page.locator(`text=${replyMessage}`);
-
-        // Attendre que le message soit présent
-        if ((await messageLocator.count()) === 0) {
-            console.warn(
-                "⚠️ Le message ne s'affiche pas. Screenshot en cours..."
-            );
+        try {
+            await expect(messageLocator).toHaveCount(1, { timeout: 15000 });
+        } catch (e) {
             await page.screenshot({
-                path: "screenshots/no-message.png",
+                path: "screenshots/message-not-found.png",
                 fullPage: true,
             });
+            throw e;
         }
 
         await page.screenshot({

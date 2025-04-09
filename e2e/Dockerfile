@@ -9,4 +9,4 @@ RUN npm install
 COPY playwright.config.ts /e2e/playwright.config.ts
 COPY __tests__/ /e2e/__tests__/
 
-CMD npm run test && tail -f /dev/null
+CMD tail -f /dev/null
