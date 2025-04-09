@@ -14,17 +14,18 @@ import {
   useCreateAdMutation,
   useUpdateAdMutation,
 } from "../../../generated/graphql-types";
-import { useState } from "react";
 import theme from "../../../mui";
 import AdModalFormAddress from "./AdModalFormAddress";
 import AdModalFormTitle from "./AdModalFormTitle";
 import AdModalFormDescription from "./AdModalFormDescription";
 import AdModalFormCategory from "./AdModalFormCategory";
 import AdModalFormDuration from "./AdModalFormDuration";
-import { AddressSuggestion } from "../../../types";
-import { GET_ADS_BY_USER_QUERY } from "../../../graphql/adQueries";
+import AdModalFormPictures from "./AdModalFormPictures";
+import {
+  GET_ADS_BY_USER_QUERY,
+  GET_ALL_ADS_QUERY,
+} from "../../../graphql/adQueries";
 import { useNavigate } from "react-router-dom";
-import AdModalFormPhotos from "./AdModalFormPhotos";
 import { useAuth } from "../../../contexts/AuthContext";
 import { isBase64 } from "../../../utils/checkBase64";
 
@@ -40,11 +41,9 @@ export default function AdModalForm({
   ad,
 }: AdModalFormProps) {
   const { userId } = useAuth();
+
   const isResponsiveLayout = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
-  // Address selection
-  const [selectedSuggestion, setSelectedSuggestion] =
-    useState<AddressSuggestion | null>(null);
 
   const methods = useForm<AdInput>({
     defaultValues: {
@@ -63,28 +62,20 @@ export default function AdModalForm({
     },
   });
 
-  // useEffect(() => {
-  //   if (ad) {
-  //     setSelectedSuggestion({
-  //       properties: {
-  //         label: `${ad.address} ${ad.zipCode} ${ad.city}`,
-  //         name: ad.address,
-  //         postcode: ad.zipCode,
-  //         city: ad.city,
-  //       },
-  //       geometry: {
-  //         coordinates: [ad.longitude ?? 0, ad?.latitude ?? 0],
-  //       },
-  //     });
-  //   }
-  // }, [ad, methods]);
-
   const [createAdMutation, { loading: loadingCreate, error: errorCreate }] =
     useCreateAdMutation({
       refetchQueries: [
         {
           query: GET_ADS_BY_USER_QUERY,
           variables: { userId: userId, status: Status.Posted },
+        },
+        {
+          query: GET_ALL_ADS_QUERY,
+          variables: { skillId: null, status: Status.Posted, limit: 4 },
+        },
+        {
+          query: GET_ALL_ADS_QUERY,
+          variables: { skillId: 1, status: Status.Posted, limit: 4 },
         },
       ],
     });
@@ -96,37 +87,32 @@ export default function AdModalForm({
           query: GET_ADS_BY_USER_QUERY,
           variables: { userId: userId, status: Status.Posted },
         },
+        {
+          query: GET_ALL_ADS_QUERY,
+          variables: { skillId: null, status: Status.Posted, limit: 4 },
+        },
+        {
+          query: GET_ALL_ADS_QUERY,
+          variables: { skillId: 1, status: Status.Posted, limit: 4 },
+        },
       ],
     });
 
-  // NewAdForm submission
+  // AdForm submission
   const onFormSubmitted = async (formData: AdInput) => {
-    if (!selectedSuggestion) {
-      console.error("Aucune adresse sélectionnée");
-      return;
-    }
-
     if (!userId) {
-      console.error("L'utilisateur n'est pas connecté");
+      console.error("Erreur sur l'identifiant de l'utilisateur");
       return;
     }
 
     const commonData = {
-      title: formData.title,
-      description: formData.description,
-      address: selectedSuggestion.properties.name,
-      zipCode: selectedSuggestion.properties.postcode,
-      city: selectedSuggestion.properties.city,
-      latitude: selectedSuggestion.geometry.coordinates[1],
-      longitude: selectedSuggestion.geometry.coordinates[0],
-      duration: formData.duration,
+      ...formData,
       mangoAmount: formData.duration / 30,
       picture1: isBase64(formData.picture1) ? formData.picture1 : null,
       picture2: isBase64(formData.picture2) ? formData.picture2 : null,
       picture3: isBase64(formData.picture3) ? formData.picture3 : null,
-      skillId: formData.skillId,
     };
-
+    console.log("commondata", commonData);
     try {
       if (isEditing && ad) {
         await updateAdMutation({
@@ -191,11 +177,7 @@ export default function AdModalForm({
               <AdModalFormDescription />
 
               {/* Adresse autocompletion */}
-              <AdModalFormAddress
-                setSelectedSuggestion={setSelectedSuggestion}
-                selectedSuggestion={selectedSuggestion}
-                ad={ad}
-              />
+              <AdModalFormAddress ad={ad} />
 
               {/* Skill */}
               <AdModalFormCategory />
@@ -217,7 +199,7 @@ export default function AdModalForm({
               <AdModalFormDuration />
 
               {/* Pictures */}
-              <AdModalFormPhotos adId={ad?.id} />
+              <AdModalFormPictures adId={ad?.id} />
             </Stack>
           </Stack>
 
@@ -229,7 +211,7 @@ export default function AdModalForm({
             }}
           >
             <Button type="submit" sx={{ paddingX: 4 }}>
-              Envoyer
+              Valider
             </Button>
           </Stack>
           {(loadingCreate || loadingUpdate) && <CircularProgress />}

@@ -476,7 +476,7 @@ export type CreateAdMutationVariables = Exact<{
 }>;
 
 
-export type CreateAdMutation = { __typename?: 'Mutation', createAd: { __typename?: 'Ad', id: string, title: string, description: string, picture1?: string | null, picture2?: string | null, picture3?: string | null } };
+export type CreateAdMutation = { __typename?: 'Mutation', createAd: { __typename?: 'Ad', id: string, title: string } };
 
 export type UpdateAdMutationVariables = Exact<{
   id: Scalars['String']['input'];
@@ -484,7 +484,7 @@ export type UpdateAdMutationVariables = Exact<{
 }>;
 
 
-export type UpdateAdMutation = { __typename?: 'Mutation', updateAd: { __typename?: 'Ad', id: string } };
+export type UpdateAdMutation = { __typename?: 'Mutation', updateAd: { __typename?: 'Ad', id: string, title: string } };
 
 export type DeleteAdMutationVariables = Exact<{
   id: Scalars['String']['input'];
@@ -771,10 +771,6 @@ export const CreateAdDocument = gql`
   createAd(adData: $formData) {
     id
     title
-    description
-    picture1
-    picture2
-    picture3
   }
 }
     `;
@@ -808,6 +804,7 @@ export const UpdateAdDocument = gql`
     mutation UpdateAd($id: String!, $formData: AdUpdateInput!) {
   updateAd(id: $id, adData: $formData) {
     id
+    title
   }
 }
     `;

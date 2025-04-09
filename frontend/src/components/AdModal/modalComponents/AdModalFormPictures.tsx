@@ -5,13 +5,12 @@ import theme from "../../../mui";
 import { useFormContext } from "react-hook-form";
 import { AdInput } from "../../../generated/graphql-types";
 import { convertFileToBase64 } from "../../../utils/convertFileToBase64";
-import { useEffect } from "react";
 
 interface AdModalFormPhotosProps {
   adId?: string | null;
 }
 
-export default function AdModalFormPhotos({ adId }: AdModalFormPhotosProps) {
+export default function AdModalFormPictures({ adId }: AdModalFormPhotosProps) {
   const MAX_SIZE_MB = 10;
   const methods = useFormContext<AdInput>();
   const { watch, setValue } = methods;
@@ -36,12 +35,6 @@ export default function AdModalFormPhotos({ adId }: AdModalFormPhotosProps) {
     const base64 = await convertFileToBase64(file);
     setValue(`picture${index + 1}` as keyof AdInput, base64);
   };
-
-  useEffect(() => {
-    console.log("picture1", picture1);
-    console.log("picture2", picture2);
-    console.log("picture3", picture3);
-  }, [picture1, picture2, picture3]);
 
   const handleDeleteImage = (index: number) => {
     setValue(`picture${index + 1}` as keyof AdInput, "");
@@ -129,7 +122,6 @@ export default function AdModalFormPhotos({ adId }: AdModalFormPhotosProps) {
                   sx={{
                     position: "absolute",
                     zIndex: 1,
-                    backgroundColor: "red",
                   }}
                 >
                   <CameraAlt
@@ -138,7 +130,6 @@ export default function AdModalFormPhotos({ adId }: AdModalFormPhotosProps) {
                       zIndex: 1,
                       width: 50,
                       height: 50,
-                      backgroundColor: "red",
                     }}
                   />
                   <input

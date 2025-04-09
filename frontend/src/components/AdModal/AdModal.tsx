@@ -16,6 +16,7 @@ export default function AdModal({
   isEditing,
   adId,
 }: AdModalProps) {
+  // If adId is provided, fetch the existing ad from the database
   const {
     loading: adLoading,
     error: adError,
@@ -24,15 +25,15 @@ export default function AdModal({
 
   const ad = adData?.getAdById;
 
-  if (isEditing && adLoading) return <CircularProgress />;
-  if (isEditing && adError)
-    return <Typography>Erreur: {adError.message}</Typography>;
-  if (isEditing && !adData)
-    return <Typography>Aucune donnée trouvée</Typography>;
-
   return (
-    <GenericModal open={open} onClose={onClose} maxWidth="md">
-      <AdModalForm isEditing={isEditing} ad={ad} onClose={onClose} />
-    </GenericModal>
+    <>
+      <GenericModal open={open} onClose={onClose} maxWidth="md">
+        <AdModalForm isEditing={isEditing} ad={ad} onClose={onClose} />
+      </GenericModal>
+
+      {adLoading && <CircularProgress />}
+      {adError && <Typography>Erreur : {adError.message}</Typography>}
+      {isEditing && !adData && <Typography>Aucune donnée trouvée</Typography>}
+    </>
   );
 }

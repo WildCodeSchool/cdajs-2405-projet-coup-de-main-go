@@ -6,28 +6,27 @@ import { Autocomplete, TextField } from "@mui/material";
 import { fetchAddressSuggestions } from "../../../services/addressService";
 
 interface AdModalFormAddressProps {
-  setSelectedSuggestion: (value: AddressSuggestion | null) => void;
-  selectedSuggestion?: AddressSuggestion | null;
   ad?: GetAdByIdQuery["getAdById"] | null | undefined;
 }
 
-export default function AdModalFormAddress({
-  setSelectedSuggestion,
-  selectedSuggestion,
-  ad,
-}: AdModalFormAddressProps) {
+export default function AdModalFormAddress({ ad }: AdModalFormAddressProps) {
   const {
     control,
+    setValue,
     formState: { errors },
   } = useFormContext<AdInput>();
 
   const [addressSuggestions, setAddressSuggestions] = useState<
     AddressSuggestion[]
   >([]);
+  const [selectedValue, setSelectedValue] = useState<AddressSuggestion | null>(
+    null
+  );
 
+  // In editing mode, define selected value in order to display default value
   useEffect(() => {
     if (ad) {
-      setSelectedSuggestion({
+      setSelectedValue({
         properties: {
           label: `${ad.address} ${ad.zipCode} ${ad.city}`,
           name: ad.address,
@@ -39,7 +38,7 @@ export default function AdModalFormAddress({
         },
       });
     }
-  }, [ad, setSelectedSuggestion]);
+  }, [ad]);
 
   return (
     <>
@@ -49,22 +48,26 @@ export default function AdModalFormAddress({
         rules={{
           required: "Champ obligatoire",
         }}
-        render={({ field }) => (
+        render={() => (
           <Autocomplete
-            {...field}
             options={addressSuggestions}
+            value={selectedValue}
             getOptionLabel={(option: AddressSuggestion) =>
               option.properties.label
             }
-            // value={isAddressSuggestion(field.value) ? field.value : null}
-            value={selectedSuggestion}
             onInputChange={async (_, value) => {
               const results = await fetchAddressSuggestions(value);
               setAddressSuggestions(results);
             }}
             onChange={(_, value: AddressSuggestion | null) => {
-              field.onChange(value);
-              setSelectedSuggestion(value);
+              setSelectedValue(value);
+              if (value) {
+                setValue("address", value.properties.name);
+                setValue("zipCode", value.properties.postcode);
+                setValue("city", value.properties.city);
+                setValue("longitude", value.geometry.coordinates[0]);
+                setValue("latitude", value.geometry.coordinates[1]);
+              }
             }}
             noOptionsText="Saissisez une adresse"
             renderInput={(params) => (

@@ -14,10 +14,6 @@ export const CREATE_AD = gql`
     createAd(adData: $formData) {
       id
       title
-      description
-      picture1
-      picture2
-      picture3
     }
   }
 `;
@@ -26,6 +22,7 @@ export const UPDATE_AD = gql`
   mutation UpdateAd($id: String!, $formData: AdUpdateInput!) {
     updateAd(id: $id, adData: $formData) {
       id
+      title
     }
   }
 `;
