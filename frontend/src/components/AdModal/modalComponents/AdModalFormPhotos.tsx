@@ -2,25 +2,62 @@ import { CameraAlt } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import theme from "../../../mui";
-import { Controller, useFormContext } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
+import { AdInput } from "../../../generated/graphql-types";
+import { convertFileToBase64 } from "../../../utils/convertFileToBase64";
+import { useEffect } from "react";
 
-type AdModalFormPhotosProps = {
-  files: File[];
-  fileUrls: string[];
-  handleFileChange: (
+interface AdModalFormPhotosProps {
+  adId?: string | null;
+}
+
+export default function AdModalFormPhotos({ adId }: AdModalFormPhotosProps) {
+  const MAX_SIZE_MB = 10;
+  const methods = useFormContext<AdInput>();
+  const { watch, setValue } = methods;
+
+  const picture1 = watch("picture1");
+  const picture2 = watch("picture2");
+  const picture3 = watch("picture3");
+  const pictures = [picture1, picture2, picture3];
+
+  const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number
-  ) => void;
-  handleDelete: (index: number) => void;
-};
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-export default function AdModalFormPhotos({
-  files,
-  fileUrls,
-  handleFileChange,
-  handleDelete,
-}: AdModalFormPhotosProps) {
-  const { control } = useFormContext();
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      alert(`La taille du fichier doit être inférieure à ${MAX_SIZE_MB} Mo.`);
+      return;
+    }
+
+    const base64 = await convertFileToBase64(file);
+    setValue(`picture${index + 1}` as keyof AdInput, base64);
+  };
+
+  useEffect(() => {
+    console.log("picture1", picture1);
+    console.log("picture2", picture2);
+    console.log("picture3", picture3);
+  }, [picture1, picture2, picture3]);
+
+  const handleDeleteImage = (index: number) => {
+    setValue(`picture${index + 1}` as keyof AdInput, "");
+  };
+
+  const getImageSrc = (pic: string) => {
+    // Si pic est une URL complète ou une base64, on l'utilise directement
+    if (pic.startsWith("http") || pic.startsWith("data:image")) {
+      return pic;
+    }
+
+    // Si pic est juste un nom de fichier, on construit l'URL complète
+    return `${
+      import.meta.env.VITE_DOMAIN_BACKEND_URL
+    }/uploads/ads/${adId}/${pic}`;
+  };
 
   return (
     <>
@@ -32,7 +69,7 @@ export default function AdModalFormPhotos({
       </Typography>
       <Stack direction="row" sx={{ justifyContent: "center" }}>
         {/* Pictures' containers */}
-        {[0, 1, 2].map((index) => (
+        {pictures.map((pic, index) => (
           <Box
             key={index}
             sx={{
@@ -49,11 +86,11 @@ export default function AdModalFormPhotos({
             }}
           >
             {/* When a file is selected, preview is visible */}
-            {files[index] ? (
+            {pic ? (
               <>
                 <img
-                  src={fileUrls[index]}
-                  alt={`photo-${index}`}
+                  src={getImageSrc(pic)}
+                  alt={`preview ${index + 1}`}
                   style={{
                     width: "100%",
                     height: "100%",
@@ -63,7 +100,7 @@ export default function AdModalFormPhotos({
                 />
                 {/* Delete preview icon */}
                 <IconButton
-                  onClick={() => handleDelete(index)}
+                  onClick={() => handleDeleteImage(index)}
                   sx={{
                     position: "absolute",
                     top: "0.1rem",
@@ -77,35 +114,43 @@ export default function AdModalFormPhotos({
             ) : (
               <>
                 {/* When no files is selected, the camera icon is visible*/}
-                <Controller
-                  name={`photos[${index}]`}
-                  control={control}
-                  render={({ field }) => (
-                    <IconButton
-                      component="label"
-                      sx={{
-                        position: "absolute",
-                        zIndex: 1,
-                      }}
-                    >
-                      <CameraAlt
-                        sx={{
-                          width: 50,
-                          height: 50,
-                        }}
-                      />
-                      <input
-                        type="file"
-                        accept="image/*"
-                        style={{ display: "none" }}
-                        onChange={(e) => {
-                          handleFileChange(e, index);
-                          field.onChange(e.target.files); // Met à jour la valeur dans react-hook-form
-                        }}
-                      />
-                    </IconButton>
-                  )}
+                {/* <label
+                  htmlFor={`picture${index + 1}`}
+                > */}
+                <input
+                  type="file"
+                  id={`picture${index + 1}`}
+                  accept="image/*"
+                  onChange={(e) => handleFileChange(e, index)}
+                  hidden
                 />
+                <IconButton
+                  component="label"
+                  sx={{
+                    position: "absolute",
+                    zIndex: 1,
+                    backgroundColor: "red",
+                  }}
+                >
+                  <CameraAlt
+                    sx={{
+                      position: "absolute",
+                      zIndex: 1,
+                      width: 50,
+                      height: 50,
+                      backgroundColor: "red",
+                    }}
+                  />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={(e) => {
+                      handleFileChange(e, index);
+                    }}
+                  />
+                </IconButton>
+                {/* </label> */}
               </>
             )}
           </Box>

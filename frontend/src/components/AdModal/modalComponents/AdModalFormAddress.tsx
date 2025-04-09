@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from "react-hook-form";
-import { AdInput } from "../../../generated/graphql-types";
-import { useState } from "react";
+import { AdInput, GetAdByIdQuery } from "../../../generated/graphql-types";
+import { useEffect, useState } from "react";
 import { AddressSuggestion } from "../../../types";
 import { Autocomplete, TextField } from "@mui/material";
 import { fetchAddressSuggestions } from "../../../services/addressService";
@@ -8,11 +8,13 @@ import { fetchAddressSuggestions } from "../../../services/addressService";
 interface AdModalFormAddressProps {
   setSelectedSuggestion: (value: AddressSuggestion | null) => void;
   selectedSuggestion?: AddressSuggestion | null;
+  ad?: GetAdByIdQuery["getAdById"] | null | undefined;
 }
 
 export default function AdModalFormAddress({
   setSelectedSuggestion,
   selectedSuggestion,
+  ad,
 }: AdModalFormAddressProps) {
   const {
     control,
@@ -22,6 +24,22 @@ export default function AdModalFormAddress({
   const [addressSuggestions, setAddressSuggestions] = useState<
     AddressSuggestion[]
   >([]);
+
+  useEffect(() => {
+    if (ad) {
+      setSelectedSuggestion({
+        properties: {
+          label: `${ad.address} ${ad.zipCode} ${ad.city}`,
+          name: ad.address,
+          postcode: ad.zipCode,
+          city: ad.city,
+        },
+        geometry: {
+          coordinates: [ad.longitude ?? 0, ad?.latitude ?? 0],
+        },
+      });
+    }
+  }, [ad, setSelectedSuggestion]);
 
   return (
     <>

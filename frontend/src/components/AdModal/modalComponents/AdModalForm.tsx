@@ -14,7 +14,7 @@ import {
   useCreateAdMutation,
   useUpdateAdMutation,
 } from "../../../generated/graphql-types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import theme from "../../../mui";
 import AdModalFormAddress from "./AdModalFormAddress";
 import AdModalFormTitle from "./AdModalFormTitle";
@@ -22,11 +22,11 @@ import AdModalFormDescription from "./AdModalFormDescription";
 import AdModalFormCategory from "./AdModalFormCategory";
 import AdModalFormDuration from "./AdModalFormDuration";
 import { AddressSuggestion } from "../../../types";
-import { convertFileToBase64 } from "../../../utils/convertFileToBase64";
 import { GET_ADS_BY_USER_QUERY } from "../../../graphql/adQueries";
 import { useNavigate } from "react-router-dom";
 import AdModalFormPhotos from "./AdModalFormPhotos";
 import { useAuth } from "../../../contexts/AuthContext";
+import { isBase64 } from "../../../utils/checkBase64";
 
 interface AdModalFormProps {
   onClose: () => void;
@@ -57,24 +57,27 @@ export default function AdModalForm({
       longitude: ad ? ad.longitude : 0,
       duration: ad ? ad.duration : 0,
       skillId: ad ? ad.skill.id : "",
+      picture1: ad && ad.picture1 ? ad.picture1 : "",
+      picture2: ad && ad.picture2 ? ad.picture2 : "",
+      picture3: ad && ad.picture3 ? ad.picture3 : "",
     },
   });
 
-  useEffect(() => {
-    if (ad) {
-      setSelectedSuggestion({
-        properties: {
-          label: `${ad.address} ${ad.zipCode} ${ad.city}`,
-          name: ad.address,
-          postcode: ad.zipCode,
-          city: ad.city,
-        },
-        geometry: {
-          coordinates: [ad.longitude ?? 0, ad?.latitude ?? 0],
-        },
-      });
-    }
-  }, [ad, methods]);
+  // useEffect(() => {
+  //   if (ad) {
+  //     setSelectedSuggestion({
+  //       properties: {
+  //         label: `${ad.address} ${ad.zipCode} ${ad.city}`,
+  //         name: ad.address,
+  //         postcode: ad.zipCode,
+  //         city: ad.city,
+  //       },
+  //       geometry: {
+  //         coordinates: [ad.longitude ?? 0, ad?.latitude ?? 0],
+  //       },
+  //     });
+  //   }
+  // }, [ad, methods]);
 
   const [createAdMutation, { loading: loadingCreate, error: errorCreate }] =
     useCreateAdMutation({
@@ -96,47 +99,6 @@ export default function AdModalForm({
       ],
     });
 
-  // Pictures and preview management
-  const MAX_SIZE_MB = 1;
-  const [files, setFiles] = useState<File[]>([]);
-  const [fileUrls, setFileUrls] = useState<string[]>([]);
-
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      // Check file size
-      if (selectedFile.size > MAX_SIZE_MB * 1024 * 1024) {
-        alert(`La taille du fichier doit être inférieure à ${MAX_SIZE_MB} Mo.`);
-        return;
-      }
-
-      // Update file table
-      const newFiles = [...files];
-      newFiles[index] = selectedFile;
-      setFiles(newFiles);
-      // Update URLs table
-      const fileUrl = URL.createObjectURL(selectedFile);
-      const newFileUrls = [...fileUrls];
-      newFileUrls[index] = fileUrl;
-      setFileUrls(newFileUrls);
-    }
-  };
-
-  const handleDelete = (index: number) => {
-    // Delete file
-    const newFiles = [...files];
-    newFiles.splice(index, 1);
-    setFiles(newFiles);
-    // Delete URL
-    URL.revokeObjectURL(fileUrls[index]);
-    const newFileUrls = [...fileUrls];
-    newFileUrls.splice(index, 1);
-    setFileUrls(newFileUrls);
-  };
-
   // NewAdForm submission
   const onFormSubmitted = async (formData: AdInput) => {
     if (!selectedSuggestion) {
@@ -149,10 +111,6 @@ export default function AdModalForm({
       return;
     }
 
-    const pictures = await Promise.all(
-      files.map((file) => (file ? convertFileToBase64(file) : null))
-    );
-
     const commonData = {
       title: formData.title,
       description: formData.description,
@@ -163,9 +121,9 @@ export default function AdModalForm({
       longitude: selectedSuggestion.geometry.coordinates[0],
       duration: formData.duration,
       mangoAmount: formData.duration / 30,
-      picture1: pictures[0] as string | null,
-      picture2: pictures[1] as string | null,
-      picture3: pictures[2] as string | null,
+      picture1: isBase64(formData.picture1) ? formData.picture1 : null,
+      picture2: isBase64(formData.picture2) ? formData.picture2 : null,
+      picture3: isBase64(formData.picture3) ? formData.picture3 : null,
       skillId: formData.skillId,
     };
 
@@ -236,6 +194,7 @@ export default function AdModalForm({
               <AdModalFormAddress
                 setSelectedSuggestion={setSelectedSuggestion}
                 selectedSuggestion={selectedSuggestion}
+                ad={ad}
               />
 
               {/* Skill */}
@@ -258,12 +217,7 @@ export default function AdModalForm({
               <AdModalFormDuration />
 
               {/* Pictures */}
-              <AdModalFormPhotos
-                files={files}
-                fileUrls={fileUrls}
-                handleFileChange={handleFileChange}
-                handleDelete={handleDelete}
-              />
+              <AdModalFormPhotos adId={ad?.id} />
             </Stack>
           </Stack>
 
