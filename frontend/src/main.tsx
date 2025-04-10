@@ -15,11 +15,7 @@ import { RouterProvider } from "react-router-dom";
 
 import { router } from "./routes";
 import theme from "./mui";
-import {
-  AuthProvider,
-  COOKIE_NAME_ID,
-  TOKEN_COOKIE_NAME,
-} from "./contexts/AuthContext";
+import { AuthProvider, TOKEN_COOKIE_NAME } from "./contexts/AuthContext";
 import { MangoProvider } from "./contexts/MangoContext";
 
 import "./App.css";
@@ -43,7 +39,6 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
       if (isTokenExpired || isUnthorized) {
         Cookies.remove(TOKEN_COOKIE_NAME);
-        Cookies.remove(COOKIE_NAME_ID);
         window.location.reload();
       } else {
         console.error(`[GraphQL error]: ${err.message}`);
