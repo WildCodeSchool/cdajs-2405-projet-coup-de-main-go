@@ -68,6 +68,7 @@ async function startApolloServer() {
   const server = new ApolloServer({
     schema,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    introspection: process.env.NODE_ENV !== "production",
   });
 
   await dataSource.initialize();
@@ -79,7 +80,7 @@ async function startApolloServer() {
 
   app.use(
     cors({
-      origin: "*",
+      origin: process.env.FRONTEND_URL,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization"],
       credentials: true,
