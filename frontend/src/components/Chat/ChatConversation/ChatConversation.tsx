@@ -96,7 +96,6 @@ export default function ChatConversation({
                 }
             }, 100);
         }
-        console.log("MESSAGES :", displayedMessages.length);
     }, [displayedMessages]);
 
     const { handleSubmit, reset, setValue } = useForm<MessageForm>();
@@ -129,8 +128,6 @@ export default function ChatConversation({
     });
 
     const currentChat = chats.find((chat: Chat) => chat.id === chatId);
-
-    console.log("CURRENT CHAT :", JSON.stringify(currentChat));
 
     const isRequester = currentUserId === currentChat?.userRequester.id;
 
@@ -276,8 +273,6 @@ export default function ChatConversation({
     };
 
     useEffect(() => {
-        console.log("INFORMATIONS :", currentChat, messageCount, currentUserId);
-
         if (currentChat) {
             const otherUserId =
                 currentUserId === currentChat.userRequester.id
@@ -325,8 +320,7 @@ export default function ChatConversation({
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
-            // e.preventDefault();
-            console.log("MESSAGE INPUT :", messageInput);
+            e.preventDefault();
             handleSubmit(onSubmit)();
         }
     };
@@ -335,14 +329,10 @@ export default function ChatConversation({
         const value = e.target.value;
         setMessageInput(value);
         setValue("message", value);
-        console.log("MESSAGE ICI :", value);
     };
 
     const onSubmit = async (formData: MessageForm) => {
         try {
-            console.log("FORMULAIRE :", JSON.stringify(formData, null, 2));
-            console.log("MESSAGE :", formData.message);
-
             await sendMessage({
                 variables: {
                     messageData: {
@@ -357,10 +347,7 @@ export default function ChatConversation({
             });
             setMessageInput("");
             reset();
-
-            console.log("\nMESSAGE ENVOYE\n");
         } catch (error) {
-            console.log("FORMULAIRE :", JSON.stringify(formData, null, 2));
             console.error("Erreur lors de l'envoi du message:", error);
         }
     };

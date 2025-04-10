@@ -1,9 +1,11 @@
 import Cookies from "js-cookie";
 import { createContext, ReactNode, useContext, useState } from "react";
 
+import { parseJwt } from "../utils/decode_jwt";
+
 interface AuthContextType {
     isAuthenticated: boolean;
-    userId: string | null;
+    userId: string | undefined;
     setIsAuthenticated: (isAuthenticated: boolean) => void;
     login: (token: string, userId: string) => void;
     logout: () => void;
@@ -14,10 +16,8 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 );
 
 export const TOKEN_COOKIE_NAME = "cdmg-token";
-export const COOKIE_NAME_ID = "cdmg-userId";
 
-const production = process.env.NODE_ENV !== "dev";
-
+const production = process.env.NODE_ENV !== "development";
 const COOKIE_OPTIONS = {
     expires: 30,
     secure: production,
@@ -26,28 +26,27 @@ const COOKIE_OPTIONS = {
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+    const token = Cookies.get(TOKEN_COOKIE_NAME);
+
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-        Cookies.get(TOKEN_COOKIE_NAME) && Cookies.get(COOKIE_NAME_ID)
-            ? true
-            : false
+        token ? true : false
     );
 
-    const [userId, setUserId] = useState<string | null>(
-        Cookies.get(COOKIE_NAME_ID) || null
+    const jwt_payload = token ? parseJwt(token) : undefined;
+    const [userId, setUserId] = useState<string | undefined>(
+        jwt_payload?.id.toString()
     );
 
     const login = (token: string, userId: string) => {
         Cookies.set(TOKEN_COOKIE_NAME, token, COOKIE_OPTIONS);
-        Cookies.set(COOKIE_NAME_ID, userId, COOKIE_OPTIONS);
         setIsAuthenticated(true);
         setUserId(userId);
     };
 
     const logout = () => {
         Cookies.remove(TOKEN_COOKIE_NAME);
-        Cookies.remove(COOKIE_NAME_ID);
         setIsAuthenticated(false);
-        setUserId(null);
+        setUserId(undefined);
     };
 
     return (

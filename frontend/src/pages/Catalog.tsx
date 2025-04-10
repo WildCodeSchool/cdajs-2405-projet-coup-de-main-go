@@ -18,7 +18,7 @@ import { getDurationValues } from "../utils/duration";
 import DurationFilter from "../components/Catalog/DurationFilter";
 import theme from "../mui";
 import DistanceFilter from "../components/Catalog/DistanceFilter";
-import Cookies from "js-cookie";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Catalog() {
   const location = useLocation();
@@ -43,7 +43,8 @@ export default function Catalog() {
   const skills = skillsData?.getAllSkills;
 
   // Fetch user's coordinates
-  const userId = Cookies.get("cdmg-userId");
+  const { userId } = useAuth();
+
   const {
     loading: userLoading,
     error: userError,

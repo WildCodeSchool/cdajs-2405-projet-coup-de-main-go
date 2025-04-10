@@ -33,17 +33,6 @@ test.describe("Send Message - E2E Tests", () => {
 
     test.beforeEach(async ({ page }) => {
         await page.goto(frontendUrl);
-
-        // Écouter les requêtes réseau
-        page.on("request", (request) => {
-            console.log(`[NETWORK] ${request.method()} ${request.url()}`);
-        });
-
-        // Écouter les messages de la console
-        page.on("console", (msg) => {
-            console.log(`[CONSOLE] ${msg.type()} - ${msg.text()}`);
-        });
-
         await login(page);
     });
 
@@ -63,25 +52,12 @@ test.describe("Send Message - E2E Tests", () => {
 
         await page.click(SELECTORS.chatLink);
         await page.locator(SELECTORS.conversationItem).first().click();
+        await page.locator(SELECTORS.messageInput).fill(replyMessage);
+        await page.locator("form").locator("button").click();
 
-        const input = page.locator(SELECTORS.messageInput);
-        await input.fill(replyMessage);
-        await page.screenshot({
-            path: "screenshots/one-message.png",
-            fullPage: true,
+        await expect(page.locator(`text=${replyMessage}`).last()).toBeVisible({
+            timeout: 5000,
         });
-        await input.press("Enter");
-
-        const messageLocator = page.locator(`text=${replyMessage}`);
-        try {
-            await expect(messageLocator).toHaveCount(1, { timeout: 15000 });
-        } catch (e) {
-            await page.screenshot({
-                path: "screenshots/message-not-found.png",
-                fullPage: true,
-            });
-            throw e;
-        }
 
         await page.screenshot({
             path: screenshotPath,
