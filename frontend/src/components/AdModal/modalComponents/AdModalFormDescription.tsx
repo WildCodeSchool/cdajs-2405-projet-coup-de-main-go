@@ -5,11 +5,9 @@ import { AdInput } from "../../../generated/graphql-types";
 export default function AdModalFormDescription() {
   const {
     register,
-    watch,
     setValue,
     formState: { errors },
   } = useFormContext<AdInput>();
-  const [description] = watch("description");
 
   return (
     <TextField
@@ -29,8 +27,9 @@ export default function AdModalFormDescription() {
         setValue("description", value, { shouldValidate: true });
       }}
       placeholder="Description"
-      error={!!errors.description || description?.length > 255}
+      error={!!errors.description}
       helperText={errors.description?.message}
+      aria-required="true"
     />
   );
 }

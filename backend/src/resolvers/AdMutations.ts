@@ -6,6 +6,7 @@ import { Skill } from "../entities/Skill";
 import { dataSource } from "../datasource";
 import { Transaction } from "../entities/Transaction";
 import uploadFile from "../utils/uploadFile";
+import deleteFile from "../utils/deleteFile";
 
 @InputType()
 export class AdInput {
@@ -115,6 +116,14 @@ export class AdUpdateInput {
   @IsOptional()
   @IsInt()
   duration?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  latitude?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  longitude?: number;
 
   @Field(() => Int, { nullable: true })
   @IsOptional()
@@ -273,57 +282,78 @@ export class AdMutations {
 
         const { picture1, picture2, picture3, ...rest } = adData;
 
-        if (adData.picture1) {
-          try {
-            const uploadResponse = uploadFile({
-              base64String: adData.picture1,
-              targetType: "ad",
-              id: ad.id?.toString()!,
-              oldFileName: adData.picture1,
-            });
-            ad.picture1 = uploadResponse || "";
-          } catch (error) {
-            throw new Error(
-              `Échec de l'upload pour les fichiers: ${
-                (error as Error).message || error
-              }`
-            );
+        if (adData.picture1 !== undefined) {
+          if (adData.picture1 === "" && ad.picture1) {
+            // Delete existing file
+            deleteFile(ad.picture1, "ad", ad.id?.toString()!);
+            ad.picture1 = "";
+          } else if (adData.picture1 != ad.picture1) {
+            // Replace existing file
+            try {
+              const uploadResponse = uploadFile({
+                base64String: adData.picture1,
+                targetType: "ad",
+                id: ad.id?.toString()!,
+                oldFileName: ad.picture1,
+              });
+              ad.picture1 = uploadResponse || "";
+            } catch (error) {
+              throw new Error(
+                `Échec de l'upload pour les fichiers: ${
+                  (error as Error).message || error
+                }`
+              );
+            }
           }
         }
 
-        if (adData.picture2) {
-          try {
-            const uploadResponse = uploadFile({
-              base64String: adData.picture2,
-              targetType: "ad",
-              id: ad.id?.toString()!,
-              oldFileName: adData.picture2,
-            });
-            ad.picture2 = uploadResponse;
-          } catch (error) {
-            throw new Error(
-              `Échec de l'upload pour les fichiers: ${
-                (error as Error).message || error
-              }`
-            );
+        if (adData.picture2 !== undefined) {
+          if (adData.picture2 === "" && ad.picture2) {
+            // Delete existing file
+            deleteFile(ad.picture2, "ad", ad.id?.toString()!);
+            ad.picture2 = "";
+          } else if (adData.picture2 != ad.picture2) {
+            // Replace existing file
+            try {
+              const uploadResponse = uploadFile({
+                base64String: adData.picture2,
+                targetType: "ad",
+                id: ad.id?.toString()!,
+                oldFileName: ad.picture2,
+              });
+              ad.picture2 = uploadResponse;
+            } catch (error) {
+              throw new Error(
+                `Échec de l'upload pour les fichiers: ${
+                  (error as Error).message || error
+                }`
+              );
+            }
           }
         }
 
-        if (adData.picture3) {
-          try {
-            const uploadResponse = uploadFile({
-              base64String: adData.picture3,
-              targetType: "ad",
-              id: ad.id?.toString()!,
-              oldFileName: adData.picture3,
-            });
-            ad.picture3 = uploadResponse;
-          } catch (error) {
-            throw new Error(
-              `Échec de l'upload pour les fichiers: ${
-                (error as Error).message || error
-              }`
-            );
+        if (adData.picture3 !== undefined) {
+          if (adData.picture3 === "" && ad.picture3) {
+            // Delete existing file
+            deleteFile(ad.picture3, "ad", ad.id?.toString()!);
+            ad.picture3 = "";
+          } else if (adData.picture3 != ad.picture3) {
+            // Replace existing file
+            try {
+              const uploadResponse = uploadFile({
+                base64String: adData.picture3,
+                targetType: "ad",
+                id: ad.id?.toString()!,
+                oldFileName: ad.picture3,
+              });
+              ad.picture3 = uploadResponse;
+            } catch (error) {
+              throw new Error(
+                `Échec de l'upload pour les fichiers: ${
+                  (error as Error).message || error
+                }`
+              );
+            }
           }
         }
 

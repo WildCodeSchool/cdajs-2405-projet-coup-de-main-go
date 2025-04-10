@@ -30,19 +30,19 @@ export class AdQueries {
     @Arg("orderBy", () => String, { defaultValue: "DESC" })
     orderBy: "ASC" | "DESC" = "DESC"
   ): Promise<Ad[]> {
-    const cacheKey = `ads:all:${skillId || "all"}:${mangoAmountMin || "min"}:${
-      mangoAmountMax || "max"
-    }:${durationMin || "dmin"}:${durationMax || "dmax"}:${status || "all"}:${
-      maxDistance || "dist"
-    }:${userLatitude || "lat"}:${
-      userLongitude || "lng"
-    }:${page}:${limit}:${orderBy}`;
+    // const cacheKey = `ads:all:${skillId || "all"}:${mangoAmountMin || "min"}:${
+    //   mangoAmountMax || "max"
+    // }:${durationMin || "dmin"}:${durationMax || "dmax"}:${status || "all"}:${
+    //   maxDistance || "dist"
+    // }:${userLatitude || "lat"}:${
+    //   userLongitude || "lng"
+    // }:${page}:${limit}:${orderBy}`;
 
     // Check if the data is cached
-    const cachedData = await redisClient.get(cacheKey);
-    if (cachedData) {
-      return JSON.parse(cachedData);
-    }
+    // const cachedData = await redisClient.get(cacheKey);
+    // if (cachedData) {
+    //   return JSON.parse(cachedData);
+    // }
 
     const query = dataSource.getRepository(Ad).createQueryBuilder("ad");
     const offset = (page - 1) * limit;
@@ -109,9 +109,9 @@ export class AdQueries {
       results = await query.getMany();
     }
 
-    await redisClient.set(cacheKey, JSON.stringify(results), {
-      EX: CACHE_EXPIRATION.GET_ALL_ADS,
-    });
+    // await redisClient.set(cacheKey, JSON.stringify(results), {
+    //   EX: CACHE_EXPIRATION.GET_ALL_ADS,
+    // });
 
     return results;
   }
@@ -141,7 +141,12 @@ export class AdQueries {
       query.status = status;
     }
 
-    const ads: Ad[] = await dataSource.manager.findBy(Ad, query);
+    const ads: Ad[] = await dataSource.manager.find(Ad, {
+      where: query,
+      order: {
+        updatedAt: "DESC",
+      },
+    });
 
     if (!ads) {
       throw new Error(`Aucune annonce trouvée pour l'utilisateur ${userId}`);

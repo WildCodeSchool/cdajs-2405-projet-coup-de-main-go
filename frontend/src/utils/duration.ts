@@ -11,6 +11,15 @@ export function formatDurationToHours(durationInMinutes?: number): string {
   return `${formattedDuration} ${unit}`;
 }
 
+export function formatDurationToHourMinute(value: number): string {
+  const hours = Math.floor(value / 60);
+  const minutes = value % 60;
+
+  if (hours === 0) return `${minutes}min`;
+  if (minutes === 0) return `${hours}h`;
+  return `${hours}h ${minutes}min`;
+}
+
 // Convert selected durations to min and max values (in minutes)
 export function getDurationValues(durations: string[]) {
   const mins = durations.map((d) => parseInt(d.split(" - ")[0], 10) * 60);

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import GenericModal from "../Modal/GenericModal";
 import DeleteAdModal from "../DeleteAdModal/DeleteAdModal";
+import AdModal from "../AdModal/AdModal";
 import theme from "../../mui";
 
 interface AdCardButtonsProps {
@@ -15,14 +16,24 @@ export default function AdCardButtons({
   isProfileCard,
 }: AdCardButtonsProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [adModalOpen, setAdModalOpen] = useState<boolean>(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+
+  const handleAdModalOpen = () => {
+    setAdModalOpen(true);
+  };
+
+  const handleAdModalClose = () => {
+    setAdModalOpen(false);
+  };
+
   const handleDeleteClick = () => {
     setDeleteModalOpen(true);
   };
 
   return isProfileCard ? (
     <>
-      <Button>Modifier</Button>
+      <Button onClick={handleAdModalOpen}>Modifier</Button>
       <Button
         variant="outlined"
         sx={{ color: "primary.main" }}
@@ -30,6 +41,13 @@ export default function AdCardButtons({
       >
         Supprimer
       </Button>
+
+      <AdModal
+        open={adModalOpen}
+        isEditing={true}
+        adId={adId}
+        onClose={handleAdModalClose}
+      />
 
       <GenericModal
         open={deleteModalOpen}
