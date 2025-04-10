@@ -49,7 +49,7 @@ export const GET_ALL_ADS_QUERY = gql`
   }
 `;
 
-// Get detailed information on ad and userRequester for AdDetail page
+// Get detailed information on ad and userRequester for AdDetail page and ad update
 export const GET_AD_BY_ID_QUERY = gql`
   query GetAdById($id: String!) {
     getAdById(id: $id) {
