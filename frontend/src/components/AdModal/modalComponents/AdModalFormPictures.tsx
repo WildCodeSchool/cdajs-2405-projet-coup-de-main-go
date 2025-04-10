@@ -15,9 +15,12 @@ export default function AdModalFormPictures({ adId }: AdModalFormPhotosProps) {
   const methods = useFormContext<AdInput>();
   const { watch, setValue } = methods;
 
-  const picture1 = watch("picture1");
-  const picture2 = watch("picture2");
-  const picture3 = watch("picture3");
+  const [picture1, picture2, picture3] = watch([
+    "picture1",
+    "picture2",
+    "picture3",
+  ]);
+
   const pictures = [picture1, picture2, picture3];
 
   const handleFileChange = async (
@@ -41,12 +44,12 @@ export default function AdModalFormPictures({ adId }: AdModalFormPhotosProps) {
   };
 
   const getImageSrc = (pic: string) => {
-    // Si pic est une URL complète ou une base64, on l'utilise directement
+    // If pic is a complete URL or a base64, it can be displayed directly
     if (pic.startsWith("http") || pic.startsWith("data:image")) {
       return pic;
     }
 
-    // Si pic est juste un nom de fichier, on construit l'URL complète
+    // If pic if a file name (fetched from the database) build the complete URL
     return `${
       import.meta.env.VITE_DOMAIN_BACKEND_URL
     }/uploads/ads/${adId}/${pic}`;
@@ -107,41 +110,32 @@ export default function AdModalFormPictures({ adId }: AdModalFormPhotosProps) {
             ) : (
               <>
                 {/* When no files is selected, the camera icon is visible*/}
-                {/* <label
+                <label
                   htmlFor={`picture${index + 1}`}
-                > */}
-                <input
-                  type="file"
-                  id={`picture${index + 1}`}
-                  accept="image/*"
-                  onChange={(e) => handleFileChange(e, index)}
-                  hidden
-                />
-                <IconButton
-                  component="label"
-                  sx={{
-                    position: "absolute",
-                    zIndex: 1,
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
-                  <CameraAlt
-                    sx={{
-                      position: "absolute",
-                      zIndex: 1,
-                      width: 50,
-                      height: 50,
-                    }}
-                  />
                   <input
                     type="file"
+                    id={`picture${index + 1}`}
                     accept="image/*"
-                    style={{ display: "none" }}
-                    onChange={(e) => {
-                      handleFileChange(e, index);
-                    }}
+                    onChange={(e) => handleFileChange(e, index)}
+                    hidden
                   />
-                </IconButton>
-                {/* </label> */}
+                  <IconButton component="span">
+                    <CameraAlt
+                      sx={{
+                        position: "absolute",
+                        zIndex: 1,
+                        width: 50,
+                        height: 50,
+                      }}
+                    />
+                  </IconButton>
+                </label>
               </>
             )}
           </Box>

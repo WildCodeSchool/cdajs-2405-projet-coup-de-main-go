@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   CircularProgress,
@@ -25,9 +26,7 @@ import {
   GET_ADS_BY_USER_QUERY,
   GET_ALL_ADS_QUERY,
 } from "../../../graphql/adQueries";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
-import { isBase64 } from "../../../utils/checkBase64";
 
 interface AdModalFormProps {
   onClose: () => void;
