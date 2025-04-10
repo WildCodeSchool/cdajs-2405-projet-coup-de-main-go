@@ -2,7 +2,7 @@ import { Button, CircularProgress, Stack, Typography } from "@mui/material";
 import { Status, useDeleteAdMutation } from "../../generated/graphql-types";
 import { GET_ADS_BY_USER_QUERY } from "../../graphql/adQueries";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface DeleteAdModalProps {
   adId: string;
@@ -14,10 +14,10 @@ export default function DeleteAdModal({
   setDeleteModalOpen,
 }: DeleteAdModalProps) {
   const navigate = useNavigate();
-  const userId = Cookies.get("cdmg-userId") || "";
+  const { userId } = useAuth();
 
   const [deleteAd, { loading, error }] = useDeleteAdMutation({
-    variables: { id: adId, userRequesterId: userId },
+    variables: { id: adId, userRequesterId: userId! },
     refetchQueries: [
       {
         query: GET_ADS_BY_USER_QUERY,
