@@ -108,11 +108,11 @@ export default function AdModalForm({
     const commonData = {
       ...formData,
       mangoAmount: formData.duration / 30,
-      picture1: isBase64(formData.picture1) ? formData.picture1 : null,
-      picture2: isBase64(formData.picture2) ? formData.picture2 : null,
-      picture3: isBase64(formData.picture3) ? formData.picture3 : null,
+      picture1: formData.picture1,
+      picture2: formData.picture2,
+      picture3: formData.picture3,
     };
-    console.log("commondata", commonData);
+
     try {
       if (isEditing && ad) {
         await updateAdMutation({
