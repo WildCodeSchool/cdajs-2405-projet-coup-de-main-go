@@ -18,7 +18,7 @@ export class AdsResponse {
   ads!: Ad[];
 
   @Field()
-  adsCount!: number;
+  totalCount!: number;
 }
 
 @Resolver(Ad)
@@ -108,7 +108,7 @@ export class AdQueries {
     }
 
     // Get the total count of the filtered ads (without pagination)
-    const adsCount = await query.getCount();
+    const totalCount = await query.getCount();
 
     // Apply pagination
     query.skip(offset).take(limit);
@@ -120,7 +120,7 @@ export class AdQueries {
 
     return {
       ads,
-      adsCount: adsCount,
+      totalCount: totalCount,
     };
 
     // await redisClient.set(cacheKey, JSON.stringify(results), {

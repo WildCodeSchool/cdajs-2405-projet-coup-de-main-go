@@ -55,7 +55,7 @@ export default function FilteredAds({
 
   // Manage pagination
   const limit = 15;
-  const pageCount = Math.ceil(adsResponse.adsCount / limit);
+  const pageCount = Math.ceil(adsResponse.totalCount / limit);
 
   return (
     <>

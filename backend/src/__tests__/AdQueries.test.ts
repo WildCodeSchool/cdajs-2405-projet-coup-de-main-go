@@ -172,7 +172,7 @@ describe("getAllAds", () => {
       } as any);
     const result = await adQueries.getAllAds();
     expect(result.ads).toEqual([]);
-    expect(result.adsCount).toBe(0);
+    expect(result.totalCount).toBe(0);
   });
 
   it("should return all ads when there are less than 15 ads in the database and when no argument are provided", async () => {
@@ -191,7 +191,7 @@ describe("getAllAds", () => {
     const result = await adQueries.getAllAds();
     expect(result.ads.length).toBe(ads.length);
     expect(result.ads).toEqual(ads);
-    expect(result.adsCount).toBe(ads.length);
+    expect(result.totalCount).toBe(ads.length);
   });
 
   it("should return the first 15 ads when there are more than 15 ads in the database and when no argument are provided", async () => {
@@ -216,7 +216,7 @@ describe("getAllAds", () => {
 
     expect(result.ads.length).toBe(15);
     expect(result.ads).toEqual(ads.slice(0, 15));
-    expect(result.adsCount).toBe(20);
+    expect(result.totalCount).toBe(20);
     expect(skipSpy).toHaveBeenCalledWith(0); // default page is 1, so skip(0)
     expect(takeSpy).toHaveBeenCalledWith(15); // default limit is 15
   });
@@ -244,7 +244,7 @@ describe("getAllAds", () => {
 
     expect(result.ads.length).toBe(adsWithSkillId1.length);
     expect(result.ads).toEqual(adsWithSkillId1);
-    expect(result.adsCount).toBe(3);
+    expect(result.totalCount).toBe(3);
     expect(andWhereSpy).toHaveBeenCalledWith("ad.skillId = :skillId", {
       skillId: "1",
     });
@@ -276,7 +276,7 @@ describe("getAllAds", () => {
 
     expect(result.ads.length).toBe(expensiveAds.length);
     expect(result.ads).toEqual(expensiveAds);
-    expect(result.adsCount).toBe(5);
+    expect(result.totalCount).toBe(5);
     expect(andWhereSpy).toHaveBeenCalledWith(
       "ad.mangoAmount >= :mangoAmountMin",
       { mangoAmountMin: 3 }
@@ -310,7 +310,7 @@ describe("getAllAds", () => {
 
     expect(result.ads.length).toBe(cheapAds.length);
     expect(result.ads).toEqual(cheapAds);
-    expect(result.adsCount).toBe(3);
+    expect(result.totalCount).toBe(3);
     expect(andWhereSpy).toHaveBeenCalledWith(
       "ad.mangoAmount <= :mangoAmountMax",
       {
@@ -353,7 +353,7 @@ describe("getAllAds", () => {
 
     expect(result.ads.length).toBe(15);
     expect(result.ads).toEqual(ads.slice(15, 30));
-    expect(result.adsCount).toBe(30);
+    expect(result.totalCount).toBe(30);
     expect(skipSpy).toHaveBeenCalledWith(15); // page 2 → skip 15 (15 * (page - 1))
     expect(takeSpy).toHaveBeenCalledWith(15); // default limit
   });
@@ -393,7 +393,7 @@ describe("getAllAds", () => {
 
     expect(result.ads.length).toBe(limit);
     expect(result.ads).toEqual(ads.slice(0, limit));
-    expect(result.adsCount).toBe(30);
+    expect(result.totalCount).toBe(30);
     expect(skipSpy).toHaveBeenCalledWith(0); // default page is 1
     expect(takeSpy).toHaveBeenCalledWith(limit);
   });

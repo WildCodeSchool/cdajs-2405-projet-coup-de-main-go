@@ -47,7 +47,7 @@ export const GET_ALL_ADS_QUERY = gql`
           picture
         }
       }
-      adsCount
+      totalCount
     }
   }
 `;
