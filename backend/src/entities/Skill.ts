@@ -28,11 +28,11 @@ export class Skill extends BaseEntity {
   @Field()
   picture: string = "";
 
-  @OneToMany(() => Ad, (ad) => ad.skill)
+  @OneToMany(() => Ad, (ad) => ad.skill__)
   @Field(() => Ad)
   ads?: Promise<Ad[]>;
 
-  constructor(name: string, picture: string) {
+  constructor(name: string = '', picture: string = '') {
     super();
     this.name = name;
     this.picture = picture;

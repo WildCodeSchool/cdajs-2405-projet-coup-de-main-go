@@ -268,7 +268,7 @@ export class AdMutations {
           if (!skill) {
             throw new Error("Skill not found");
           }
-          ad.skill = skill;
+          ad.skill__ = skill;
         }
 
         const { picture1, picture2, picture3, ...rest } = adData;

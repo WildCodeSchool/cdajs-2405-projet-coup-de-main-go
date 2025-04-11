@@ -17,6 +17,7 @@ import { Chat } from "./Chat";
 import { User } from "./User";
 import { Skill } from "./Skill";
 import { Transaction } from "./Transaction";
+import { S } from "@faker-js/faker/dist/airline-D6ksJFwG";
 
 export enum Status {
   POSTED = "posted",
@@ -123,9 +124,38 @@ export class Ad extends BaseEntity {
   @Field(() => User)
   userRequester?: User;
 
-  @ManyToOne(() => Skill, (skill) => skill.ads, { eager: true })
+  @Column({ nullable: true })
+  private skillId?: string;
+
+  private static skillsById: { [skillId: string]: Skill } = {};
+
+  async getSkill(): Promise<Skill | undefined> {
+    if (this.skillId == undefined) {
+      return undefined;
+    }
+
+    if (!Ad.skillsById[this.skillId]) {
+      // cannot find flyweight shared object instance -> reload cache
+
+      const skills: Skill[] = await Skill.find({
+        where: {}
+      });
+
+      for (const skill of skills) {
+        Ad.skillsById[skill.id!] = skill;
+      }
+    }
+
+    return Ad.skillsById[this.skillId];
+  }
+
+  setSkill(skill: Skill | undefined) {
+    this.skillId = skill ? skill.id : undefined;
+  }
+
+  @ManyToOne(() => Skill, (skill) => skill.ads, { eager: false })
   @Field(() => Skill)
-  skill?: Skill;
+  skill__?: Skill;
 
   @OneToOne(() => Transaction, (transaction) => transaction.ad)
   @Field(() => Transaction)
@@ -154,7 +184,7 @@ export class Ad extends BaseEntity {
     this.duration = duration;
     this.mangoAmount = mangoAmount;
     this.userRequester = userRequester;
-    this.skill = skill;
+    this.skill__ = skill;
     this.picture1 = picture1 || "";
     this.picture2 = picture2 || "";
     this.picture3 = picture3 || "";
