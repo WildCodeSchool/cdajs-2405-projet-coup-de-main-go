@@ -107,9 +107,6 @@ export default function AdModalForm({
     const commonData = {
       ...formData,
       mangoAmount: formData.duration / 30,
-      picture1: formData.picture1,
-      picture2: formData.picture2,
-      picture3: formData.picture3,
     };
 
     try {
