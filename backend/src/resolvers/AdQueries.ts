@@ -1,13 +1,29 @@
-import { Query, Resolver, Arg, Int, Float } from "type-graphql";
+import {
+  Query,
+  Resolver,
+  Arg,
+  Int,
+  Float,
+  ObjectType,
+  Field,
+} from "type-graphql";
 import { Ad, Status } from "../entities/Ad";
 import { dataSource } from "../datasource";
-import calculateDistance from "../utils/calculateDistance";
 import { redisClient } from "../utils/redisClient";
 import { CACHE_EXPIRATION } from "../constants/cache";
 
+@ObjectType()
+export class AdsResponse {
+  @Field(() => [Ad])
+  ads!: Ad[];
+
+  @Field()
+  totalCount!: number;
+}
+
 @Resolver(Ad)
 export class AdQueries {
-  @Query(() => [Ad])
+  @Query(() => AdsResponse)
   async getAllAds(
     @Arg("skillId", () => String, { nullable: true }) skillId?: string,
     @Arg("mangoAmountMin", () => Int, { nullable: true })
@@ -29,7 +45,7 @@ export class AdQueries {
     @Arg("limit", () => Int, { defaultValue: 15 }) limit: number = 15,
     @Arg("orderBy", () => String, { defaultValue: "DESC" })
     orderBy: "ASC" | "DESC" = "DESC"
-  ): Promise<Ad[]> {
+  ): Promise<AdsResponse> {
     // const cacheKey = `ads:all:${skillId || "all"}:${mangoAmountMin || "min"}:${
     //   mangoAmountMax || "max"
     // }:${durationMin || "dmin"}:${durationMax || "dmax"}:${status || "all"}:${
@@ -44,6 +60,7 @@ export class AdQueries {
     //   return JSON.parse(cachedData);
     // }
 
+    // Calculate the offset to determine the starting point of the ads for the given page and limit.
     const query = dataSource.getRepository(Ad).createQueryBuilder("ad");
     const offset = (page - 1) * limit;
 
@@ -77,8 +94,6 @@ export class AdQueries {
       query.andWhere("ad.status = :status", { status });
     }
 
-    let results: Ad[];
-
     // Apply distance filter if maxDistance and user coordinates are provided
     if (
       maxDistance !== undefined &&
@@ -86,34 +101,31 @@ export class AdQueries {
       userLatitude !== undefined &&
       userLongitude !== undefined
     ) {
-      const ads = await query.getMany();
-      results = ads.filter((ad) => {
-        if (ad.latitude !== undefined && ad.longitude !== undefined) {
-          const distance = calculateDistance(
-            userLatitude,
-            userLongitude,
-            ad.latitude,
-            ad.longitude
-          );
-          return distance <= maxDistance;
-        }
-        return false;
-      });
-    } else {
-      // Apply pagination
-      query.skip(offset).take(limit);
-
-      // Apply sorting by date (createdAt or similar field)
-      query.orderBy("ad.updatedAt", orderBy);
-
-      results = await query.getMany();
+      query.andWhere(
+        `6371 * acos(cos(radians(:latitude)) * cos(radians(ad.latitude)) * cos(radians(ad.longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(ad.latitude))) <= :maxDistance`,
+        { latitude: userLatitude, longitude: userLongitude, maxDistance }
+      );
     }
+
+    // Get the total count of the filtered ads (without pagination)
+    const totalCount = await query.getCount();
+
+    // Apply pagination
+    query.skip(offset).take(limit);
+
+    // Apply sorting by date (createdAt or similar field)
+    query.orderBy("ad.updatedAt", orderBy);
+
+    const ads = await query.getMany();
+
+    return {
+      ads,
+      totalCount: totalCount,
+    };
 
     // await redisClient.set(cacheKey, JSON.stringify(results), {
     //   EX: CACHE_EXPIRATION.GET_ALL_ADS,
     // });
-
-    return results;
   }
 
   @Query(() => Ad)
