@@ -166,11 +166,13 @@ describe("getAllAds", () => {
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(ads),
+        getCount: jest.fn().mockResolvedValue(0),
         orderBy: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
       } as any);
-    const retrievedAds: Ad[] = await adQueries.getAllAds();
-    expect(retrievedAds).toEqual(ads);
+    const result = await adQueries.getAllAds();
+    expect(result.ads).toEqual([]);
+    expect(result.adsCount).toBe(0);
   });
 
   it("should return all ads when there are less than 15 ads in the database and when no argument are provided", async () => {
@@ -182,12 +184,14 @@ describe("getAllAds", () => {
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(ads),
+        getCount: jest.fn().mockResolvedValue(ads.length),
         orderBy: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
       } as any);
-    const retrievedAds: Ad[] = await adQueries.getAllAds();
-    expect(retrievedAds.length).toBe(ads.length);
-    expect(retrievedAds).toEqual(ads);
+    const result = await adQueries.getAllAds();
+    expect(result.ads.length).toBe(ads.length);
+    expect(result.ads).toEqual(ads);
+    expect(result.adsCount).toBe(ads.length);
   });
 
   it("should return the first 15 ads when there are more than 15 ads in the database and when no argument are provided", async () => {
@@ -203,12 +207,16 @@ describe("getAllAds", () => {
         skip: skipSpy,
         take: takeSpy,
         getMany: jest.fn().mockResolvedValue(ads.slice(0, 15)),
+        getCount: jest.fn().mockResolvedValue(ads.length),
         orderBy: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
       } as any);
-    const retrievedAds: Ad[] = await adQueries.getAllAds();
-    expect(retrievedAds.length).toBe(15);
-    expect(retrievedAds).toEqual(ads.slice(0, 15));
+
+    const result = await adQueries.getAllAds();
+
+    expect(result.ads.length).toBe(15);
+    expect(result.ads).toEqual(ads.slice(0, 15));
+    expect(result.adsCount).toBe(20);
     expect(skipSpy).toHaveBeenCalledWith(0); // default page is 1, so skip(0)
     expect(takeSpy).toHaveBeenCalledWith(15); // default limit is 15
   });
@@ -227,15 +235,16 @@ describe("getAllAds", () => {
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(adsWithSkillId1),
+        getCount: jest.fn().mockResolvedValue(adsWithSkillId1.length),
         orderBy: jest.fn().mockReturnThis(),
         andWhere: andWhereSpy,
       } as any);
 
-    const retrievedAds: Ad[] = await adQueries.getAllAds(
-      skillId //skillId
-    );
-    expect(retrievedAds.length).toBe(adsWithSkillId1.length);
-    expect(retrievedAds).toEqual(adsWithSkillId1);
+    const result = await adQueries.getAllAds(skillId);
+
+    expect(result.ads.length).toBe(adsWithSkillId1.length);
+    expect(result.ads).toEqual(adsWithSkillId1);
+    expect(result.adsCount).toBe(3);
     expect(andWhereSpy).toHaveBeenCalledWith("ad.skillId = :skillId", {
       skillId: "1",
     });
@@ -255,21 +264,22 @@ describe("getAllAds", () => {
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(expensiveAds),
+        getCount: jest.fn().mockResolvedValue(expensiveAds.length),
         orderBy: jest.fn().mockReturnThis(),
         andWhere: andWhereSpy,
       } as any);
 
-    const retrievedAds: Ad[] = await adQueries.getAllAds(
-      undefined, //skillId
-      mangoAmountMin //mangoAmountMin
+    const result = await adQueries.getAllAds(
+      undefined, // skillId
+      mangoAmountMin // mangoAmountMin
     );
-    expect(retrievedAds.length).toBe(expensiveAds.length);
-    expect(retrievedAds).toEqual(expensiveAds);
+
+    expect(result.ads.length).toBe(expensiveAds.length);
+    expect(result.ads).toEqual(expensiveAds);
+    expect(result.adsCount).toBe(5);
     expect(andWhereSpy).toHaveBeenCalledWith(
       "ad.mangoAmount >= :mangoAmountMin",
-      {
-        mangoAmountMin: 3,
-      }
+      { mangoAmountMin: 3 }
     );
   });
 
@@ -287,17 +297,20 @@ describe("getAllAds", () => {
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(cheapAds),
+        getCount: jest.fn().mockResolvedValue(cheapAds.length),
         orderBy: jest.fn().mockReturnThis(),
         andWhere: andWhereSpy,
       } as any);
 
-    const retrievedAds: Ad[] = await adQueries.getAllAds(
-      undefined, //skillId
-      undefined, //mangoAmountMin
-      mangoAmountMax //mangoAmountMax
+    const result = await adQueries.getAllAds(
+      undefined, // skillId
+      undefined, // mangoAmountMin
+      mangoAmountMax // mangoAmountMax
     );
-    expect(retrievedAds.length).toBe(cheapAds.length);
-    expect(retrievedAds).toEqual(cheapAds);
+
+    expect(result.ads.length).toBe(cheapAds.length);
+    expect(result.ads).toEqual(cheapAds);
+    expect(result.adsCount).toBe(3);
     expect(andWhereSpy).toHaveBeenCalledWith(
       "ad.mangoAmount <= :mangoAmountMax",
       {
@@ -320,25 +333,29 @@ describe("getAllAds", () => {
         skip: skipSpy,
         take: takeSpy,
         getMany: jest.fn().mockResolvedValue(ads.slice(15, 30)),
+        getCount: jest.fn().mockResolvedValue(ads.length),
         orderBy: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
       } as any);
-    const retrievedAds: Ad[] = await adQueries.getAllAds(
-      undefined, //skillId
-      undefined, //mangoAmountMin
-      undefined, //mangoAmountMax
-      undefined, //durationMin
-      undefined, //durationMax
-      undefined, //status
-      undefined, //maxDistance
-      undefined, //userLatitude
+
+    const result = await adQueries.getAllAds(
+      undefined, // skillId
+      undefined, // mangoAmountMin
+      undefined, // mangoAmountMax
+      undefined, // durationMin
+      undefined, // durationMax
+      undefined, // status
+      undefined, // maxDistance
+      undefined, // userLatitude
       undefined, // userLongitude
-      page //page
+      page // page
     );
-    expect(retrievedAds.length).toBe(15);
-    expect(retrievedAds).toEqual(ads.slice(15, 30));
-    expect(skipSpy).toHaveBeenCalledWith(15);
-    expect(takeSpy).toHaveBeenCalledWith(15);
+
+    expect(result.ads.length).toBe(15);
+    expect(result.ads).toEqual(ads.slice(15, 30));
+    expect(result.adsCount).toBe(30);
+    expect(skipSpy).toHaveBeenCalledWith(15); // page 2 → skip 15 (15 * (page - 1))
+    expect(takeSpy).toHaveBeenCalledWith(15); // default limit
   });
 
   it("should return the right number of ads when the limit argument is provided", async () => {
@@ -355,25 +372,29 @@ describe("getAllAds", () => {
         skip: skipSpy,
         take: takeSpy,
         getMany: jest.fn().mockResolvedValue(ads.slice(0, 20)),
+        getCount: jest.fn().mockResolvedValue(ads.length),
         orderBy: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
       } as any);
-    const retrievedAds: Ad[] = await adQueries.getAllAds(
-      undefined, //skillId
-      undefined, //mangoAmountMin
-      undefined, //mangoAmountMax
-      undefined, //durationMin
-      undefined, //durationMax
-      undefined, //status
-      undefined, //maxDistance
-      undefined, //userLatitude
+
+    const result = await adQueries.getAllAds(
+      undefined, // skillId
+      undefined, // mangoAmountMin
+      undefined, // mangoAmountMax
+      undefined, // durationMin
+      undefined, // durationMax
+      undefined, // status
+      undefined, // maxDistance
+      undefined, // userLatitude
       undefined, // userLongitude
-      undefined, //page
-      limit //limit
+      undefined, // page
+      limit // limit
     );
-    expect(retrievedAds.length).toBe(20);
-    expect(retrievedAds).toEqual(ads.slice(0, 20));
-    expect(skipSpy).toHaveBeenCalledWith(0); // default page is 1, so skip(0)
+
+    expect(result.ads.length).toBe(limit);
+    expect(result.ads).toEqual(ads.slice(0, limit));
+    expect(result.adsCount).toBe(30);
+    expect(skipSpy).toHaveBeenCalledWith(0); // default page is 1
     expect(takeSpy).toHaveBeenCalledWith(limit);
   });
 });
