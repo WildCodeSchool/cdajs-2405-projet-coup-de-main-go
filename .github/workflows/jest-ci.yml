@@ -51,10 +51,10 @@ jobs:
                   echo "Running tests in E2E container..."
                   docker exec $(docker ps -qf "name=e2e") npm run test
 
-            - name: Upload screenshot as artifact
+            - name: Upload screenshots as artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: screenshot-artifact
+                  name: screenshot-artifacts
                   path: e2e/screenshots/*.png
 
             - name: Show Docker logs on failure

@@ -16,16 +16,16 @@ export class ChatQueries {
         const cacheKey = `chats:user:${userId}`;
 
         // Check if the data is cached
-        const cachedData = await redisClient.get(cacheKey);
-        if (cachedData) {
-            const parsedData = JSON.parse(cachedData);
-            const formatData = parsedData.map((chat: any) => ({
-                ...chat,
-                messages: chat.__messages__ || chat.messages || [],
-            }));
+        // const cachedData = await redisClient.get(cacheKey);
+        // if (cachedData) {
+        //     const parsedData = JSON.parse(cachedData);
+        //     const formatData = parsedData.map((chat: any) => ({
+        //         ...chat,
+        //         messages: chat.__messages__ || chat.messages || [],
+        //     }));
 
-            return formatData;
-        }
+        //     return formatData;
+        // }
 
         // Check if the user exists
         const user = await dataSource.manager.findOne(User, {
@@ -51,9 +51,9 @@ export class ChatQueries {
         });
 
         // Cache the result
-        await redisClient.set(cacheKey, JSON.stringify(chats), {
-            EX: CACHE_EXPIRATION.CHATS_BY_USER,
-        });
+        // await redisClient.set(cacheKey, JSON.stringify(chats), {
+        //     EX: CACHE_EXPIRATION.CHATS_BY_USER,
+        // });
 
         return chats;
     }
