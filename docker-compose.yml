@@ -19,9 +19,6 @@ services:
             JWT_SECRET: ${JWT_SECRET}
         ports:
             - 4000:4000
-        volumes:
-            - ./backend:/app
-            - /app/node_modules
         depends_on:
             postgres:
                 condition: service_healthy
@@ -41,10 +38,6 @@ services:
             VITE_POLL_CHAT_INTERVAL: ${VITE_POLL_CHAT_INTERVAL}
         ports:
             - 5173:5173
-        volumes:
-            - ./frontend:/webapp
-            - /webapp/node_modules
-            - web-client-build:/webapp/build
         depends_on:
             backend:
                 condition: service_healthy
@@ -82,7 +75,6 @@ services:
             - ${GATEWAY_PORT:-8000}:80
         volumes:
             - ./nginx.conf:/etc/nginx/nginx.conf
-            - web-client-build:/web-client-build
             - ./logs:/var/log/nginx
 
     redis:
@@ -102,4 +94,3 @@ services:
 
 volumes:
     postgres-data:
-    web-client-build:

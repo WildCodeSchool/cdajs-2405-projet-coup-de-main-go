@@ -2,8 +2,7 @@ import { Drawer, List, ListItemButton, IconButton } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
 import HeaderButton from "../Header/HeaderButton";
 import { useState } from "react";
-import GenericModal from "../Modal/GenericModal";
-import AdModalForm from "../NewAdModal/AdModalForm";
+import AdModal from "../AdModal/AdModal";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -18,10 +17,16 @@ export default function MobileMenu({
   onToggle,
   onLogout,
 }: MobileMenuProps) {
-  const [newAdModalIsOpen, setNewAdModalIsOpen] = useState<boolean>(false);
-  const closeNewAdModal = () => {
-    setNewAdModalIsOpen(false);
+  const [adModalOpen, setAdModalOpen] = useState<boolean>(false);
+
+  const handleAdModalOpen = () => {
+    setAdModalOpen(true);
   };
+
+  const handleAdModalClose = () => {
+    setAdModalOpen(false);
+  };
+
   return (
     <>
       <IconButton onClick={onToggle}>
@@ -42,7 +47,7 @@ export default function MobileMenu({
               color="secondary"
               text="Créer une annonce"
               icon="/images/mango.png"
-              onClick={() => setNewAdModalIsOpen(true)}
+              onClick={handleAdModalOpen}
             />
             <HeaderButton
               color="primary"
@@ -60,15 +65,7 @@ export default function MobileMenu({
         </List>
       </Drawer>
 
-      {newAdModalIsOpen && (
-        <GenericModal
-          open={newAdModalIsOpen}
-          onClose={closeNewAdModal}
-          maxWidth="md"
-        >
-          <AdModalForm onClose={closeNewAdModal} />
-        </GenericModal>
-      )}
+      <AdModal open={adModalOpen} onClose={handleAdModalClose} />
     </>
   );
 }

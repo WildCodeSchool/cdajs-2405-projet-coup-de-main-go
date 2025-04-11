@@ -5,12 +5,9 @@ import { AdInput } from "../../../generated/graphql-types";
 export default function AdModalFormTitle() {
   const {
     register,
-    watch,
     setValue,
     formState: { errors },
   } = useFormContext<AdInput>();
-
-  const [title] = watch("title");
 
   return (
     <TextField
@@ -28,8 +25,9 @@ export default function AdModalFormTitle() {
         setValue("title", value, { shouldValidate: true });
       }}
       placeholder="Titre de l'annonce"
-      error={!!errors.title || title?.length > 50}
+      error={!!errors.title}
       helperText={errors.title?.message}
+      aria-required="true"
     />
   );
 }

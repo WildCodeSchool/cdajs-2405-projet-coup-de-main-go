@@ -18,6 +18,7 @@ export default function AdModalFormCategory() {
     formState: { errors },
   } = useFormContext<AdInput>();
 
+  // Fetch categories' list
   const {
     loading: skillsLoading,
     error: skillsError,

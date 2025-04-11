@@ -6,11 +6,10 @@ import HeaderButton from "../Header/HeaderButton";
 import DesktopMenu from "./DesktopMenu";
 import MobileMenu from "./MobileMenu";
 import AuthenticatedIcons from "./AuthenticatedIcons";
-import GenericModal from "../Modal/GenericModal";
-import AdModalForm from "../NewAdModal/AdModalForm";
 import { formatFullName } from "../../utils/formatName";
 import { useMango } from "../../contexts/MangoContext";
 import { useGetUserOverviewByIdQuery } from "../../generated/graphql-types";
+import AdModal from "../AdModal/AdModal";
 
 interface HeaderProps {
   setAuthModalIsOpen: (isOpen: boolean) => void;
@@ -29,9 +28,14 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
 
   const handleDrawerToggle = () => setDrawerOpen(!drawerOpen);
 
-  const [newAdModalIsOpen, setNewAdModalIsOpen] = useState<boolean>(false);
-  const closeNewAdModal = () => {
-    setNewAdModalIsOpen(false);
+  const [adModalOpen, setAdModalOpen] = useState<boolean>(false);
+
+  const handleAdModalOpen = () => {
+    setAdModalOpen(true);
+  };
+
+  const handleAdModalClose = () => {
+    setAdModalOpen(false);
   };
 
   const { data, loading, error } = useGetUserOverviewByIdQuery({
@@ -64,7 +68,7 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
                   color="secondary"
                   text="Créer une annonce"
                   icon="/images/mango.png"
-                  onClick={() => setNewAdModalIsOpen(true)}
+                  onClick={handleAdModalOpen}
                 />
                 <HeaderButton
                   color="primary"
@@ -112,15 +116,7 @@ export default function Header({ setAuthModalIsOpen }: HeaderProps) {
         </Toolbar>
       </AppBar>
 
-      {newAdModalIsOpen && (
-        <GenericModal
-          open={newAdModalIsOpen}
-          onClose={closeNewAdModal}
-          maxWidth="md"
-        >
-          <AdModalForm onClose={closeNewAdModal} />
-        </GenericModal>
-      )}
+      <AdModal open={adModalOpen} onClose={handleAdModalClose} />
     </>
   );
 }
