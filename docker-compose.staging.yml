@@ -1,8 +1,6 @@
 services:
     backend:
-        build:
-            context: ./backend
-            dockerfile: Dockerfile
+        image: guillaumesep/coup_de_main_go_backend:latest
         healthcheck:
             test: "curl --fail --silent --show-error http://localhost:4000/health || exit 1"
             interval: 5s
@@ -27,9 +25,7 @@ services:
                 condition: service_healthy
 
     frontend:
-        build:
-            context: ./frontend
-            dockerfile: Dockerfile
+        image: guillaumesep/coup_de_main_go_frontend:latest
         healthcheck:
             test: "curl --fail --request GET --url 'http://localhost:5173' || exit 1"
             interval: 5s
