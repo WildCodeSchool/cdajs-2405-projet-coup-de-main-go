@@ -76,6 +76,12 @@ export type AdUpdateInput = {
   zipCode?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type AdsResponse = {
+  __typename?: 'AdsResponse';
+  ads: Array<Ad>;
+  adsCount: Scalars['Float']['output'];
+};
+
 export type Chat = {
   __typename?: 'Chat';
   ad: Ad;
@@ -273,7 +279,7 @@ export type Query = {
   credentialsVerification: Scalars['Boolean']['output'];
   getAdById: Ad;
   getAdsByUser: Array<Ad>;
-  getAllAds: Array<Ad>;
+  getAllAds: AdsResponse;
   getAllSkills?: Maybe<Array<Skill>>;
   getAllUsers: Array<User>;
   getChatByUserAndAdId?: Maybe<Array<Chat>>;
@@ -510,7 +516,7 @@ export type GetAllAdsQueryVariables = Exact<{
 }>;
 
 
-export type GetAllAdsQuery = { __typename?: 'Query', getAllAds: Array<{ __typename?: 'Ad', id: string, title: string, description: string, updatedAt: any, mangoAmount: number, status: Status, picture1?: string | null, skill: { __typename?: 'Skill', id: string, name: string, picture: string }, userRequester: { __typename?: 'User', id: string, picture?: string | null } }> };
+export type GetAllAdsQuery = { __typename?: 'Query', getAllAds: { __typename?: 'AdsResponse', adsCount: number, ads: Array<{ __typename?: 'Ad', id: string, title: string, description: string, updatedAt: any, mangoAmount: number, status: Status, picture1?: string | null, skill: { __typename?: 'Skill', id: string, name: string, picture: string }, userRequester: { __typename?: 'User', id: string, picture?: string | null } }> } };
 
 export type GetAdByIdQueryVariables = Exact<{
   id: Scalars['String']['input'];
@@ -883,22 +889,25 @@ export const GetAllAdsDocument = gql`
     userLatitude: $userLatitude
     userLongitude: $userLongitude
   ) {
-    id
-    title
-    description
-    updatedAt
-    mangoAmount
-    status
-    picture1
-    skill {
+    ads {
       id
-      name
-      picture
+      title
+      description
+      updatedAt
+      mangoAmount
+      status
+      picture1
+      skill {
+        id
+        name
+        picture
+      }
+      userRequester {
+        id
+        picture
+      }
     }
-    userRequester {
-      id
-      picture
-    }
+    adsCount
   }
 }
     `;

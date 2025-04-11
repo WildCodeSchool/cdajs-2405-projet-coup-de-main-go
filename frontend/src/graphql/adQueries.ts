@@ -29,22 +29,25 @@ export const GET_ALL_ADS_QUERY = gql`
       userLatitude: $userLatitude
       userLongitude: $userLongitude
     ) {
-      id
-      title
-      description
-      updatedAt
-      mangoAmount
-      status
-      picture1
-      skill {
+      ads {
         id
-        name
-        picture
+        title
+        description
+        updatedAt
+        mangoAmount
+        status
+        picture1
+        skill {
+          id
+          name
+          picture
+        }
+        userRequester {
+          id
+          picture
+        }
       }
-      userRequester {
-        id
-        picture
-      }
+      adsCount
     }
   }
 `;

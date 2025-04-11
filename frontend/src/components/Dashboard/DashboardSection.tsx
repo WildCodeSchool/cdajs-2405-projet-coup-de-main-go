@@ -47,7 +47,7 @@ export default function DashboardSection({
   if (adsError) return <p>Error: {adsError.message}</p>;
   if (!adsData) return <Typography>Aucune donnée trouvée</Typography>;
 
-  const adCards: AdCardType[] = adsData?.getAllAds;
+  const adsResponse = adsData?.getAllAds;
 
   const handleClick = () => {
     const skillData = { id: skillId, name: title };
@@ -91,7 +91,7 @@ export default function DashboardSection({
             }
             navigation
           >
-            {adCards.map((ad) => (
+            {adsResponse.ads.map((ad) => (
               <SwiperSlide
                 key={ad.id}
                 style={{
@@ -115,7 +115,7 @@ export default function DashboardSection({
               marginY: 4,
             }}
           >
-            {adCards.map((ad: AdCardType) => (
+            {adsResponse.ads.map((ad: AdCardType) => (
               <AdCard key={ad.id} ad={ad} />
             ))}
           </Stack>
