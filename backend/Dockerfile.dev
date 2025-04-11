@@ -1,11 +1,11 @@
 FROM node:18-alpine 
 
-WORKDIR /app
+WORKDIR /server
 
-COPY package*.json package-lock.json ./
+COPY package*.json ./
 
 RUN npm install
 
-COPY . .
+COPY src src
 
 CMD ["npx", "ts-node", "./src/index.ts"]

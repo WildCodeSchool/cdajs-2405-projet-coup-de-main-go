@@ -1,63 +1,73 @@
 import Cookies from "js-cookie";
 import { createContext, ReactNode, useContext, useState } from "react";
 
+import { parseJwt } from "../utils/decode_jwt";
+
 interface AuthContextType {
-  isAuthenticated: boolean;
-  userId: string | null;
-  setIsAuthenticated: (isAuthenticated: boolean) => void;
-  login: (token: string, userId: string) => void;
-  logout: () => void;
+    isAuthenticated: boolean;
+    userId: string | undefined;
+    setIsAuthenticated: (isAuthenticated: boolean) => void;
+    login: (token: string, userId: string) => void;
+    logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
+    undefined
 );
 
 export const TOKEN_COOKIE_NAME = "cdmg-token";
+
+const production = process.env.NODE_ENV !== "development";
 const COOKIE_OPTIONS = {
-  expires: 30, // 30 days
-  secure: true,
-  sameSite: "strict" as const,
+    expires: 30,
+    secure: production,
+    httpOnly: production,
+    sameSite: production ? ("None" as const) : ("Lax" as const),
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    Cookies.get(TOKEN_COOKIE_NAME) ? true : false
-  );
+    const token = Cookies.get(TOKEN_COOKIE_NAME);
 
-  const [userId, setUserId] = useState<string | null>(null);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
+        token ? true : false
+    );
 
-  const login = (token: string, userId: string) => {
-    Cookies.set(TOKEN_COOKIE_NAME, token, COOKIE_OPTIONS);
-    setIsAuthenticated(true);
-    setUserId(userId);
-  };
+    const jwt_payload = token ? parseJwt(token) : undefined;
+    const [userId, setUserId] = useState<string | undefined>(
+        jwt_payload?.id.toString()
+    );
 
-  const logout = () => {
-    Cookies.remove(TOKEN_COOKIE_NAME);
-    setIsAuthenticated(false);
-    setUserId(null);
-  };
+    const login = (token: string, userId: string) => {
+        Cookies.set(TOKEN_COOKIE_NAME, token, COOKIE_OPTIONS);
+        setIsAuthenticated(true);
+        setUserId(userId);
+    };
 
-  return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        setIsAuthenticated,
-        login,
-        logout,
-        userId,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+    const logout = () => {
+        Cookies.remove(TOKEN_COOKIE_NAME);
+        setIsAuthenticated(false);
+        setUserId(undefined);
+    };
+
+    return (
+        <AuthContext.Provider
+            value={{
+                isAuthenticated,
+                setIsAuthenticated,
+                login,
+                logout,
+                userId,
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within a AuthContext");
-  }
-  return context;
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error("useAuth must be used within a AuthContext");
+    }
+    return context;
 }

@@ -146,7 +146,6 @@ export class UserQueries {
         const reviewsAsHelper = (await user.reviewsAsHelper) || [];
 
         const reviewsAsHelperCount = reviewsAsHelper.length;
-
         const averageRating =
             reviewsAsHelperCount > 0
                 ? (
@@ -167,17 +166,16 @@ export class UserQueries {
     }
 
     @Query(() => User)
-async getUserById(@Arg("id") id: string): Promise<User> {
-    const user: User | null = await dataSource.manager.findOne(User, {
-        relations: ["skills"],
-        where: { id },
-    });
+    async getUserById(@Arg("id") id: string): Promise<User> {
+        const user: User | null = await dataSource.manager.findOne(User, {
+            relations: ["skills"],
+            where: { id },
+        });
 
-    if (!user) {
-        throw new Error("L'utilisateur n'existe pas");
+        if (!user) {
+            throw new Error("L'utilisateur n'existe pas");
+        }
+
+        return user;
     }
-
-    return user;
-}
-
 }

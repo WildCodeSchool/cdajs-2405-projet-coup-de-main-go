@@ -1,9 +1,9 @@
 import {
-  ApolloClient,
-  ApolloLink,
-  ApolloProvider,
-  createHttpLink,
-  InMemoryCache,
+    ApolloClient,
+    ApolloLink,
+    ApolloProvider,
+    createHttpLink,
+    InMemoryCache,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
@@ -22,62 +22,64 @@ import "./App.css";
 import { AuthModalProvider } from "./contexts/AuthModalContext";
 
 const httpLink = createHttpLink({
-  uri: import.meta.env.VITE_BACKEND_URL,
+    uri: import.meta.env.VITE_BACKEND_URL,
 });
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors) {
-    for (const err of graphQLErrors) {
-      const isTokenExpired =
-        err.extensions?.stacktrace &&
-        Array.isArray(err.extensions.stacktrace) &&
-        err.extensions.stacktrace[0]?.startsWith(
-          "TokenExpiredError: jwt expired"
-        );
+    if (graphQLErrors) {
+        for (const err of graphQLErrors) {
+            const isTokenExpired =
+                err.extensions?.stacktrace &&
+                Array.isArray(err.extensions.stacktrace) &&
+                err.extensions.stacktrace[0]?.startsWith(
+                    "TokenExpiredError: jwt expired"
+                );
 
-      const isUnthorized = err.message === "Unauthorized access";
+            const isUnthorized = err.message === "Unauthorized access";
 
-      if (isTokenExpired || isUnthorized) {
-        Cookies.remove(TOKEN_COOKIE_NAME);
-        window.location.reload();
-      } else {
-        console.error(`[GraphQL error]: ${err.message}`);
-      }
+            if (isTokenExpired || isUnthorized) {
+                Cookies.remove(TOKEN_COOKIE_NAME);
+                window.location.reload();
+            } else {
+                console.error(`[GraphQL error]: ${err.message}`);
+            }
+        }
     }
-  }
 
-  if (networkError) {
-    console.error(`[Network error]: ${networkError.message || networkError}`);
-  }
+    if (networkError) {
+        console.error(
+            `[Network error]: ${networkError.message || networkError}`
+        );
+    }
 });
 
 const authLink = setContext((_, { headers }) => {
-  const token = Cookies.get(TOKEN_COOKIE_NAME) || null;
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : "",
-    },
-  };
+    const token = Cookies.get(TOKEN_COOKIE_NAME) || null;
+    return {
+        headers: {
+            ...headers,
+            authorization: token ? `Bearer ${token}` : "",
+        },
+    };
 });
 
 export const apolloClient = new ApolloClient({
-  link: ApolloLink.from([errorLink, authLink.concat(httpLink)]),
-  cache: new InMemoryCache(),
+    link: ApolloLink.from([errorLink, authLink.concat(httpLink)]),
+    cache: new InMemoryCache(),
 });
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <ApolloProvider client={apolloClient}>
-      <ThemeProvider theme={theme}>
-        <AuthProvider>
-          <MangoProvider>
-            <AuthModalProvider>
-              <RouterProvider router={router} />
-            </AuthModalProvider>
-          </MangoProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </ApolloProvider>
-  </StrictMode>
+    <StrictMode>
+        <ApolloProvider client={apolloClient}>
+            <ThemeProvider theme={theme}>
+                <AuthProvider>
+                    <MangoProvider>
+                        <AuthModalProvider>
+                            <RouterProvider router={router} />
+                        </AuthModalProvider>
+                    </MangoProvider>
+                </AuthProvider>
+            </ThemeProvider>
+        </ApolloProvider>
+    </StrictMode>
 );

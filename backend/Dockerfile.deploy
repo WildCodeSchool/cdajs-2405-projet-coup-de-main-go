@@ -1,15 +1,14 @@
 FROM node:18-alpine 
 
-WORKDIR /app
+WORKDIR /server
 
+COPY package*.json ./
 ENV NODE_ENV=production
-
-COPY package*.json package-lock.json ./
 
 RUN npm install
 
 RUN apk add --no-cache curl
 
-COPY . .
+COPY src src
 
 CMD ["npx", "ts-node", "./src/index.ts"]
