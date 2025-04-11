@@ -9,6 +9,6 @@ RUN npm install
 
 RUN apk add --no-cache curl
 
-COPY . .
+COPY src src
 
 CMD ["npx", "ts-node", "./src/index.ts"]
