@@ -2,8 +2,12 @@ services:
     backend:
         build:
             context: ./backend
-            dockerfile: Dockerfile.dev
-        restart: unless-stopped
+            dockerfile: Dockerfile
+        healthcheck:
+            test: "curl --fail --silent --show-error http://localhost:4000/health || exit 1"
+            interval: 5s
+            timeout: 5s
+            retries: 10
         environment:
             APOLLO_PORT: ${APOLLO_PORT}
             DB_USER: ${DB_USER}
@@ -18,13 +22,18 @@ services:
             - ./backend:/server
             - /server/node_modules
         depends_on:
-            - postgres
+            postgres:
+                condition: service_healthy
 
     frontend:
         build:
             context: ./frontend
-            dockerfile: Dockerfile.dev
-        restart: unless-stopped
+            dockerfile: Dockerfile
+        healthcheck:
+            test: "curl --fail --request GET --url 'http://localhost:5173' || exit 1"
+            interval: 5s
+            timeout: 5s
+            retries: 10
         environment:
             VITE_BACKEND_URL: ${VITE_BACKEND_URL}
             VITE_DOMAIN_BACKEND_URL: ${VITE_DOMAIN_BACKEND_URL}
@@ -38,27 +47,16 @@ services:
             - /client/node_modules
             - web-client-build:/client/build
         depends_on:
-            - backend
-
-    e2e:
-        build:
-            context: ./e2e
-            dockerfile: Dockerfile
-        environment:
-            VITE_FRONTEND_URL: ${VITE_FRONTEND_URL}
-            CI: true
-        volumes:
-            - ./e2e:/e2e
-            - /e2e/node_modules
-        depends_on:
-            - backend
-            - frontend
-        ports:
-            - 9000:9000
+            backend:
+                condition: service_healthy
 
     postgres:
         image: postgres:alpine
-        restart: unless-stopped
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -d postgres -U postgres"]
+            interval: 10s
+            timeout: 5s
+            retries: 20
         shm_size: 128mb
         environment:
             POSTGRES_USER: ${DB_USER}

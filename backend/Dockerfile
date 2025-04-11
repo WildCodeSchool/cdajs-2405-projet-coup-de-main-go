@@ -1,14 +1,12 @@
 FROM node:18-alpine 
 
-WORKDIR /client
+WORKDIR /server
 
 COPY package*.json ./
-
 RUN npm install
 
 RUN apk add --no-cache curl
 
-COPY public public
-COPY src src
+COPY . .
 
-CMD ["npm", "run", "dev", "--", "--host"]
+CMD npx ts-node ./src/index.ts
