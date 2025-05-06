@@ -7,8 +7,6 @@ import {
   BeforeUpdate,
   OneToMany,
   ManyToOne,
-  ManyToMany,
-  JoinTable,
   OneToOne,
 } from "typeorm";
 import { Field, ObjectType, ID, registerEnumType } from "type-graphql";
@@ -116,7 +114,7 @@ export class Ad extends BaseEntity {
   picture3: string = "";
 
   @OneToMany(() => Chat, (chat) => chat.ad)
-  @Field((type) => [Chat])
+  @Field(() => [Chat])
   chats?: Promise<Chat[]>;
 
   @ManyToOne(() => User, (user) => user.ads, { eager: true })
