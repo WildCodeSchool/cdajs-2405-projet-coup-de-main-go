@@ -135,7 +135,7 @@ export class AdQueries {
     });
 
     if (!ad) {
-      throw new Error(`Annonce non trouvée pour l'id ${id}`);
+      throw new Error(`Ad not found for id : ${id}`);
     }
 
     return ad;
@@ -159,10 +159,6 @@ export class AdQueries {
         updatedAt: "DESC",
       },
     });
-
-    if (!ads) {
-      throw new Error(`Aucune annonce trouvée pour l'utilisateur ${userId}`);
-    }
 
     return ads;
   }
