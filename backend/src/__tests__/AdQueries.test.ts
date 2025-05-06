@@ -428,7 +428,7 @@ describe("getAdById", () => {
     }
     mockTypeOrm().onMock(Ad).toReturn(null, "findOne");
     await expect(adQueries.getAdById(invalidId)).rejects.toThrow(
-      `Annonce non trouvée pour l'id ${invalidId}`
+      `Ad not found for id : ${invalidId}`
     );
   });
 });
