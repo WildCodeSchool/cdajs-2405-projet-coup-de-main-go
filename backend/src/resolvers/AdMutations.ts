@@ -4,7 +4,6 @@ import { Ad, Status } from "../entities/Ad";
 import { User } from "../entities/User";
 import { Skill } from "../entities/Skill";
 import { dataSource } from "../datasource";
-import { Transaction } from "../entities/Transaction";
 import uploadFile from "../utils/uploadFile";
 import deleteFile from "../utils/deleteFile";
 
@@ -370,14 +369,14 @@ export class AdMutations {
     }
   }
 
-  // Mutation to delete Ad (possible only when no transaction is associated to this specific Ad)
+  // Mutation to delete Ad
   @Mutation((_) => Boolean)
   async deleteAd(
     @Arg("id") id: string,
     @Arg("userRequesterId") userRequesterId: string
   ): Promise<boolean> {
     return await dataSource.transaction(async (transactionalEntityManager) => {
-      // Find ad to delete
+      // Retrieve ad
       const ad = await transactionalEntityManager.findOne(Ad, {
         where: { id },
       });
@@ -386,23 +385,20 @@ export class AdMutations {
         throw new Error("Ad not found");
       }
 
+      // Check that the user requesting deletion is the ad owner
       if (userRequesterId && ad.userRequester?.id != userRequesterId) {
         throw new Error("User not allowed to delete the ad");
       }
 
-      const associatedTransaction = await transactionalEntityManager.findOne(
-        Transaction,
-        {
-          where: { ad: { id: ad.id } },
-        }
-      );
-
-      if (associatedTransaction) {
-        throw new Error("Ad is associated to a transaction");
+      // Prevent deletion if ad is finalised or reviewed
+      if (ad.status === "finalised" || ad.status === "isreviewed") {
+        throw new Error(
+          "Ad cannot be deleted as the service has already been provided"
+        );
       }
 
       try {
-        // Update chats associated with the ad, to set adId as null
+        // Nullify ad reference in chats
         if (ad.chats) {
           const chats = await ad.chats;
           for (const chat of chats) {
@@ -410,12 +406,13 @@ export class AdMutations {
             await transactionalEntityManager.save(chat);
           }
         }
+
         // Delete Ad
         await transactionalEntityManager.remove(ad);
         return true;
       } catch (error) {
         console.error(error);
-        return false;
+        throw new Error("Erreur lors de la suppression de l'annonce");
       }
     });
   }
