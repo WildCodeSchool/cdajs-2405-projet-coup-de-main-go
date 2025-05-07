@@ -27,6 +27,8 @@ export default function AdModalFormCategory() {
 
   const skills: Skill[] = skillsData?.getAllSkills ?? [];
 
+  const labelId = "category-label";
+
   return (
     <FormControl
       error={!!errors.skillId}
@@ -37,7 +39,9 @@ export default function AdModalFormCategory() {
         },
       }}
     >
-      <InputLabel sx={{ borderRadius: "20px" }}>Catégorie</InputLabel>
+      <InputLabel id={labelId} sx={{ borderRadius: "20px" }}>
+        Catégorie
+      </InputLabel>
       <Controller
         name="skillId"
         control={control}
@@ -45,6 +49,7 @@ export default function AdModalFormCategory() {
         render={({ field }) => (
           <Select
             {...field}
+            labelId={labelId}
             label="Catégorie"
             disabled={skillsLoading || !!skillsError}
             onChange={(e) => {
