@@ -8,5 +8,3 @@ RUN npm install
 
 COPY playwright.config.ts /e2e/playwright.config.ts
 COPY __tests__/ /e2e/__tests__/
-
-CMD tail -f /dev/null
