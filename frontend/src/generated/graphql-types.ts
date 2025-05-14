@@ -24,6 +24,7 @@ export type Ad = {
   chats: Array<Chat>;
   city: Scalars['String']['output'];
   createdAt: Scalars['DateTimeISO']['output'];
+  deletedAt?: Maybe<Scalars['DateTimeISO']['output']>;
   description: Scalars['String']['output'];
   duration: Scalars['Float']['output'];
   id: Scalars['ID']['output'];
@@ -410,6 +411,7 @@ export type Skill = {
 /** Statut de l'annonce */
 export enum Status {
   Booked = 'BOOKED',
+  Deleted = 'DELETED',
   Finalised = 'FINALISED',
   Isreviewed = 'ISREVIEWED',
   Posted = 'POSTED'

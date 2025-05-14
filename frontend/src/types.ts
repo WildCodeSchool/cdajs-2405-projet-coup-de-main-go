@@ -22,6 +22,7 @@ export enum StatusType {
   BOOKED = "booked",
   FINALISED = "finalised",
   ISREVIEWED = "isreviewed",
+  DELETED = "deleted",
 }
 
 export type Skill = {
