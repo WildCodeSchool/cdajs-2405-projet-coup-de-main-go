@@ -64,7 +64,8 @@ services:
             - frontend
         ports:
             - 9000:9000
-
+        command: sh -c "npx playwright test && tail -f /dev/null"
+        
     postgres:
         image: postgres:alpine
         healthcheck:
