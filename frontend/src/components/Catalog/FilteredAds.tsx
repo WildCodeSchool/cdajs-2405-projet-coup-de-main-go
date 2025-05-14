@@ -45,6 +45,7 @@ export default function FilteredAds({
       userLongitude: userLongitude,
       page: page,
     },
+    fetchPolicy: "network-only",
   });
 
   if (adsLoading) return <CircularProgress />;

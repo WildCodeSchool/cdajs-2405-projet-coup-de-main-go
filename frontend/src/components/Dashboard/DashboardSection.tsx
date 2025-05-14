@@ -41,6 +41,7 @@ export default function DashboardSection({
       limit: 4,
       status: Status.Posted,
     },
+    fetchPolicy: "network-only",
   });
 
   if (adsLoading) return <CircularProgress />;
