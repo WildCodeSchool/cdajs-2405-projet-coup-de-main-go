@@ -18,6 +18,7 @@ export const mockAuth = {
 };
 
 export const deleteAdMocks: MockedResponse[] = [
+  // Mock pour la requête initiale GET_ADS_BY_USER_QUERY
   {
     request: {
       query: GET_ADS_BY_USER_QUERY,
@@ -51,6 +52,7 @@ export const deleteAdMocks: MockedResponse[] = [
       },
     },
   },
+  // Mock pour la requête GET_AD_BY_ID_QUERY
   {
     request: {
       query: GET_AD_BY_ID_QUERY,
@@ -93,6 +95,7 @@ export const deleteAdMocks: MockedResponse[] = [
       },
     },
   },
+  // Mock pour la mutation DELETE_AD
   {
     request: {
       query: DELETE_AD,
@@ -108,6 +111,21 @@ export const deleteAdMocks: MockedResponse[] = [
             deleteAd: true,
           },
         ],
+      },
+    },
+  },
+  // Mock pour la requête de refetch après la suppression
+  {
+    request: {
+      query: GET_ADS_BY_USER_QUERY,
+      variables: {
+        userId: mockUserId,
+        status: Status.Posted,
+      },
+    },
+    result: {
+      data: {
+        getAdsByUser: [], // Renvoie une liste vide après la suppression
       },
     },
   },
