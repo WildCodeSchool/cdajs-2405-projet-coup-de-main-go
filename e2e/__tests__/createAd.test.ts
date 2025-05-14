@@ -30,13 +30,13 @@ test.describe("Create ad - E2E Tests", () => {
   }) => {
     // Open modal
     await page.getByRole("button", { name: "Créer une annonce" }).click();
-    await page.getByRole("textbox", { name: "Titre" }).click();
 
     // Fill title in
+    await page.getByRole("textbox", { name: "Titre" }).click();
     await page.getByRole("textbox", { name: "Titre" }).fill("Titre");
-    await page.getByRole("textbox", { name: "Description" }).click();
 
     // Fill description in
+    await page.getByRole("textbox", { name: "Description" }).click();
     await page
       .getByRole("textbox", { name: "Description" })
       .fill("Description");
