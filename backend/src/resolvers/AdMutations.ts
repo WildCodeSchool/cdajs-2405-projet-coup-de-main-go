@@ -375,46 +375,34 @@ export class AdMutations {
     @Arg("id") id: string,
     @Arg("userRequesterId") userRequesterId: string
   ): Promise<boolean> {
-    return await dataSource.transaction(async (transactionalEntityManager) => {
-      // Retrieve ad
-      const ad = await transactionalEntityManager.findOne(Ad, {
-        where: { id },
-      });
+    const ad = await dataSource.manager.findOneBy(Ad, { id });
 
-      if (!ad) {
-        throw new Error("Ad not found");
-      }
+    if (!ad) {
+      throw new Error("Ad not found");
+    }
 
-      // Check that the user requesting deletion is the ad owner
-      if (userRequesterId && ad.userRequester?.id != userRequesterId) {
-        throw new Error("User not allowed to delete the ad");
-      }
+    // Check that the user requesting deletion is the ad owner
+    if (userRequesterId && ad.userRequester?.id != userRequesterId) {
+      throw new Error("User not allowed to delete the ad");
+    }
 
-      // Prevent deletion if ad is finalised or reviewed
-      if (ad.status === "finalised" || ad.status === "isreviewed") {
-        throw new Error(
-          "Ad cannot be deleted as the service has already been provided"
-        );
-      }
+    // Prevent deletion if ad is finalised or reviewed
+    if (ad.status === "finalised" || ad.status === "isreviewed") {
+      throw new Error(
+        "Ad cannot be deleted as the service has already been provided"
+      );
+    }
 
-      try {
-        // Nullify ad reference in chats
-        if (ad.chats) {
-          const chats = await ad.chats;
-          for (const chat of chats) {
-            chat.ad = null as any;
-            await transactionalEntityManager.save(chat);
-          }
-        }
-
-        // Delete Ad
-        await transactionalEntityManager.remove(ad);
-        return true;
-      } catch (error) {
-        console.error(error);
-        throw new Error("Erreur lors de la suppression de l'annonce");
-      }
-    });
+    try {
+      // Update ad status and deletedAd
+      ad.status = Status.DELETED;
+      ad.deletedAt = new Date();
+      await ad.save();
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Erreur lors de la suppression de l'annonce");
+    }
   }
 
   @Mutation(() => Ad)

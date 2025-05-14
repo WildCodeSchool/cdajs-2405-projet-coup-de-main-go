@@ -5,7 +5,6 @@ import { AdMutations } from "../resolvers/AdMutations";
 import { Skill } from "../entities/Skill";
 import { User } from "../entities/User";
 import { Chat } from "../entities/Chat";
-import { dataSource } from "../datasource";
 
 describe("deleteAd", () => {
   let adMutations: AdMutations;
@@ -64,7 +63,7 @@ describe("deleteAd", () => {
   });
 
   it("should throw an error if ad does not exist", async () => {
-    mockTypeOrm().onMock(Ad).toReturn(null, "findOne");
+    mockTypeOrm().onMock(Ad).toReturn(null, "findOneBy");
 
     await expect(
       adMutations.deleteAd(ad.id!, userRequester.id!)
@@ -73,7 +72,7 @@ describe("deleteAd", () => {
 
   it("should throw an error if user is not the ad's userRequester", async () => {
     ad.userRequester = { id: "another-user-id" } as User;
-    mockTypeOrm().onMock(Ad).toReturn(ad, "findOne");
+    mockTypeOrm().onMock(Ad).toReturn(ad, "findOneBy");
 
     await expect(
       adMutations.deleteAd(ad.id!, userRequester.id!)
@@ -82,7 +81,7 @@ describe("deleteAd", () => {
 
   it("should throw an error if ad's status is finalised", async () => {
     ad.status = Status.FINALISED;
-    mockTypeOrm().onMock(Ad).toReturn(ad, "findOne");
+    mockTypeOrm().onMock(Ad).toReturn(ad, "findOneBy");
 
     await expect(
       adMutations.deleteAd(ad.id!, userRequester.id!)
@@ -93,7 +92,7 @@ describe("deleteAd", () => {
 
   it("should throw an error if ad's status is isreviewed", async () => {
     ad.status = Status.ISREVIEWED;
-    mockTypeOrm().onMock(Ad).toReturn(ad, "findOne");
+    mockTypeOrm().onMock(Ad).toReturn(ad, "findOneBy");
 
     await expect(
       adMutations.deleteAd(ad.id!, userRequester.id!)
@@ -102,42 +101,27 @@ describe("deleteAd", () => {
     );
   });
 
-  it("should delete ad and nullify related chats' ad references", async () => {
-    const mockManager = {
-      findOne: jest.fn().mockResolvedValue(ad),
-      save: jest.fn().mockResolvedValue(chat),
-      remove: jest.fn().mockResolvedValue(true),
-    };
+  it("should update ad status to DELETED and set deletedAt date", async () => {
+    const testDate = new Date();
+    jest.useFakeTimers().setSystemTime(testDate);
 
-    jest
-      .spyOn(dataSource, "transaction")
-      .mockImplementation(async (cb: any) => {
-        return cb(mockManager);
-      });
+    mockTypeOrm().onMock(Ad).toReturn(ad, "findOneBy");
+    ad.save = jest.fn().mockResolvedValue(ad);
 
     const result = await adMutations.deleteAd(ad.id!, userRequester.id!);
 
-    expect(mockManager.findOne).toHaveBeenCalledWith(Ad, {
-      where: { id: ad.id },
-    });
-    expect(mockManager.save).toHaveBeenCalledWith(
-      expect.objectContaining({ ad: null })
-    );
-    expect(mockManager.remove).toHaveBeenCalledWith(ad);
-    expect(chat.ad).toBeNull();
+    expect(ad.status).toBe(Status.DELETED);
+    expect(ad.deletedAt).toEqual(testDate);
+    expect(ad.save).toHaveBeenCalled();
     expect(result).toBe(true);
+
+    jest.useRealTimers();
   });
 
-  it("should throw an error if deletion fails", async () => {
-    const mockManager = {
-      findOne: jest.fn().mockResolvedValue(ad),
-      save: jest.fn().mockResolvedValue(chat),
-      remove: jest.fn().mockRejectedValue(new Error("DB error")),
-    };
+  it("should throw an error if updating fails", async () => {
+    mockTypeOrm().onMock(Ad).toReturn(ad, "findOneBy");
 
-    jest
-      .spyOn(dataSource, "transaction")
-      .mockImplementation(async (cb: any) => cb(mockManager));
+    ad.save = jest.fn().mockRejectedValue(new Error("DB error"));
 
     jest.spyOn(console, "error").mockImplementation(() => {});
 

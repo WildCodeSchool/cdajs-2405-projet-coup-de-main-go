@@ -21,6 +21,7 @@ export enum Status {
   BOOKED = "booked",
   FINALISED = "finalised",
   ISREVIEWED = "isreviewed",
+  DELETED = "deleted",
 }
 
 registerEnumType(Status, {
@@ -100,6 +101,11 @@ export class Ad extends BaseEntity {
   @Column()
   @Field()
   updatedAt?: Date;
+
+  @IsDate()
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  deletedAt?: Date;
 
   @Column({ nullable: true })
   @Field({ nullable: true })
