@@ -22,7 +22,7 @@ const COOKIE_OPTIONS = {
     expires: 30,
     secure: production,
     httpOnly: production,
-    sameSite: production ? ("None" as const) : ("Lax" as const),
+    sameSite: "strict" as const,
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
