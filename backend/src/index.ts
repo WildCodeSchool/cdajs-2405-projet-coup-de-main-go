@@ -75,8 +75,8 @@ async function startApolloServer() {
 
   await server.start();
 
-  const staticFolderPath = path.resolve("uploads");
-  app.use("/files", express.static(staticFolderPath));
+  const staticFolderPath = path.join(__dirname, "..", "uploads");
+  app.use("/uploads", express.static(staticFolderPath));
 
   app.use(
     cors({

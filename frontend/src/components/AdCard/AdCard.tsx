@@ -84,9 +84,9 @@ export default function AdCard({ ad, isProfileCard = false }: AdCardProps) {
         }}
         image={
           ad.picture1
-            ? `${import.meta.env.VITE_DOMAIN_BACKEND_URL}/files/ads/${ad.id}/${
-                ad.picture1
-              }`
+            ? `${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/ads/${
+                ad.id
+              }/${ad.picture1}`
             : "/images/picture.png"
         }
         alt={`${ad.skill.name} picture`}
