@@ -1,4 +1,12 @@
-import { Mutation, Resolver, Arg, InputType, Field, Int } from "type-graphql";
+import {
+  Mutation,
+  Resolver,
+  Arg,
+  InputType,
+  Field,
+  Int,
+  Authorized,
+} from "type-graphql";
 import { Length, IsInt, IsOptional } from "class-validator";
 import { Ad, Status } from "../entities/Ad";
 import { User } from "../entities/User";
@@ -153,6 +161,7 @@ export class AdUpdateInput {
 @Resolver(Ad)
 export class AdMutations {
   // Mutation to create a new Ad
+  @Authorized()
   @Mutation(() => Ad)
   async createAd(@Arg("adData") adData: AdInput): Promise<Ad> {
     // Check if userRequested exists
@@ -244,6 +253,7 @@ export class AdMutations {
   }
 
   // Mutation to update an existing Ad
+  @Authorized()
   @Mutation(() => Ad)
   async updateAd(
     @Arg("id") id: string,
@@ -370,6 +380,7 @@ export class AdMutations {
   }
 
   // Mutation to delete Ad
+  @Authorized()
   @Mutation((_) => Boolean)
   async deleteAd(
     @Arg("id") id: string,
@@ -405,6 +416,7 @@ export class AdMutations {
     }
   }
 
+  @Authorized()
   @Mutation(() => Ad)
   async updateAdStatus(
     @Arg("id") id: string,

@@ -6,6 +6,7 @@ import {
   Float,
   ObjectType,
   Field,
+  Authorized,
 } from "type-graphql";
 import { Ad, Status } from "../entities/Ad";
 import { dataSource } from "../datasource";
@@ -23,6 +24,7 @@ export class AdsResponse {
 
 @Resolver(Ad)
 export class AdQueries {
+  @Authorized()
   @Query(() => AdsResponse)
   async getAllAds(
     @Arg("skillId", () => String, { nullable: true }) skillId?: string,
@@ -128,6 +130,7 @@ export class AdQueries {
     // });
   }
 
+  @Authorized()
   @Query(() => Ad)
   async getAdById(@Arg("id") id: string): Promise<Ad | null> {
     const ad: Ad | null = await dataSource.manager.findOne(Ad, {
@@ -141,6 +144,7 @@ export class AdQueries {
     return ad;
   }
 
+  @Authorized()
   @Query(() => [Ad])
   async getAdsByUser(
     @Arg("userId") userId: string,
