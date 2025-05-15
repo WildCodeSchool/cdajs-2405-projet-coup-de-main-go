@@ -1,3 +1,7 @@
+jest.mock("../utils/cacheAds", () => ({
+  invalidateAdsCache: jest.fn().mockResolvedValue(undefined),
+}));
+
 import { mockTypeOrm } from "../tests_mockTypeorm-config";
 import { faker } from "@faker-js/faker";
 import { Ad, Status } from "../entities/Ad";
@@ -5,6 +9,8 @@ import { AdMutations } from "../resolvers/AdMutations";
 import { Skill } from "../entities/Skill";
 import { User } from "../entities/User";
 import { Chat } from "../entities/Chat";
+import { redisClient } from "../utils/redisClient";
+import { invalidateAdsCache } from "../utils/cacheAds";
 
 describe("deleteAd", () => {
   let adMutations: AdMutations;
@@ -12,7 +18,6 @@ describe("deleteAd", () => {
   let userRequester: User;
   let userHelper: User;
   let skill: Skill;
-  let chat: Chat;
 
   beforeEach(() => {
     adMutations = new AdMutations();
@@ -56,10 +61,15 @@ describe("deleteAd", () => {
     );
     ad.id = faker.string.uuid();
 
-    chat = new Chat(false, userHelper, userRequester, ad);
-    chat.id = faker.string.uuid();
+    (invalidateAdsCache as jest.Mock).mockClear();
+  });
 
-    ad.chats = Promise.resolve([chat]);
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  afterAll(async () => {
+    await redisClient.quit();
   });
 
   it("should throw an error if ad does not exist", async () => {
@@ -113,9 +123,8 @@ describe("deleteAd", () => {
     expect(ad.status).toBe(Status.DELETED);
     expect(ad.deletedAt).toEqual(testDate);
     expect(ad.save).toHaveBeenCalled();
+    expect(invalidateAdsCache).toHaveBeenCalled();
     expect(result).toBe(true);
-
-    jest.useRealTimers();
   });
 
   it("should throw an error if updating fails", async () => {

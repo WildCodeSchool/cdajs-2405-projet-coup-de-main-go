@@ -12,6 +12,7 @@ import { Ad, Status } from "../entities/Ad";
 import { dataSource } from "../datasource";
 import { redisClient } from "../utils/redisClient";
 import { CACHE_EXPIRATION } from "../constants/cache";
+import { generateCacheKey } from "../utils/cacheAds";
 
 @ObjectType()
 export class AdsResponse {
@@ -48,19 +49,26 @@ export class AdQueries {
     @Arg("orderBy", () => String, { defaultValue: "DESC" })
     orderBy: "ASC" | "DESC" = "DESC"
   ): Promise<AdsResponse> {
-    // const cacheKey = `ads:all:${skillId || "all"}:${mangoAmountMin || "min"}:${
-    //   mangoAmountMax || "max"
-    // }:${durationMin || "dmin"}:${durationMax || "dmax"}:${status || "all"}:${
-    //   maxDistance || "dist"
-    // }:${userLatitude || "lat"}:${
-    //   userLongitude || "lng"
-    // }:${page}:${limit}:${orderBy}`;
+    const cacheKey = generateCacheKey(
+      skillId,
+      mangoAmountMin,
+      mangoAmountMax,
+      durationMin,
+      durationMax,
+      status,
+      maxDistance,
+      userLatitude,
+      userLongitude,
+      page,
+      limit,
+      orderBy
+    );
 
     // Check if the data is cached
-    // const cachedData = await redisClient.get(cacheKey);
-    // if (cachedData) {
-    //   return JSON.parse(cachedData);
-    // }
+    const cachedData = await redisClient.get(cacheKey);
+    if (cachedData) {
+      return JSON.parse(cachedData);
+    }
 
     // Calculate the offset to determine the starting point of the ads for the given page and limit.
     const query = dataSource.getRepository(Ad).createQueryBuilder("ad");
@@ -120,19 +128,28 @@ export class AdQueries {
 
     const ads = await query.getMany();
 
-    return {
+    const result = {
       ads,
       totalCount: totalCount,
     };
 
-    // await redisClient.set(cacheKey, JSON.stringify(results), {
-    //   EX: CACHE_EXPIRATION.GET_ALL_ADS,
-    // });
+    await redisClient.set(cacheKey, JSON.stringify(result), {
+      EX: CACHE_EXPIRATION.GET_ALL_ADS,
+    });
+
+    return result;
   }
 
   @Authorized()
   @Query(() => Ad)
   async getAdById(@Arg("id") id: string): Promise<Ad | null> {
+    const cacheKey = `ads:id:${id}`;
+
+    const cachedData = await redisClient.get(cacheKey);
+    if (cachedData) {
+      return JSON.parse(cachedData);
+    }
+
     const ad: Ad | null = await dataSource.manager.findOne(Ad, {
       where: { id },
     });
@@ -140,6 +157,10 @@ export class AdQueries {
     if (!ad) {
       throw new Error(`Ad not found for id : ${id}`);
     }
+
+    await redisClient.set(cacheKey, JSON.stringify(ad), {
+      EX: CACHE_EXPIRATION.GET_AD_BY_ID,
+    });
 
     return ad;
   }
@@ -150,6 +171,13 @@ export class AdQueries {
     @Arg("userId") userId: string,
     @Arg("status", () => Status, { nullable: true }) status?: Status
   ): Promise<Ad[]> {
+    const cacheKey = `ads:user:${userId}:${status ?? "all"}`;
+
+    const cachedData = await redisClient.get(cacheKey);
+    if (cachedData) {
+      return JSON.parse(cachedData);
+    }
+
     const query: any = { userRequester: { id: userId } };
 
     // Apply status filter is provided
@@ -162,6 +190,10 @@ export class AdQueries {
       order: {
         updatedAt: "DESC",
       },
+    });
+
+    await redisClient.set(cacheKey, JSON.stringify(ads), {
+      EX: CACHE_EXPIRATION.GET_ADS_BY_USER,
     });
 
     return ads;

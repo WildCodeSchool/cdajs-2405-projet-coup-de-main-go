@@ -14,6 +14,7 @@ import { Skill } from "../entities/Skill";
 import { dataSource } from "../datasource";
 import uploadFile from "../utils/uploadFile";
 import deleteFile from "../utils/deleteFile";
+import { invalidateAdsCache } from "../utils/cacheAds";
 
 @InputType()
 export class AdInput {
@@ -243,6 +244,9 @@ export class AdMutations {
 
       await ad.save();
 
+      // Invalidate cache
+      await invalidateAdsCache();
+
       return ad;
     } catch (error) {
       if (error instanceof Error) {
@@ -370,6 +374,10 @@ export class AdMutations {
       }
 
       await ad.save();
+
+      // Invalidate cache
+      await invalidateAdsCache();
+
       return ad;
     } catch (error) {
       if (error instanceof Error) {
@@ -409,6 +417,10 @@ export class AdMutations {
       ad.status = Status.DELETED;
       ad.deletedAt = new Date();
       await ad.save();
+
+      // Invalidate cache
+      await invalidateAdsCache();
+
       return true;
     } catch (error) {
       console.error(error);
@@ -430,6 +442,10 @@ export class AdMutations {
     ad.status = status;
     try {
       await ad.save();
+
+      // Invalidate cache
+      await invalidateAdsCache();
+
       return ad;
     } catch (error) {
       throw new Error("Échec de la mise à jour de l'annonce");
