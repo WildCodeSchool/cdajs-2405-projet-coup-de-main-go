@@ -7,8 +7,6 @@ import {
   BeforeUpdate,
   OneToMany,
   ManyToOne,
-  ManyToMany,
-  JoinTable,
   OneToOne,
 } from "typeorm";
 import { Field, ObjectType, ID, registerEnumType } from "type-graphql";
@@ -23,6 +21,7 @@ export enum Status {
   BOOKED = "booked",
   FINALISED = "finalised",
   ISREVIEWED = "isreviewed",
+  DELETED = "deleted",
 }
 
 registerEnumType(Status, {
@@ -103,6 +102,11 @@ export class Ad extends BaseEntity {
   @Field()
   updatedAt?: Date;
 
+  @IsDate()
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  deletedAt?: Date;
+
   @Column({ nullable: true })
   @Field({ nullable: true })
   picture1: string = "";
@@ -116,7 +120,7 @@ export class Ad extends BaseEntity {
   picture3: string = "";
 
   @OneToMany(() => Chat, (chat) => chat.ad)
-  @Field((type) => [Chat])
+  @Field(() => [Chat])
   chats?: Promise<Chat[]>;
 
   @ManyToOne(() => User, (user) => user.ads, { eager: true })

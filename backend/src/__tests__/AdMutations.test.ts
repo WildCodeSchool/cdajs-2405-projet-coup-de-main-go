@@ -1,15 +1,22 @@
+jest.mock("../utils/cacheAds", () => ({
+  invalidateAdsCache: jest.fn().mockResolvedValue(undefined),
+}));
+
 import { mockTypeOrm } from "../tests_mockTypeorm-config";
 import { faker } from "@faker-js/faker";
-import { Ad } from "../entities/Ad";
+import { Ad, Status } from "../entities/Ad";
 import { AdMutations } from "../resolvers/AdMutations";
 import { Skill } from "../entities/Skill";
 import { User } from "../entities/User";
-import { Transaction } from "../entities/Transaction";
+import { Chat } from "../entities/Chat";
+import { redisClient } from "../utils/redisClient";
+import { invalidateAdsCache } from "../utils/cacheAds";
 
 describe("deleteAd", () => {
   let adMutations: AdMutations;
   let ad: Ad;
   let userRequester: User;
+  let userHelper: User;
   let skill: Skill;
 
   beforeEach(() => {
@@ -27,6 +34,18 @@ describe("deleteAd", () => {
     );
     userRequester.id = faker.string.uuid();
 
+    userHelper = new User(
+      faker.person.firstName(),
+      faker.person.lastName(),
+      faker.internet.email(),
+      faker.internet.password(),
+      faker.image.avatar(),
+      faker.location.streetAddress(),
+      faker.location.zipCode(),
+      faker.location.city()
+    );
+    userHelper.id = faker.string.uuid();
+
     skill = new Skill(faker.lorem.word(), faker.image.url());
 
     ad = new Ad(
@@ -40,33 +59,83 @@ describe("deleteAd", () => {
       userRequester,
       skill
     );
-
     ad.id = faker.string.uuid();
+
+    (invalidateAdsCache as jest.Mock).mockClear();
   });
 
-  it("should throw 'Ad not found' if ad does not exist", async () => {
-    mockTypeOrm().onMock(Ad).toReturn(null, "findOne");
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  afterAll(async () => {
+    await redisClient.quit();
+  });
+
+  it("should throw an error if ad does not exist", async () => {
+    mockTypeOrm().onMock(Ad).toReturn(null, "findOneBy");
 
     await expect(
       adMutations.deleteAd(ad.id!, userRequester.id!)
     ).rejects.toThrow("Ad not found");
   });
 
-  it("should throw 'Ad is associated to a transaction' if ad is associated to a transaction", async () => {
-    mockTypeOrm().onMock(Ad).toReturn(ad, "findOne");
-    mockTypeOrm().onMock(Transaction).toReturn(true, "findOne");
+  it("should throw an error if user is not the ad's userRequester", async () => {
+    ad.userRequester = { id: "another-user-id" } as User;
+    mockTypeOrm().onMock(Ad).toReturn(ad, "findOneBy");
 
     await expect(
       adMutations.deleteAd(ad.id!, userRequester.id!)
-    ).rejects.toThrow("Ad is associated to a transaction");
+    ).rejects.toThrow("User not allowed to delete the ad");
   });
 
-  it("should delete ad and return true", async () => {
-    mockTypeOrm().onMock(Ad).toReturn(ad, "findOne");
-    mockTypeOrm().onMock(Transaction).toReturn(false, "findOne");
+  it("should throw an error if ad's status is finalised", async () => {
+    ad.status = Status.FINALISED;
+    mockTypeOrm().onMock(Ad).toReturn(ad, "findOneBy");
 
-    await expect(adMutations.deleteAd(ad.id!, userRequester.id!)).resolves.toBe(
-      true
+    await expect(
+      adMutations.deleteAd(ad.id!, userRequester.id!)
+    ).rejects.toThrow(
+      "Ad cannot be deleted as the service has already been provided"
     );
+  });
+
+  it("should throw an error if ad's status is isreviewed", async () => {
+    ad.status = Status.ISREVIEWED;
+    mockTypeOrm().onMock(Ad).toReturn(ad, "findOneBy");
+
+    await expect(
+      adMutations.deleteAd(ad.id!, userRequester.id!)
+    ).rejects.toThrow(
+      "Ad cannot be deleted as the service has already been provided"
+    );
+  });
+
+  it("should update ad status to DELETED and set deletedAt date", async () => {
+    const testDate = new Date();
+    jest.useFakeTimers().setSystemTime(testDate);
+
+    mockTypeOrm().onMock(Ad).toReturn(ad, "findOneBy");
+    ad.save = jest.fn().mockResolvedValue(ad);
+
+    const result = await adMutations.deleteAd(ad.id!, userRequester.id!);
+
+    expect(ad.status).toBe(Status.DELETED);
+    expect(ad.deletedAt).toEqual(testDate);
+    expect(ad.save).toHaveBeenCalled();
+    expect(invalidateAdsCache).toHaveBeenCalled();
+    expect(result).toBe(true);
+  });
+
+  it("should throw an error if updating fails", async () => {
+    mockTypeOrm().onMock(Ad).toReturn(ad, "findOneBy");
+
+    ad.save = jest.fn().mockRejectedValue(new Error("DB error"));
+
+    jest.spyOn(console, "error").mockImplementation(() => {});
+
+    await expect(
+      adMutations.deleteAd(ad.id!, userRequester.id!)
+    ).rejects.toThrow("Erreur lors de la suppression de l'annonce");
   });
 });

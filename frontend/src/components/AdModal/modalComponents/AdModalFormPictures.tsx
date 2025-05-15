@@ -121,6 +121,7 @@ export default function AdModalFormPictures({ adId }: AdModalFormPhotosProps) {
                   <input
                     type="file"
                     id={`picture${index + 1}`}
+                    data-testid={`picture${index + 1}`}
                     accept="image/*"
                     onChange={(e) => handleFileChange(e, index)}
                     hidden

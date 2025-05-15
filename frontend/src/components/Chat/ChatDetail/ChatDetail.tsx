@@ -1,10 +1,11 @@
-import { Paper } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 import ChatDetailProfile from "./ChatDetailProfile";
 import { Ad, Chat, User } from "../../../types";
 import { useEffect, useState } from "react";
 import ChatDetailPicture from "./ChatDetailPicture";
 import ChatDetailExtraInformation from "./ChatDetailExtraInformation";
 import ChatDetailDescription from "./ChatDetailDescription";
+import { Status } from "../../../generated/graphql-types";
 
 type ChatDetailProps = {
   chats: Chat[];
@@ -40,9 +41,26 @@ export default function ChatDetail({ chats, chatId }: ChatDetailProps) {
       }}
     >
       <ChatDetailProfile userRequester={userRequester} />
-      <ChatDetailPicture ad={ad} />
-      <ChatDetailDescription ad={ad} />
-      <ChatDetailExtraInformation ad={ad} />
+      {ad && ad.status === Status.Deleted ? (
+        <Box
+          sx={{
+            p: 1,
+            pl: 2,
+            borderBottom: 2,
+            borderColor: "divider",
+          }}
+        >
+          <Typography variant="body2">
+            Annonce supprimée par l'utilisateur
+          </Typography>
+        </Box>
+      ) : (
+        <>
+          <ChatDetailPicture ad={ad} />
+          <ChatDetailDescription ad={ad} />
+          <ChatDetailExtraInformation ad={ad} />
+        </>
+      )}
     </Paper>
   );
 }
