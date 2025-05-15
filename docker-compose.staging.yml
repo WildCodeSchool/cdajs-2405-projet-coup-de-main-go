@@ -20,7 +20,7 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./backend/uploads:/uploads
+      - ./uploads:/server/uploads
 
   frontend:
     image: guillaumesep/coup_de_main_go_frontend:latest
