@@ -24,20 +24,12 @@ import { TransactionMutations } from "./resolvers/TransactionMutations";
 import { UserMutations } from "./resolvers/UserMutations";
 import { AdQueries } from "./resolvers/AdQueries";
 import { AdMutations } from "./resolvers/AdMutations";
-import { redisClient } from "./utils/redisClient";
 
 import "./jobs/cronJobs";
 
 const port: number = parseInt(process.env.APOLLO_PORT || "4000", 10);
 
 async function startApolloServer() {
-    try {
-        await redisClient.connect();
-        console.log("Redis client connected");
-    } catch (error) {
-        console.error("Error connecting to Redis client:", error);
-    }
-
     const schema = await buildSchema({
         resolvers: [
             UserQueries,

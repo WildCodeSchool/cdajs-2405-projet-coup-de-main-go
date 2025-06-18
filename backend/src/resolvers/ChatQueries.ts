@@ -3,7 +3,6 @@ import { Chat } from "../entities/Chat";
 import { User } from "../entities/User";
 import { dataSource } from "../datasource";
 import { checkUserId } from "../middlewares/userAuthMiddleware";
-import { redisClient } from "../utils/redisClient";
 import { CACHE_EXPIRATION } from "../constants/cache";
 
 @Resolver(Chat)
@@ -13,20 +12,6 @@ export class ChatQueries {
     async getChatsByUserId(
         @Arg("userId") userId: string
     ): Promise<Chat[] | null> {
-        const cacheKey = `chats:user:${userId}`;
-
-        // Check if the data is cached
-        // const cachedData = await redisClient.get(cacheKey);
-        // if (cachedData) {
-        //     const parsedData = JSON.parse(cachedData);
-        //     const formatData = parsedData.map((chat: any) => ({
-        //         ...chat,
-        //         messages: chat.__messages__ || chat.messages || [],
-        //     }));
-
-        //     return formatData;
-        // }
-
         // Check if the user exists
         const user = await dataSource.manager.findOne(User, {
             where: { id: userId },
@@ -49,11 +34,6 @@ export class ChatQueries {
                 },
             },
         });
-
-        // Cache the result
-        // await redisClient.set(cacheKey, JSON.stringify(chats), {
-        //     EX: CACHE_EXPIRATION.CHATS_BY_USER,
-        // });
 
         return chats;
     }
