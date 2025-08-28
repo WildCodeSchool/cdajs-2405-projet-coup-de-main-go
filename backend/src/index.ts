@@ -31,103 +31,101 @@ import "./jobs/cronJobs";
 const port: number = parseInt(process.env.APOLLO_PORT || "4000", 10);
 
 async function startApolloServer() {
-    try {
-        await redisClient.connect();
-        console.log("Redis client connected");
-    } catch (error) {
-        console.error("Error connecting to Redis client:", error);
-    }
+  try {
+    await redisClient.connect();
+    console.log("Redis client connected");
+  } catch (error) {
+    console.error("Error connecting to Redis client:", error);
+  }
 
-    const schema = await buildSchema({
-        resolvers: [
-            UserQueries,
-            UserMutations,
-            AdQueries,
-            AdMutations,
-            ChatQueries,
-            ChatMutations,
-            MessageQueries,
-            MessageMutations,
-            SkillQueries,
-            ReviewQueries,
-            ReviewMutations,
-            TransactionQueries,
-            TransactionMutations,
-        ],
-        authChecker: ({ context }) => {
-            if (context.user) {
-                return true;
-            }
-            return false;
-        },
-    });
+  const schema = await buildSchema({
+    resolvers: [
+      UserQueries,
+      UserMutations,
+      AdQueries,
+      AdMutations,
+      ChatQueries,
+      ChatMutations,
+      MessageQueries,
+      MessageMutations,
+      SkillQueries,
+      ReviewQueries,
+      ReviewMutations,
+      TransactionQueries,
+      TransactionMutations,
+    ],
+    authChecker: ({ context }) => {
+      if (context.user) {
+        return true;
+      }
+      return false;
+    },
+    validate: true,
+  });
 
-    const app = express();
-    const httpServer = http.createServer(app);
+  const app = express();
+  const httpServer = http.createServer(app);
 
-    const server = new ApolloServer({
-        schema,
-        plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-        introspection: process.env.NODE_ENV !== "production",
-    });
+  const server = new ApolloServer({
+    schema,
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    introspection: process.env.NODE_ENV !== "production",
+  });
 
-    await dataSource.initialize();
+  await dataSource.initialize();
 
-    await server.start();
+  await server.start();
 
-    const staticFolderPath = path.join(__dirname, "..", "uploads");
-    app.use("/uploads", express.static(staticFolderPath));
+  const staticFolderPath = path.join(__dirname, "..", "uploads");
+  app.use("/uploads", express.static(staticFolderPath));
 
-    app.use(
-        cors({
-            origin: process.env.FRONTEND_URL,
-            methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            allowedHeaders: ["Content-Type", "Authorization"],
-            credentials: true,
-        })
-    );
+  app.use(
+    cors({
+      origin: process.env.FRONTEND_URL,
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+      credentials: true,
+    })
+  );
 
-    app.use(
-        "/graphql",
-        cors<cors.CorsRequest>(),
-        express.json({ limit: "10mb" }),
-        expressMiddleware(server, {
-            context: async ({ req }) => {
-                const authHeader = req.headers.authorization;
-                let user = null;
+  app.use(
+    "/graphql",
+    cors<cors.CorsRequest>(),
+    express.json({ limit: "10mb" }),
+    expressMiddleware(server, {
+      context: async ({ req }) => {
+        const authHeader = req.headers.authorization;
+        let user = null;
 
-                if (authHeader?.startsWith("Bearer ") === true) {
-                    const tokenValue: string = authHeader.substring(
-                        "Bearer ".length
-                    );
+        if (authHeader?.startsWith("Bearer ") === true) {
+          const tokenValue: string = authHeader.substring("Bearer ".length);
 
-                    const jwtSecret: string | undefined =
-                        process.env.JWT_SECRET;
-                    if (!jwtSecret) {
-                        throw new Error("Invalid JWT secret");
-                    }
-                    try {
-                        user = jwt.verify(tokenValue, jwtSecret) as {
-                            id: string;
-                        };
-                    } catch (error) {
-                        console.error("Invalid token:", error);
-                    }
-                }
+          const jwtSecret: string | undefined = process.env.JWT_SECRET;
+          if (!jwtSecret) {
+            throw new Error("Invalid JWT secret");
+          }
+          try {
+            user = jwt.verify(tokenValue, jwtSecret) as {
+              id: string;
+            };
+          } catch (error) {
+            console.error("Invalid token:", error);
+          }
+        }
 
-                return { user };
-            },
-        })
-    );
+        return { user };
+      },
+    })
+  );
 
-    app.get("/health", (req, res) => {
-        res.status(200).send("Okay!");
-    });
+  app.get("/health", (req, res) => {
+    res.status(200).send("Okay!");
+  });
 
-    await new Promise<void>((resolve) => httpServer.listen({ port }, resolve));
-    console.log(`🚀 Le serveur est prêt à http://localhost:${port}/graphql`);
+  await new Promise<void>((resolve) => httpServer.listen({ port }, resolve));
+  console.log(`🚀 Le serveur est prêt à http://localhost:${port}/graphql`);
 }
 
 startApolloServer().catch((error) => {
-    console.error("Erreur lors du démarrage du serveur :", error);
+  console.error("Erreur lors du démarrage du serveur :", error);
 });
