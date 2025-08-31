@@ -7,7 +7,7 @@ import {
   Int,
   Authorized,
 } from "type-graphql";
-import { Length, IsInt, IsOptional } from "class-validator";
+import { Length, IsInt, IsOptional, IsString, IsNumber } from "class-validator";
 import { Ad, Status } from "../entities/Ad";
 import { User } from "../entities/User";
 import { Skill } from "../entities/Skill";
@@ -22,37 +22,44 @@ export class AdInput {
   @Length(1, 50, {
     message: "Le titre doit contenir entre 1 et 50 caractères.",
   })
+  @IsString()
   title!: string;
 
   @Field()
   @Length(1, 255, {
     message: "La description doit contenir entre 1 et 255 caractères.",
   })
+  @IsString()
   description!: string;
 
   @Field()
   @Length(1, 255, {
     message: "L'adresse doit contenir entre 1 et 255 caractères.",
   })
+  @IsString()
   address!: string;
 
   @Field()
   @Length(5, 5, {
     message: "Le code postal doit contenir 5 caractères.",
   })
+  @IsString()
   zipCode!: string;
 
   @Field()
   @Length(1, 100, {
     message: "La ville doit contenir entre 1 et 100 caractères.",
   })
+  @IsString()
   city!: string;
 
   @Field({ nullable: true })
+  @IsNumber()
   @IsOptional()
   latitude?: number;
 
   @Field({ nullable: true })
+  @IsNumber()
   @IsOptional()
   longitude?: number;
 
@@ -65,20 +72,25 @@ export class AdInput {
   mangoAmount!: number;
 
   @Field()
+  @IsString()
   userRequesterId!: string;
 
   @Field()
+  @IsString()
   skillId!: string;
 
   @Field({ nullable: true })
+  @IsString()
   @IsOptional()
   picture1?: string;
 
   @Field({ nullable: true })
+  @IsString()
   @IsOptional()
   picture2?: string;
 
   @Field({ nullable: true })
+  @IsString()
   @IsOptional()
   picture3?: string;
 }
@@ -90,6 +102,7 @@ export class AdUpdateInput {
   @Length(1, 50, {
     message: "Le titre doit contenir entre 1 et 50 caractères.",
   })
+  @IsString()
   title?: string;
 
   @Field({ nullable: true })
@@ -97,6 +110,7 @@ export class AdUpdateInput {
   @Length(1, 255, {
     message: "La description doit contenir entre 1 et 255 caractères.",
   })
+  @IsString()
   description?: string;
 
   @Field({ nullable: true })
@@ -104,6 +118,7 @@ export class AdUpdateInput {
   @Length(1, 255, {
     message: "L'adresse doit contenir entre 1 et 255 caractères.",
   })
+  @IsString()
   address?: string;
 
   @Field({ nullable: true })
@@ -111,6 +126,7 @@ export class AdUpdateInput {
   @Length(5, 5, {
     message: "Le code postal doit contenir 5 caractères.",
   })
+  @IsString()
   zipCode?: string;
 
   @Field({ nullable: true })
@@ -118,6 +134,7 @@ export class AdUpdateInput {
   @Length(1, 100, {
     message: "La ville doit contenir entre 1 et 100 caractères.",
   })
+  @IsString()
   city?: string;
 
   @Field(() => Int, { nullable: true })
@@ -127,10 +144,12 @@ export class AdUpdateInput {
 
   @Field({ nullable: true })
   @IsOptional()
+  @IsNumber()
   latitude?: number;
 
   @Field({ nullable: true })
   @IsOptional()
+  @IsNumber()
   longitude?: number;
 
   @Field(() => Int, { nullable: true })
@@ -140,22 +159,27 @@ export class AdUpdateInput {
 
   @Field({ nullable: true })
   @IsOptional()
+  @IsString()
   userRequesterId?: string;
 
   @Field({ nullable: true })
   @IsOptional()
+  @IsString()
   skillId?: string;
 
   @Field({ nullable: true })
   @IsOptional()
+  @IsString()
   picture1?: string;
 
   @Field({ nullable: true })
   @IsOptional()
+  @IsString()
   picture2?: string;
 
   @Field({ nullable: true })
   @IsOptional()
+  @IsString()
   picture3?: string;
 }
 

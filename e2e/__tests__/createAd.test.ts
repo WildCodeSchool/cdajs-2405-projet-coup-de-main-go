@@ -25,7 +25,7 @@ test.describe("Create ad - E2E Tests", () => {
     await expect(page.getByRole("heading")).toContainText("Créer une annonce");
   });
 
-  test("should successfully create a new ad and display a success message", async ({
+  test("should successfully display a success message after submission", async ({
     page,
   }) => {
     // Open modal
