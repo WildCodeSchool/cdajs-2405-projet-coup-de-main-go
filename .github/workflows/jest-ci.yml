@@ -3,57 +3,57 @@ name: jest-ci
 on: pull_request
 
 jobs:
-    tests:
-        timeout-minutes: 60
-        runs-on: ubuntu-latest
+  tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Check out code
-              uses: actions/checkout@v4
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
 
-            - name: Create .env file
-              run: |
-                  echo "APOLLO_PORT=${{ secrets.APOLLO_PORT }}" >> .env
-                  echo "DB_USER=${{ secrets.POSTGRES_USER }}" >> .env
-                  echo "DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
-                  echo "DB_HOST=${{ secrets.POSTGRES_HOST }}" >> .env
-                  echo "DB_PORT=${{ secrets.POSTGRES_PORT }}" >> .env
-                  echo "DB_DATABASE=${{ secrets.POSTGRES_DB }}" >> .env
-                  echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-                  echo "VITE_POLL_CHAT_INTERVAL=${{ secrets.VITE_POLL_CHAT_INTERVAL }}" >> .env
+      - name: Create .env file
+        run: |
+          echo "APOLLO_PORT=${{ secrets.APOLLO_PORT }}" >> .env
+          echo "DB_USER=${{ secrets.POSTGRES_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+          echo "DB_HOST=${{ secrets.POSTGRES_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.POSTGRES_PORT }}" >> .env
+          echo "DB_DATABASE=${{ secrets.POSTGRES_DB }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "VITE_POLL_CHAT_INTERVAL=${{ secrets.VITE_POLL_CHAT_INTERVAL }}" >> .env
 
-            - name: Start services with Docker Compose
-              run: |
-                  echo "Starting services with Docker Compose E2E..."
-                  docker compose --env-file .env -f docker-compose.e2e.yml up --build -d
+      - name: Start services with Docker Compose
+        run: |
+          echo "Starting services with Docker Compose E2E..."
+          docker compose --env-file .env -f docker-compose.e2e.yml up --build -d
 
-            - name: Run Database Seeds
-              run: |
-                  echo "Starting seed..."
-                  docker exec $(docker ps -qf "name=backend") npm run seed
-              working-directory: backend
+      - name: Run Database Seeds
+        run: |
+          echo "Starting seed..."
+          docker exec $(docker ps -qf "name=backend") npm run seed
+        working-directory: backend
 
-            - name: Run the tests in the backend container
-              run: |
-                  echo "Running tests in backend container..."
-                  docker exec $(docker ps -qf "name=backend") npm run test
+      - name: Run the tests in the backend container
+        run: |
+          echo "Running tests in backend container..."
+          docker exec $(docker ps -qf "name=backend") npm run test
 
-            - name: Run the tests in the frontend container
-              run: |
-                  echo "Running tests in frontend container..."
-                  docker exec $(docker ps -qf "name=frontend") npm run test:ci
+      - name: Run the tests in the frontend container
+        run: |
+          echo "Running tests in frontend container..."
+          docker exec $(docker ps -qf "name=frontend") npm run test:ci
 
-            - name: Run the tests in the E2E container
-              run: |
-                  echo "Running tests in E2E container..."
-                  docker exec $(docker ps -qf "name=e2e") npm run test
+      - name: Run the tests in the E2E container
+        run: |
+          echo "Running tests in E2E container..."
+          docker exec $(docker ps -qf "name=e2e") npm run test
 
-            - name: Upload screenshots as artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: screenshot-artifacts
-                  path: e2e/screenshots/*.png
+      - name: Upload screenshots as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot-artifacts
+          path: e2e/screenshots/*.png
 
-            - name: Show Docker logs on failure
-              if: failure()
-              run: docker compose -f docker-compose.dev.yml logs
+      - name: Show Docker logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.e2e.yml logs
