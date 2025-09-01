@@ -19,10 +19,9 @@ export const TOKEN_COOKIE_NAME = "cdmg-token";
 
 const production = process.env.NODE_ENV !== "development";
 const COOKIE_OPTIONS = {
-    expires: 30,
-    secure: production,
-    httpOnly: production,
-    sameSite: "strict" as const,
+  expires: 30,
+  secure: production,
+  sameSite: "strict" as const,
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
