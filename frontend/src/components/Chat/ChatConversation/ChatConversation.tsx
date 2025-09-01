@@ -147,8 +147,8 @@ export default function ChatConversation({
     if (!currentChat) return;
 
     const amount = currentChat!.ad.mangoAmount;
-    const fromId = currentChat.userHelper.id;
-    const toId = currentChat.userRequester.id;
+    const fromId = currentChat.userRequester.id;
+    const toId = currentChat.userHelper.id;
 
     try {
       // Transfer funds from the helper to the requester
@@ -159,8 +159,8 @@ export default function ChatConversation({
         variables: {
           transactionData: {
             adId: currentChat.ad.id,
-            userRequesterId: toId,
-            userHelperId: fromId,
+            userRequesterId: fromId,
+            userHelperId: toId,
           },
         },
       });
