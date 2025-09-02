@@ -19,7 +19,7 @@ import DetailAdSlider from "./DetailAdSlider";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import MapWithLocation from "./MapWithLocation";
-import Hands from "/images/picture.png";
+import Hands from "/images/picture.webp";
 import theme from "../../mui";
 import {
     GET_USER_CHATS,

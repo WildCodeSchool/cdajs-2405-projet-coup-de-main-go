@@ -11,7 +11,7 @@ type ChatDetailPictureProps = {
       name: string;
       picture: string;
     };
-  }
+  };
 };
 
 export default function ChatDetailPicture({ ad }: ChatDetailPictureProps) {
@@ -49,7 +49,7 @@ export default function ChatDetailPicture({ ad }: ChatDetailPictureProps) {
           <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
             {ad?.mangoAmount}
           </Typography>
-          <img src="/images/mango.png" alt="mango" style={{ width: 16 }} />
+          <img src="/images/mango.webp" alt="mango" style={{ width: 16 }} />
         </Box>
       </Box>
     </Box>

@@ -46,7 +46,7 @@ export default function MobileMenu({
             <HeaderButton
               color="secondary"
               text="Créer une annonce"
-              icon="/images/mango.png"
+              icon="/images/mango.webp"
               onClick={handleAdModalOpen}
             />
             <HeaderButton

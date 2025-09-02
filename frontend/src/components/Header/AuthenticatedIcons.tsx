@@ -37,7 +37,7 @@ export default function AuthenticatedIcons({
       <IconButton sx={{ position: "relative", marginRight: isMobile ? 0 : 2 }}>
         <Box
           component="img"
-          src="/images/mango.png"
+          src="/images/mango.webp"
           alt="Mango notification"
           sx={{
             width: 40,

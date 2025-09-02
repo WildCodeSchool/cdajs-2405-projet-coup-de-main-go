@@ -9,31 +9,39 @@ export default function Dashboard() {
   return (
     <>
       <img
-        src="/images/dashboard-poster.png"
+        src="/images/dashboard-poster.webp"
         alt="helping to walk"
         style={{
           width: "100%",
           minHeight: 153,
         }}
       />
-
-      <Box marginX={isMobile ? 2 : 6} marginY={3}>
-        <Stack
+      <Box marginX={isMobile ? 2 : 6}>
+        <Box
+          mx="auto"
+          marginY={3}
+          maxWidth="xl"
           sx={{
-            marginY: 3,
-            alignItems: isMobile ? "center" : "flex-start",
+            justifySelf: "center",
           }}
         >
-          <Button sx={{ paddingX: 4 }} component={Link} to={"/catalog"}>
-            Afficher toutes les annonces
-          </Button>
-        </Stack>
+          <Stack
+            sx={{
+              marginY: 3,
+              alignItems: isMobile ? "center" : "flex-start",
+            }}
+          >
+            <Button sx={{ paddingX: 4 }} component={Link} to={"/catalog"}>
+              Afficher toutes les annonces
+            </Button>
+          </Stack>
 
-        <DashboardSection title="Les plus récentes" />
+          <DashboardSection title="Les plus récentes" />
 
-        <DashboardSection title="Bricolage" skillId="1" />
+          <DashboardSection title="Bricolage" skillId="1" />
 
-        <DashboardSection title="Jardinage" skillId="2" />
+          <DashboardSection title="Jardinage" skillId="2" />
+        </Box>
       </Box>
     </>
   );

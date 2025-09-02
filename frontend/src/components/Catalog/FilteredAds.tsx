@@ -70,6 +70,7 @@ export default function FilteredAds({
             flexWrap: "wrap",
             mt: 1,
             mb: 6,
+            maxWidth: "xl",
           }}
         >
           {adsResponse.ads.map((ad) => (

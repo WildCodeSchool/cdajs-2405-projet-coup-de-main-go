@@ -49,7 +49,7 @@ export default function AdCard({ ad, isProfileCard = false }: AdCardProps) {
                 ? `${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/users/${
                     ad.userRequester.id
                   }/${ad.userRequester.picture}`
-                : "/images/auth-modal-img.png"
+                : "/images/auth-modal-img.webp"
             }
             sx={{ width: "2rem", height: "2rem" }}
           />
@@ -87,7 +87,7 @@ export default function AdCard({ ad, isProfileCard = false }: AdCardProps) {
             ? `${import.meta.env.VITE_DOMAIN_BACKEND_URL}/uploads/ads/${
                 ad.id
               }/${ad.picture1}`
-            : "/images/picture.png"
+            : "/images/picture.webp"
         }
         alt={`${ad.skill.name} picture`}
       />
@@ -116,7 +116,7 @@ export default function AdCard({ ad, isProfileCard = false }: AdCardProps) {
         <Stack direction="row" alignItems="center" spacing={0.5}>
           <Typography sx={{ fontWeight: "bold" }}>{ad.mangoAmount}</Typography>
           <img
-            src="/images/mango.png"
+            src="/images/mango.webp"
             alt="mango"
             style={{ width: "1.25rem", height: "1.25rem" }}
           />
